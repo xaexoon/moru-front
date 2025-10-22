@@ -1,12 +1,31 @@
-function Login() {
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+
+import KimLogin from "./test/login_kim";
+import Login from "./pages/login";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    errorElement: <div>im error</div>,
+    children: [
+      {
+        index: true,
+        element: <Login />,
+      },
+      {
+        path: "kim/login",
+        element: <KimLogin />,
+      },
+    ],
+  },
+]);
+
+function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <div>로그인 페이지 입니다</div>
-      </header>
-      <body>로그인 Content</body>
-    </div>
+    <>
+      <RouterProvider router={router} />
+    </>
   );
 }
 
-export default Login;
+export default App;
