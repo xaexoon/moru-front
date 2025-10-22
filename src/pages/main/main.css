@@ -10,7 +10,7 @@
   height: 100%;
   display: flex;
   justify-content: center;
-  border: solid;
+  border-right: solid;
 }
 
 .left_bar {
