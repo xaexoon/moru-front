@@ -16,7 +16,6 @@ input {
   height: 32px;
 
   font-size: 11px;
-  color: #d2d2d2;
 
   border: 0;
   border-radius: 15px;
@@ -48,7 +47,7 @@ input {
   justify-content: flex-start;
 
   background-color: #e7e7e7;
-  box-shadow: 2px 2px 10px #cacaca;
+  box-shadow: 2px 2px 10px rgb(231, 231, 231, 0.1);
 
   border-radius: 100px 100px 10% 10%;
 }

@@ -35,7 +35,6 @@ function Login() {
           <p className="socialText">Or sign in with</p>
         </div>
       </div>
-      <body>로그인 Content</body>
     </div>
   );
 }
