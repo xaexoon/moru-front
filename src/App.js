@@ -6,18 +6,15 @@ import Login from "./pages/login";
 const router = createBrowserRouter([
   {
     path: "/",
+    errorElement: <div>im error</div>,
     children: [
       {
         index: true,
-        Component: <Login />,
+        element: <Login />,
       },
       {
         path: "kim/login",
         element: <KimLogin />,
-      },
-      {
-        path: "*",
-        element: <div>error page</div>,
       },
     ],
   },
@@ -25,9 +22,9 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <div>
+    <>
       <RouterProvider router={router} />
-    </div>
+    </>
   );
 }
 
