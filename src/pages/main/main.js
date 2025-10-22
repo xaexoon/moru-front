@@ -31,7 +31,11 @@ function Main() {
                 <div className="top_search_container">
                   <div className="top_search">
                     <div className="search_icon"></div>
-                    <input className="search_content"></input>
+                    <input
+                      className="search_content"
+                      type="text"
+                      placeholder="검색..."
+                    ></input>
                   </div>
                 </div>
               </div>
