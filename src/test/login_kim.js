@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./login_kim.css";
 
-function Login() {
+function KimLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -39,4 +39,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default KimLogin;
