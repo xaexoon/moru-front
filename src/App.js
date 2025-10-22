@@ -1,24 +1,12 @@
-import "./App.css";
-
-function App() {
+function Login() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <div>로그인 페이지 입니다</div>
       </header>
+      <body>로그인 Content</body>
     </div>
   );
 }
 
-export default App;
+export default Login;
