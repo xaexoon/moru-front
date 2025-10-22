@@ -12,7 +12,7 @@ const router = createBrowserRouter([
         Component: <Login />,
       },
       {
-        path: "/kim/login",
+        path: "kim/login",
         element: <KimLogin />,
       },
       {
