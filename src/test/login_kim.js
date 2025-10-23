@@ -7,7 +7,7 @@ function KimLogin() {
   const [password, setPassword] = useState("");
 
   return (
-    <div className="App">
+    <div className="app">
       <header className="App-header"></header>
       <div className="container">
         <div className="loginContainer">
