@@ -13,6 +13,14 @@
   border-right: solid;
 }
 
+.main_left_simple {
+  width: 80px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  border-right: solid;
+}
+
 .left_bar {
   margin: 30px;
   display: flex;
