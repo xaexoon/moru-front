@@ -40,7 +40,7 @@ function Main() {
                       </div>
                     </div>
                     <div className="top_icon" onClick={handleNavClick}>
-                      아이콘
+                      ◫
                     </div>
                   </div>
                   <div className="top_search_container">
@@ -106,7 +106,7 @@ function Main() {
                 <div className="left_bar_top">
                   <div className="top_title_container">
                     <div className="top_icon" onClick={handleNavClick}>
-                      아이콘
+                      ◫
                     </div>
                   </div>
                 </div>
