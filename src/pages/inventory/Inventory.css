@@ -1,10 +1,14 @@
 .main_container {
+  height: 100%;
+
   display: flex;
+
   background-color: white;
 }
 
 .inventory_left {
   width: 70%;
+  height: 100%;
 
   display: flex;
 

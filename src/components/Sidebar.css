@@ -3,7 +3,7 @@
   height: 100%;
   display: flex;
   justify-content: center;
-  border-right: solid;
+  border-right: solid #ededed;
 }
 
 .left_bar {
@@ -166,14 +166,4 @@
   background-color: #ededed;
   margin: 0 -30px;
   width: auto;
-}
-
-/* 사이드 바 간략화 스타일 */
-
-.main_left_simple {
-  width: 80px;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  border-right: solid;
 }
