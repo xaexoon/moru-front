@@ -14,7 +14,7 @@ function Sidebar() {
     { icon: "◫", text: "카드 생성", path: "/createCard" },
     { icon: "◫", text: "내 덱", path: "/myDeck" },
     { icon: "◫", text: "데이터 필드 관리", path: "/dataFields" },
-    { icon: "◫", text: "인벤토리", path: "/inventory" },
+    { icon: "◫", text: "인벤토리", path: "/" },
   ];
 
   const handleNavClick = () => {
@@ -56,7 +56,7 @@ function Sidebar() {
               <div
                 key={index}
                 className={`menu_item ${
-                  location.pathname === item.path ? "active" : ""
+                  location.pathname === item.path ? "selected" : ""
                 }`}
                 onClick={() => navigate(item.path)}
               >
