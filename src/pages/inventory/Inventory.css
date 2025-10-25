@@ -1,0 +1,12 @@
+.main_container {
+  display: flex;
+  background-color: white;
+}
+
+.inventory_left {
+  width: 70%;
+
+  display: flex;
+
+  border-right: solid 1px #e6e6e6;
+}
