@@ -8,7 +8,9 @@ function Layout({ children }) {
     <div className="App">
       <main>
         <div className="main_container">
-          <Sidebar />
+          <div className="main_left">
+            <Sidebar />
+          </div>
           <div className="main_right">
             {children} {/* 페이지 내용이 여기 들어감 */}
           </div>
