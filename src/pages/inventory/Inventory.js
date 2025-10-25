@@ -1,7 +1,7 @@
 import "./Inventory.css";
 
 function Inventory() {
-  return null;
+  return <></>;
 }
 
 export default Inventory;

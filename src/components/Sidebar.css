@@ -13,14 +13,6 @@
   border-right: solid;
 }
 
-.main_left_simple {
-  width: 80px;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  border-right: solid;
-}
-
 .left_bar {
   margin: 30px;
   display: flex;
@@ -144,4 +136,14 @@
   background-color: black;
   margin: 10px 0;
   width: 100%;
+}
+
+/* 사이드 바 간략화 스타일 */
+
+.main_left_simple {
+  width: 80px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  border-right: solid;
 }
