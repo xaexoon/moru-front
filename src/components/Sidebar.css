@@ -108,8 +108,38 @@
 }
 
 /* 왼쪽 사이드바 프로젝트 */
+.left_bar_projects {
+  display: flex;
+  flex-direction: column;
+}
 
-.divider {
+.project_card_list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.project_card {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 50px;
+  background-color: beige;
+  border-radius: 10px;
+}
+
+.project_card_icon {
+  display: flex;
+  width: 20px;
+  align-items: center;
+  justify-content: center;
+}
+.project_card_info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.project_card .divider {
   height: 1px;
   background-color: black;
   margin: 10px 0;

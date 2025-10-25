@@ -1,36 +1,27 @@
 /* eslint-disable react/react-in-jsx-scope */
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import KimLogin from "./test/login_kim";
 import Login from "./pages/login/login";
-import Main from "./pages/main/main";
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    errorElement: <div>im error</div>,
-    children: [
-      {
-        index: true,
-        element: <Main />,
-      },
-      {
-        path: "login",
-        element: <Login />,
-      },
-      {
-        path: "kim/login",
-        element: <KimLogin />,
-      },
-    ],
-  },
-]);
+import Inventory from "./pages/inventory/Inventory";
+import Layout from "./components/Layout";
 
 function App() {
   return (
-    <>
-      <RouterProvider router={router} />
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <Layout>
+              <Inventory />
+            </Layout>
+          }
+        />
+        <Route path="/login" element={<Login />} />
+        <Route path="/kim/login" element={<KimLogin />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

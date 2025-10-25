@@ -1,9 +1,9 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { useState } from "react";
 
-import "./main.css";
+import "./Sidebar.css";
 
-function Main() {
+function Sidebar() {
   const [navOpen, setNavOpen] = useState(true);
 
   console.log(navOpen);
@@ -88,7 +88,15 @@ function Main() {
                   <div className="project_container">
                     <div className="project_title">최근 프로젝트</div>
                     <div className="project_card_list">
-                      <div className="project_card"></div>
+                      <div className="project_card">
+                        <div className="project_card_icon">◫</div>
+                        <div className="project_card_info">
+                          <div className="project_card_content">
+                            부산 유물 아카이브
+                          </div>
+                          <div className="project_date">2일전</div>
+                        </div>
+                      </div>
                       <div className="project_card"></div>
                       <div className="project_card"></div>
                       <div className="project_card"></div>
@@ -122,4 +130,4 @@ function Main() {
   );
 }
 
-export default Main;
+export default Sidebar;
