@@ -1,0 +1,249 @@
+/* LoginPage.css */
+
+/* 전체 컨테이너 */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #d1d1d1;
+  padding: 20px;
+}
+
+/* 메인 카드 - 뉴모피즘 스타일 */
+.login-card {
+  background: linear-gradient(to bottom, #e8e8e8, #d8d8d8);
+  border-radius: 40px;
+  /* 바깥쪽 그림자: 오른쪽/아래 어두운 그림자, 왼쪽/위 밝은 그림자 */
+  box-shadow: 
+    20px 20px 60px #bebebe,
+    -20px -20px 60px #ffffff;
+  padding: 60px 50px;
+  width: 100%;
+  max-width: 420px;
+}
+
+/* 프로필 원형 아이콘 */
+.profile-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #5a5a5a, #2d2d2d);
+  box-shadow: 
+    8px 8px 16px #b8b8b8,
+    -8px -8px 16px #ffffff;
+  margin: 0 auto 30px;
+}
+
+/* 타이틀 */
+.title {
+  text-align: center;
+  font-size: 30px;
+  font-weight: 500;
+  color: #3a3a3a;
+  margin-bottom: 8px;
+}
+
+/* 서브타이틀 */
+.subtitle {
+  text-align: center;
+  font-size: 14px;
+  color: #999;
+  margin-bottom: 32px;
+}
+
+/* 입력 필드 그룹 */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+/* 입력 필드 - 안쪽으로 들어간 느낌 */
+.input-field {
+  width: 100%;
+  padding: 16px 20px;
+  border: none;
+  border-radius: 25px;
+  background: #e0e0e0;
+  /* inset: 안쪽 그림자로 오목한 효과 */
+  box-shadow: 
+    inset 6px 6px 12px #c0c0c0,
+    inset -6px -6px 12px #ffffff;
+  font-size: 15px;
+  color: #333;
+  outline: none;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.input-field::placeholder {
+  color: #999;
+}
+
+/* 포커스 시 그림자 강조 */
+.input-field:focus {
+  box-shadow: 
+    inset 8px 8px 16px #b8b8b8,
+    inset -8px -8px 16px #ffffff;
+}
+
+/* 로그인 버튼 - 볼록한 느낌 */
+.login-button {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 25px;
+  background: linear-gradient(145deg, #3a3a3a, #2d2d2d);
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 
+    6px 6px 12px #b8b8b8,
+    -6px -6px 12px #ffffff;
+  transition: all 0.3s ease;
+}
+
+/* 호버 시 버튼이 살짝 올라오는 효과 */
+.login-button:hover {
+  background: linear-gradient(145deg, #2d2d2d, #252525);
+  transform: translateY(-2px);
+  box-shadow: 
+    8px 8px 16px #b8b8b8,
+    -8px -8px 16px #ffffff;
+}
+
+/* 클릭 시 버튼이 눌리는 효과 */
+.login-button:active {
+  transform: translateY(0);
+  box-shadow: 
+    4px 4px 8px #b8b8b8,
+    -4px -4px 8px #ffffff;
+}
+
+/* 구분선 텍스트 */
+.divider-text {
+  text-align: center;
+  font-size: 14px;
+  color: #999;
+  margin-bottom: 24px;
+}
+
+/* 소셜 로그인 버튼 그리드 */
+.social-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.social-grid:last-child {
+  margin-bottom: 0;
+}
+
+/* 소셜 로그인 버튼 */
+.social-button {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 20px;
+  border: none;
+  background: linear-gradient(145deg, #5a5a5a, #4a4a4a);
+  box-shadow: 
+    6px 6px 12px #b8b8b8,
+    -6px -6px 12px #ffffff;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  padding: 12px;
+}
+
+.social-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 
+    8px 8px 16px #b8b8b8,
+    -8px -8px 16px #ffffff;
+}
+
+.social-button:active {
+  transform: translateY(0);
+}
+
+/* 소셜 아이콘 공통 스타일 */
+.social-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+/* 소셜 라벨 */
+.social-label {
+  font-size: 12px;
+  color: white;
+}
+
+/* 각 소셜 로그인 아이콘 색상 */
+.kakao-icon {
+  background: #FEE500;
+  color: #000;
+}
+
+.apple-icon {
+  background: #fff;
+  color: #000;
+  font-size: 24px;
+}
+
+.google-icon {
+  background: #fff;
+  color: #4285F4;
+  font-size: 20px;
+}
+
+.naver-icon {
+  background: #03C75A;
+  color: #fff;
+  font-weight: bold;
+}
+
+.add-icon {
+  background: #d0d0d0;
+  color: #666;
+  font-size: 28px;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 480px) {
+  .login-card {
+    padding: 40px 30px;
+  }
+  
+  .profile-circle {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .title {
+    font-size: 26px;
+  }
+  
+  .social-button {
+    gap: 6px;
+  }
+  
+  .social-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+}
