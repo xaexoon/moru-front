@@ -5,13 +5,17 @@ function Inventory() {
     <div className="main_container">
       <div className="inventory_left">
         <div className="inventory_top">
-          <div>
-            <p>내 인벤토리</p>
-            <p>작업용으로 모아둔 카드들을 관리하세요</p>
-          </div>
-          <div>
-            <input type="checkbox" />
-            <span>선택 모드</span>
+          <div className="inventory_discription">
+            <div className="inventory_top_left">
+              <p>내 인벤토리</p>
+              <p>작업용으로 모아둔 카드들을 관리하세요</p>
+            </div>
+            <div className="inventory_top_right">
+              <div className="inventory_selectmode">
+                <input type="checkbox" />
+                <span>선택 모드</span>
+              </div>
+            </div>
           </div>
           <div>
             <input type="text" placeholder="인벤토리 내 검색..." />

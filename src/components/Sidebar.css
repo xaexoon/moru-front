@@ -3,7 +3,7 @@
   height: 100%;
   display: flex;
   justify-content: center;
-  border-right: solid #ededed;
+  border-right: solid;
 }
 
 .left_bar {
