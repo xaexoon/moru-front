@@ -1,9 +1,9 @@
 .main_container {
-  display: flex;
-  flex: 1;
-
   width: 100%;
   height: 100%;
+
+  display: flex;
+  flex: 1;
 }
 
 .inventory_container {
@@ -24,10 +24,12 @@
 
 .inventory_top {
   width: 100%;
-  height: 170px;
+  height: 128px;
 
   display: flex;
   flex-direction: column;
+
+  padding: 20px;
 
   border-bottom: solid 2px #e6e6e6;
 }
@@ -36,6 +38,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  margin-bottom: 18px;
 }
 
 .inventory_top_left {
@@ -48,17 +52,93 @@
   }
 }
 
-.inventory_selectmode {
-  width: 90px;
-  padding: 3px 4px;
+/* 체크박스 CSS*/
+
+.inventory_selectmode_btn {
+  width: 100px;
+  padding: 4px 5px;
 
   display: flex;
   justify-content: space-around;
   align-items: center;
 
-  font-size: 14px;
+  font-size: 13px;
   color: #838383;
 
-  border: solid 2px #f1f1f1;
+  border: solid 1px #f1f1f1;
   border-radius: 10px;
+}
+
+input[type="checkbox"] {
+  display: none;
+}
+
+input#selectMode + label {
+  display: inline-block;
+
+  width: 13px;
+  height: 13px;
+
+  border: 2px solid #a1a1a1;
+  border-radius: 3px;
+
+  cursor: pointer;
+}
+
+input#selectMode:checked + label {
+  background-color: #a1a1a1;
+  border-color: #a1a1a1;
+  position: relative;
+}
+
+.inventory_menu {
+  flex: 1;
+  display: flex;
+}
+
+/* 검색창 CSS */
+
+.inventory_search_container {
+  width: 100%;
+  height: 31px;
+  max-width: 392px;
+
+  border-radius: 8px;
+
+  display: flex;
+  align-items: center;
+
+  background-color: #f3f3f5;
+}
+
+.inventory_search_container:focus-within {
+  outline: solid 3px #d0d0d0;
+}
+
+.inventory_search_input {
+  width: 100%;
+  height: 100%;
+
+  border: none;
+
+  background-color: transparent;
+
+  box-shadow: none;
+  appearance: none;
+}
+
+.inventory_search_input:focus {
+  outline: none;
+}
+
+.inventory_sort_container {
+  width: 140px;
+  height: 31px;
+
+  margin: 0 14px;
+}
+
+.inventory_category_btn {
+  width: 112px;
+  height: 31px;
 }

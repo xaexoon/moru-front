@@ -7,7 +7,7 @@
 }
 
 .main_left {
-  width: 300px;
+  /* width: 300px; 인벤토리 작업중 */
   height: 100%;
   display: flex;
   border-right: 1px solid #ededed;
