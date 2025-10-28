@@ -4,13 +4,12 @@ import "./Dropdown.css";
 
 function Dropdown({ options, onChange }) {
   const [currentValue, setCurrentValue] = useState(options[0]);
-  const [showOptions, setShowOptions] = useState(true);
+  const [showOptions, setShowOptions] = useState(false);
   const dropdownRef = useRef(null);
 
-  const handleSelectValue = (e) => {
-    setCurrentValue(e.target.getAttribute("value"));
-    onChange?.(e.target.getAttribute("value"));
-    setShowOptions(false);
+  const handleSelectValue = (value) => {
+    setCurrentValue(value);
+    onChange?.(value);
   };
 
   useEffect(() => {
@@ -37,7 +36,7 @@ function Dropdown({ options, onChange }) {
               className="dropdown_select_option"
               key={option + index}
               value={option}
-              onClick={handleSelectValue}
+              onClick={() => handleSelectValue(option)}
             >
               {option}
               <div>{currentValue === option && "✔"} </div>

@@ -1,6 +1,6 @@
 .dropdown_select_container {
   height: 31px;
-  width: 140px;
+  width: 100%;
 
   background-color: #f3f3f5;
 
@@ -20,7 +20,7 @@
 }
 
 .dropdown_select_box {
-  width: 140px;
+  width: 100%;
 
   padding: 4px;
 
@@ -41,7 +41,9 @@
 }
 
 .dropdown_select_option {
+  width: 100%;
   height: 30px;
+
   list-style-type: none;
 
   display: flex;
