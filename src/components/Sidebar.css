@@ -1,9 +1,9 @@
 .main_left_simple {
-  width: 80px;
+  width: 70px;
   height: 100%;
   display: flex;
   justify-content: center;
-  border-right: solid;
+  border-right: 1px solid #ededed;
 }
 
 .left_bar {
