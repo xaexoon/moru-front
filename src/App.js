@@ -11,9 +11,8 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* inventory 화면 */}
         <Route
-          path="/"
+          path="/inventory"
           element={
             <Layout>
               <Inventory />
