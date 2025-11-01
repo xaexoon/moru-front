@@ -1,3 +1,6 @@
+/* eslint-disable no-constant-condition */
+/* eslint-disable react/react-in-jsx-scope */
+/* eslint-disable react/prop-types */
 import Dropdown from "../../components/dropdown/Dropdown";
 import "./Inventory.css";
 
@@ -20,7 +23,7 @@ function Inventory() {
             <div className="inventory_top_right">
               <div className="inventory_selectmode_btn">
                 <input type="checkbox" id="selectMode" />
-                <label for="selectMode"></label>
+                <label htmlFor="selectMode"></label>
                 <span>선택 모드</span>
               </div>
             </div>

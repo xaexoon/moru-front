@@ -1,0 +1,383 @@
+/* 전역 리셋 */
+select {
+  padding: revert;
+}
+
+.create_card_container {
+  width: 100%;
+  min-height: 100%;
+  background-color: #ffffff;
+  box-sizing: border-box;
+}
+
+.create_card_main {
+  display: flex;
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  flex-direction: column;
+  padding-left: 80px;
+  padding-right: 80px;
+  padding-top: 50px;
+}
+
+.create_card_title {
+  padding-left: 40px;
+  margin-bottom: 30px;
+}
+
+.create_card_form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+
+.form-grid-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  width: 100%;
+}
+
+.left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
+
+.right-column {
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 20px;
+  height: fit-content;
+  min-width: 0;
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  height: auto;
+  width: 100%;
+  border: solid;
+  border-color: #ddd;
+  border-width: 1px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+.require_container,
+.extend_data_container,
+.preview_container {
+  margin: 30px;
+  box-sizing: border-box;
+  position: relative;
+  overflow: visible;
+}
+
+.require_header,
+.extend_data_header,
+.preview_header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.require_content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-top: 20px;
+  position: relative;
+  overflow: visible;
+}
+
+.rep_imange,
+.card_name,
+.select_data_field {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+}
+
+.rep_img_title,
+.card_name_content > div:first-child,
+.select_data_field > div:first-child {
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+}
+
+.rep_img_container {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.rep_img_upload {
+  height: 150px;
+  border: dashed;
+  border-width: 2px;
+  border-color: #1976d2;
+  border-radius: 10px;
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.rep_img_upload:hover {
+  background-color: #f5f9ff;
+  border-color: #1565c0;
+}
+
+.rep_img_upload_text {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1976d2;
+  font-size: 14px;
+}
+
+.card_name {
+  display: flex;
+}
+
+.card_name_content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.card_name_input {
+  display: flex;
+  flex: 1;
+  padding: 12px 16px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+  background-color: #f5f5f5; /* 회색 배경 추가 */
+}
+
+.card_name_input:focus {
+  outline: none;
+  border-color: #1976d2;
+  background-color: white; /* focus 시 흰색 */
+}
+
+/* React Select 커스텀 스타일 */
+.data_field_select_wrapper {
+  width: 100%;
+}
+
+.data_field_select__control {
+  padding: 4px 8px;
+  border: 1px solid #ddd !important;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  min-height: 45px;
+  box-shadow: none !important;
+  background-color: #f5f5f5 !important; /* input과 동일한 회색 배경 */
+}
+
+.data_field_select__control:hover {
+  border-color: #1976d2 !important;
+  background-color: #e8e8e8 !important; /* hover 시 약간 더 진한 회색 */
+}
+
+.data_field_select__control--is-focused {
+  border-color: #1976d2 !important;
+  box-shadow: none !important;
+  background-color: white !important; /* focus 시 흰색 */
+}
+
+.data_field_select__menu {
+  z-index: 9999;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  margin-top: 4px;
+}
+
+.data_field_select__menu-list {
+  padding: 4px 0;
+}
+
+.data_field_select__option {
+  padding: 12px 16px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.data_field_select__option--is-selected {
+  background-color: #1976d2 !important;
+  color: white;
+}
+
+.data_field_select__option--is-focused {
+  background-color: #e3f2fd !important;
+  color: #333;
+}
+
+.data_field_select__single-value {
+  font-size: 16px;
+  color: #333;
+}
+
+.data_field_select__indicator-separator {
+  display: none;
+}
+
+.data_field_select__dropdown-indicator {
+  color: #666;
+}
+
+.data_field_select__dropdown-indicator:hover {
+  color: #1976d2;
+}
+
+p {
+  display: flex;
+  margin: 0;
+}
+
+.extend_content {
+  width: 100%;
+  padding-top: 20px;
+}
+
+.extend_data_list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.extend_data_item {
+  display: flex;
+  flex-direction: row;
+}
+
+.extend_data_item_cotainer {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 20px;
+  background-color: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.extend_data_item_cotainer:hover {
+  background-color: #e3f2fd;
+  border-color: #1976d2;
+}
+
+.extend_data_icon,
+.extend_default_info_icon,
+.extend_link_data_icon,
+.extend_unlink_data_icon,
+.require_icon,
+.create_card_section_icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.preview_content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+}
+
+.preview_img {
+  width: 100%;
+  max-width: 280px;
+  height: 280px;
+  border: 2px dashed #ddd;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f9f9f9;
+}
+
+.preview_img input {
+  width: 100%;
+  height: 100%;
+}
+
+.preview_img_title {
+  font-weight: 600;
+  font-size: 16px;
+  color: #333;
+  text-align: center;
+}
+
+.preview_img_date {
+  font-size: 13px;
+  color: #666;
+}
+
+button {
+  width: 100%;
+  padding: 16px 32px;
+  background: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 8px;
+}
+
+button:hover {
+  background: #1565c0;
+}
+
+@media (max-width: 1440px) {
+  .form-grid-container {
+    grid-template-columns: 1fr;
+  }
+
+  .right-column {
+    position: relative;
+    top: 0;
+  }
+
+  .create_card_main {
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+}

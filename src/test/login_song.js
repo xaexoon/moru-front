@@ -1,28 +1,28 @@
 // LoginPage.js
-import React, { useState } from 'react';
-import './LoginPage.css';
+import React, { useState } from "react";
+import "./login_song.css";
 
 export default function LoginPage() {
   // 상태 관리: 이메일과 비밀번호 입력값 저장
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   // 로그인 버튼 클릭 시 실행
   const handleLogin = () => {
-    console.log('Login attempt:', { email, password });
+    console.log("Login attempt:", { email, password });
     // 실제 구현 시: API 호출, 토큰 저장 등
   };
 
   // Enter 키 입력 시 로그인 실행
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleLogin();
     }
   };
 
   // 소셜 로그인 버튼 클릭 시 실행
   const socialLogin = (provider) => {
-    console.log('Social login:', provider);
+    console.log("Social login:", provider);
     // 실제 구현 시: OAuth 인증 페이지로 리다이렉트
   };
 
@@ -30,7 +30,7 @@ export default function LoginPage() {
     <div className="login-container">
       <div className="login-card">
         <div className="profile-circle"></div>
-        
+
         <h1 className="title">Welcome back</h1>
         <p className="subtitle">Sign in to continue</p>
 
@@ -44,7 +44,7 @@ export default function LoginPage() {
             onChange={(e) => setEmail(e.target.value)}
             onKeyPress={handleKeyPress}
           />
-          
+
           {/* 비밀번호 입력 */}
           <input
             type="password"
@@ -54,7 +54,7 @@ export default function LoginPage() {
             onChange={(e) => setPassword(e.target.value)}
             onKeyPress={handleKeyPress}
           />
-          
+
           <button onClick={handleLogin} className="login-button">
             Login
           </button>
@@ -64,27 +64,27 @@ export default function LoginPage() {
 
         {/* 첫 번째 줄: 카카오, 애플, 구글 */}
         <div className="social-grid">
-          <button 
+          <button
             className="social-button"
-            onClick={() => socialLogin('kakao')}
+            onClick={() => socialLogin("kakao")}
           >
             <div className="social-icon kakao-icon">K</div>
             <span className="social-label">Kakao</span>
           </button>
 
-          <button 
+          <button
             className="social-button"
-            onClick={() => socialLogin('apple')}
+            onClick={() => socialLogin("apple")}
           >
             <div className="social-icon apple-icon">
-              <span style={{ fontSize: '24px' }}>🍎</span>
+              <span style={{ fontSize: "24px" }}>🍎</span>
             </div>
             <span className="social-label">Apple</span>
           </button>
 
-          <button 
+          <button
             className="social-button"
-            onClick={() => socialLogin('google')}
+            onClick={() => socialLogin("google")}
           >
             <div className="social-icon google-icon">G</div>
             <span className="social-label">Google</span>
@@ -93,9 +93,9 @@ export default function LoginPage() {
 
         {/* 두 번째 줄: 네이버, Add 버튼들 */}
         <div className="social-grid">
-          <button 
+          <button
             className="social-button"
-            onClick={() => socialLogin('naver')}
+            onClick={() => socialLogin("naver")}
           >
             <div className="social-icon naver-icon">N</div>
             <span className="social-label">Naver</span>
