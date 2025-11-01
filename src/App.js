@@ -2,6 +2,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import KimLogin from "./test/login_kim";
+import SongLogin from "./test/login_song";
 import Login from "./pages/login/login";
 import Inventory from "./pages/inventory/Inventory";
 import Layout from "./components/Layout";
@@ -31,6 +32,7 @@ function App() {
         />
         <Route path="/login" element={<Login />} />
         <Route path="/kim/login" element={<KimLogin />} />
+        <Route path="/song/login" element={<SongLogin />} />
       </Routes>
     </BrowserRouter>
   );
