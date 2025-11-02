@@ -67,7 +67,7 @@ function App() {
           path="/myDeck"
           element={
             <Layout>
-              <CreateCard />
+              <MyDeck />
             </Layout>
           }
         />

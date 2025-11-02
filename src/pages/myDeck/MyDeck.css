@@ -39,11 +39,16 @@
 }
 
 .myDeck_filter_Btn {
-  width: 70px;
+  width: 65px;
   height: 25px;
 
   font-size: 1px;
   color: black;
+
+  border: solid 1px #d2d4d7;
+  background-color: #ffff;
+
+  margin: 0 14px;
 }
 
 .myDeck_createNewDeck_Btn {
