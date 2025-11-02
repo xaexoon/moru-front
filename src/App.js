@@ -39,13 +39,47 @@ function App() {
           }
         />
         <Route
-          path="/myDeck"
+          path="/"
           element={
             <Layout>
-              <MyDeck />
+              <CreateCard />
             </Layout>
           }
         />
+
+        <Route
+          path="/feed"
+          element={
+            <Layout>
+              <CreateCard />
+            </Layout>
+          }
+        />
+        <Route
+          path="/dataFields"
+          element={
+            <Layout>
+              <CreateCard />
+            </Layout>
+          }
+        />
+        <Route
+          path="/myDeck"
+          element={
+            <Layout>
+              <CreateCard />
+            </Layout>
+          }
+        />
+        <Route
+          path="/workspace"
+          element={
+            <Layout>
+              <CreateCard />
+            </Layout>
+          }
+        />
+
         <Route path="/login" element={<Login />} />
         <Route path="/kim/login" element={<KimLogin />} />
         <Route path="/song/login" element={<SongLogin />} />
