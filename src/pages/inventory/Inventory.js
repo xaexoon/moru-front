@@ -12,7 +12,7 @@ function Inventory() {
   const handleCategoryChange = (value) => console.log("category:", value);
 
   return (
-    <div className="main_container">
+    <div className="inventory_container">
       <div className="inventory_left">
         <div className="inventory_top">
           <div className="inventory_discription">
@@ -30,10 +30,10 @@ function Inventory() {
           </div>
           <div>
             <div className="inventory_menu">
-              <div className="inventory_search_container">
+              <div className="page_search_container">
                 <div className="search_icon"></div>
                 <input
-                  className="inventory_search_input"
+                  className="page_search_input"
                   type="text"
                   placeholder="인벤토리 내 검색..."
                 />
