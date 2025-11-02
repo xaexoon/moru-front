@@ -7,6 +7,7 @@ import Login from "./pages/login/login";
 import Inventory from "./pages/inventory/Inventory";
 import Layout from "./components/Layout";
 import CreateCard from "./pages/createCard/CreateCard";
+import MyDeck from "./pages/myDeck/MyDeck";
 
 function App() {
   return (
@@ -34,6 +35,14 @@ function App() {
           element={
             <Layout>
               <CreateCard />
+            </Layout>
+          }
+        />
+        <Route
+          path="/myDeck"
+          element={
+            <Layout>
+              <MyDeck />
             </Layout>
           }
         />
