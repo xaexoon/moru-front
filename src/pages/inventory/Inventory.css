@@ -1,4 +1,4 @@
-.main_container {
+.inventory_container {
   width: 100%;
   height: 100%;
 
@@ -23,7 +23,6 @@
 }
 
 .inventory_top {
-  width: 100%;
   height: 128px;
 
   display: flex;
@@ -34,7 +33,7 @@
   border-bottom: solid 2px #e6e6e6;
 }
 
-.inventory_discription {
+.inventory_description {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -98,7 +97,7 @@ input#selectMode:checked + label {
 
 /* 검색창 CSS */
 
-.inventory_search_container {
+.page_search_container {
   flex: 1;
   max-width: 392px;
   height: 31px;
@@ -111,11 +110,11 @@ input#selectMode:checked + label {
   background-color: #f3f3f5;
 }
 
-.inventory_search_container:focus-within {
+.page_search_container:focus-within {
   outline: solid 3px #d0d0d0;
 }
 
-.inventory_search_input {
+.page_search_input {
   width: 100%;
   height: 100%;
 
@@ -127,7 +126,7 @@ input#selectMode:checked + label {
   appearance: none;
 }
 
-.inventory_search_input:focus {
+.page_search_input:focus {
   outline: none;
 }
 

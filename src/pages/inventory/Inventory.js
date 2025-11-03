@@ -4,18 +4,18 @@
 import Dropdown from "../../components/dropdown/Dropdown";
 import "./Inventory.css";
 
-const sortOptionData = ["최근추가", "자주사용", "제목순"];
-const categoryOptionData = ["전체", "내 카드", "참조 카드"];
+const SORT_OPTION_DATA = ["최근추가", "자주사용", "제목순"];
+const CATEGORY_OPTION_DATA = ["전체", "내 카드", "참조 카드"];
 
 function Inventory() {
   const handleSortChange = (value) => console.log("sort:", value);
   const handleCategoryChange = (value) => console.log("category:", value);
 
   return (
-    <div className="main_container">
+    <div className="inventory_container">
       <div className="inventory_left">
         <div className="inventory_top">
-          <div className="inventory_discription">
+          <div className="inventory_description">
             <div className="inventory_top_left">
               <p>내 인벤토리</p>
               <p>작업용으로 모아둔 카드들을 관리하세요</p>
@@ -30,23 +30,23 @@ function Inventory() {
           </div>
           <div>
             <div className="inventory_menu">
-              <div className="inventory_search_container">
+              <div className="page_search_container">
                 <div className="search_icon"></div>
                 <input
-                  className="inventory_search_input"
+                  className="page_search_input"
                   type="text"
                   placeholder="인벤토리 내 검색..."
                 />
               </div>
               <div className="inventory_sort_container">
                 <Dropdown
-                  options={sortOptionData}
+                  options={SORT_OPTION_DATA}
                   onChange={handleSortChange}
                 />
               </div>
               <div className="inventory_category_container">
                 <Dropdown
-                  options={categoryOptionData}
+                  options={CATEGORY_OPTION_DATA}
                   onChange={handleCategoryChange}
                 />
               </div>
