@@ -1,35 +1,14 @@
 import { useState } from "react";
 
 import "./MyDeck.css";
-import Deck from "../../components/deck/Deck";
+import MyDeckTab from "./tabs/MyDeckTab";
+import ReleasedDeckTab from "./tabs/ReleasedDeckTab";
+import SharedDeckTab from "./tabs/SharedDeckTab";
 
 const MY_DECK_TAB = [
   { title: "내 덱", id: "myDeck" },
-  { title: "공개 덱", id: "publicDeck" },
+  { title: "공개 덱", id: "releasedDeck" },
   { title: "공유받은 덱", id: "sharedDeck" },
-];
-
-const MY_DECK_DATA = [
-  {
-    title: "부산 지역 토기 모음",
-    visibility: true,
-    description: "부산 지역에서 발굴된 다양한 토기들의 아카이브",
-    tags: ["토기", "부산", "고고학"],
-    cardCount: 24,
-    updated: "2일 전",
-    author: ["김", "박"],
-    image: "https://i.ytimg.com/vi/O6hf6yLEVvU/hqdefault.jpg",
-  },
-  {
-    title: "한국 전통 문양 패턴",
-    visibility: "공개",
-    description: "한국 전통 문양들의 기하학적 패턴 연구",
-    tags: ["문양", "패턴", "전통"],
-    cardCount: 18,
-    updated: "1주 전",
-    author: null,
-    thumbnail: null,
-  },
 ];
 
 function MyDeck() {
@@ -69,9 +48,9 @@ function MyDeck() {
         </div>
       </div>
       <div className="myDeck_bottom">
-        {activeTab === "myDeck" && <Deck data={MY_DECK_DATA} />}
-        {activeTab === "publicDeck" && <>공개 덱</>}
-        {activeTab === "sharedDeck" && <>공유 받은 덱</>}
+        {activeTab === "myDeck" && <MyDeckTab />}
+        {activeTab === "releasedDeck" && <ReleasedDeckTab />}
+        {activeTab === "sharedDeck" && <SharedDeckTab />}
       </div>
     </div>
   );

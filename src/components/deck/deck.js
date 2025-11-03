@@ -1,47 +1,56 @@
 import "./Deck.css";
 
-function Deck({ data }) {
-  /* title: "부산 지역 토기 모음",
-    visibility: true,
-    description: "부산 지역에서 발굴된 다양한 토기들의 아카이브",
-    tags: ["토기", "부산", "고고학"],
-    cardCount: 24,
-    updated: "2일 전",
-    author: "김박",
-    image: null, */
-
-  const recentData = data[0];
-
+function Deck({ deckData }) {
   return (
     <div className="deck_list">
-      <div className="deck_list_item">
-        <img className="deck_img" src={recentData.image} alt="" />
-        <div className="deck_detail">
-          <div className="deck_detail_title">
-            <div>{recentData.title}</div>
-            {recentData.visibility && (
-              <div className="deck_detail_visibility">공개</div>
-            )}
+      {deckData.map((deck) => {
+        return (
+          <div className="deck_list_item" key={deck.title}>
+            <img className="deck_img" src={deck.image} alt="" />
+            <div className="deck_detail">
+              <div className="deck_detail_title">
+                <div key={"deck title" + deck.title}>{deck.title}</div>
+                {deck.visibility && (
+                  <div className="deck_detail_visibility">공개</div>
+                )}
+              </div>
+              <div className="deck_detail_description">{deck.description}</div>
+              <div className="deck_detail_tags">
+                {deck.tags.map((tag) => {
+                  return (
+                    <div
+                      className="deck_detail_tags_item"
+                      key={`${deck.title}_${tag}`}
+                    >
+                      {tag}
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="deck_detail_etc">
+                <div>{deck.cardCount} 개 카드</div>
+                <div>{deck.updated}</div>
+              </div>
+              <div className="deck_detail_author">
+                {deck.author ? (
+                  deck.author.map((author) => {
+                    return (
+                      <div
+                        className="deck_detail_author_name"
+                        key={`${deck.title}_${author}`}
+                      >
+                        {author}
+                      </div>
+                    );
+                  })
+                ) : (
+                  <></>
+                )}
+              </div>
+            </div>
           </div>
-          <div className="deck_detail_description">
-            {recentData.description}
-          </div>
-          <div className="deck_detail_tags">
-            {recentData.tags.map((tag) => {
-              return <div className="deck_detail_tags_item">{tag}</div>;
-            })}
-          </div>
-          <div className="deck_detail_etc">
-            <div>{recentData.cardCount} 개 카드</div>
-            <div>{recentData.updated}</div>
-          </div>
-          <div className="deck_detail_author">
-            {recentData.author.map((author) => {
-              return <div className="deck_detail_author_name">{author}</div>;
-            })}
-          </div>
-        </div>
-      </div>
+        );
+      })}
     </div>
   );
 }

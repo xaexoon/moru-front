@@ -1,5 +1,9 @@
 .deck_list {
   display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 .deck_list_item {
@@ -10,6 +14,8 @@
   border-radius: 15px;
 
   overflow: hidden;
+
+  margin-right: 14px;
 }
 
 .deck_img {
@@ -17,6 +23,8 @@
   height: 112px;
 
   object-fit: cover;
+
+  background-color: #f3f4f6;
 }
 
 .deck_detail {
