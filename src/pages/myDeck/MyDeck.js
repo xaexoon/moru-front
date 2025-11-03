@@ -1,15 +1,15 @@
 import { useState } from "react";
 
 import "./MyDeck.css";
-import Deck from "../../components/deck/deck";
+import Deck from "../../components/deck/Deck";
 
-const TABS = [
+const MY_DECK_TAB = [
   { title: "내 덱", id: "myDeck" },
   { title: "공개 덱", id: "publicDeck" },
   { title: "공유받은 덱", id: "sharedDeck" },
 ];
 
-const DECK = [
+const MY_DECK_DATA = [
   {
     title: "부산 지역 토기 모음",
     visibility: true,
@@ -17,8 +17,8 @@ const DECK = [
     tags: ["토기", "부산", "고고학"],
     cardCount: 24,
     updated: "2일 전",
-    author: "김박",
-    image: null,
+    author: ["김", "박"],
+    image: "https://i.ytimg.com/vi/O6hf6yLEVvU/hqdefault.jpg",
   },
   {
     title: "한국 전통 문양 패턴",
@@ -56,7 +56,7 @@ function MyDeck() {
         </div>
         <div className="myDeck_tab_container">
           <ul className="myDeck_tab_list">
-            {TABS.map((tab) => (
+            {MY_DECK_TAB.map((tab) => (
               <li
                 key={tab.id}
                 className="myDeck_tab_item"
@@ -69,7 +69,7 @@ function MyDeck() {
         </div>
       </div>
       <div className="myDeck_bottom">
-        {activeTab === "myDeck" && <Deck data={DECK} />}
+        {activeTab === "myDeck" && <Deck data={MY_DECK_DATA} />}
         {activeTab === "publicDeck" && <>공개 덱</>}
         {activeTab === "sharedDeck" && <>공유 받은 덱</>}
       </div>

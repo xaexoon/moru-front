@@ -33,7 +33,7 @@
   border-bottom: solid 2px #e6e6e6;
 }
 
-.inventory_discription {
+.inventory_description {
   display: flex;
   justify-content: space-between;
   align-items: center;
