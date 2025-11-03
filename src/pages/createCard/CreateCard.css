@@ -342,7 +342,7 @@ p {
   color: #666;
 }
 
-button {
+/* button {
   width: 100%;
   padding: 16px 32px;
   background: #1976d2;
@@ -354,7 +354,7 @@ button {
   cursor: pointer;
   transition: background 0.2s;
   margin-top: 8px;
-}
+} 내덱 작업중*/
 
 button:hover {
   background: #1565c0;

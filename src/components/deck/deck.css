@@ -1,0 +1,11 @@
+.deck_container {
+  width: 245px;
+  height: 305px;
+
+  border: 1px solid #e5e5e5;
+}
+
+.deck_img {
+  width: 100%;
+  height: 112px;
+}
