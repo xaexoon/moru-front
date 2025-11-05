@@ -1,5 +1,3 @@
-/* eslint-disable react/react-in-jsx-scope */
-/* eslint-disable react/prop-types */
 import Sidebar from "./Sidebar";
 import "./Layout.css";
 

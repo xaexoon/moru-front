@@ -1,0 +1,22 @@
+{
+  "eslint.options": {
+    "overrideConfig": {
+      "env": {
+        "browser": true,
+        "node": true,
+        "es6": true
+      },
+      "settings": {
+        "react": {
+          "version": "detect"
+        }
+      },
+      "rules": {
+        "react/react-in-jsx-scope": "off",
+        "react/prop-types": "off",
+        "no-constant-condition": "warn"
+      }
+    }
+  },
+  "eslint.validate": ["javascript", "javascriptreact"]
+}

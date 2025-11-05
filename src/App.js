@@ -6,6 +6,7 @@ import Inventory from "./pages/inventory/Inventory";
 import Layout from "./components/Layout";
 import CreateCard from "./pages/createCard/CreateCard";
 import MyDeck from "./pages/myDeck/MyDeck";
+import Feed from "./pages/feed/Feed";
 
 function App() {
   return (
@@ -49,7 +50,7 @@ function App() {
           path="/feed"
           element={
             <Layout>
-              <CreateCard />
+              <Feed />
             </Layout>
           }
         />

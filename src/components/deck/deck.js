@@ -1,4 +1,4 @@
-import "./Deck.css";
+import "./deck.css";
 
 function Deck({ deckData }) {
   return (

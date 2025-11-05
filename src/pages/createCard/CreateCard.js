@@ -1,5 +1,3 @@
-/* eslint-disable react/react-in-jsx-scope */
-import "./CreateCard.css";
 import Select from "react-select";
 
 function CreateCard() {
@@ -16,98 +14,173 @@ function CreateCard() {
     { value: "개념", label: "개념" },
   ];
 
+  // react-select 커스텀 스타일
+  const customSelectStyles = {
+    control: (provided, state) => ({
+      ...provided,
+      padding: "4px 8px",
+      borderColor: state.isFocused ? "#1976d2" : "#ddd",
+      borderRadius: "6px",
+      fontSize: "16px",
+      minHeight: "45px",
+      boxShadow: "none",
+      backgroundColor: state.isFocused ? "white" : "#f5f5f5",
+      "&:hover": {
+        borderColor: "#1976d2",
+        backgroundColor: "#e8e8e8",
+      },
+    }),
+    menu: (provided) => ({
+      ...provided,
+      zIndex: 9999,
+      fontSize: "16px",
+      border: "1px solid #ddd",
+      boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+      borderRadius: "6px",
+      marginTop: "4px",
+    }),
+    menuList: (provided) => ({
+      ...provided,
+      padding: "4px 0",
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      padding: "12px 16px",
+      fontSize: "16px",
+      backgroundColor: state.isSelected
+        ? "#1976d2"
+        : state.isFocused
+        ? "#e3f2fd"
+        : "white",
+      color: state.isSelected ? "white" : "#333",
+      cursor: "pointer",
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      fontSize: "16px",
+      color: "#333",
+    }),
+    indicatorSeparator: () => ({
+      display: "none",
+    }),
+    dropdownIndicator: (provided) => ({
+      ...provided,
+      color: "#666",
+      "&:hover": {
+        color: "#1976d2",
+      },
+    }),
+  };
+
   return (
-    <div className="create_card_container">
-      <main className="create_card_main">
-        <header className="create_card_title">
-          <h2 className="card_main_title">새 카드 만들기</h2>
-          <p className="card_sub_title">
+    <div className="w-full min-h-full bg-white box-border">
+      <main className="flex w-full max-w-[1600px] mx-auto flex-col px-20 pt-12">
+        <header className="pl-10 mb-8">
+          <h2 className="text-2xl font-bold">새 카드 만들기</h2>
+          <p className="text-gray-600 mt-2">
             필수 정보를 입력하여 카드를 생성하고, 필요한 경우 확장 데이터를
             추가할 수 있습니다.
           </p>
         </header>
-        <form className="create_card_form">
-          <div className="form-grid-container">
+
+        <form className="flex flex-col gap-6 w-full bg-white p-10 rounded-xl">
+          <div className="grid grid-cols-2 gap-8 w-full">
             {/* 왼쪽 컬럼 */}
-            <div className="left-column">
+            <div className="flex flex-col gap-6 min-w-0">
               {/* 필수정보 */}
-              <section className="require_info_section">
-                <div className="require_container">
-                  <header className="require_header">
-                    <div className="require_icon"></div>
-                    <h2>필수 정보</h2>
+              <section className="flex flex-col bg-white w-full border border-gray-300 rounded-xl shadow-sm overflow-visible">
+                <div className="m-8">
+                  <header className="flex flex-row items-center gap-3 pb-5 border-b border-gray-200">
+                    <div className="w-5 h-5"></div>
+                    <h2 className="text-lg font-semibold">필수 정보</h2>
                   </header>
-                  <div className="require_content_container">
-                    <div className="require_content">
-                      {/* 대표이미지 */}
-                      <div className="rep_imange">
-                        <div className="rep_img_title">대표이미지 *</div>
-                        <div className="rep_img_container">
-                          <div className="rep_img_upload">
-                            <div className="rep_img_upload_text">
-                              클릭하여 이미지 업로드 (다중 선택 가능)
-                            </div>
+
+                  <div className="flex flex-col gap-6 pt-5">
+                    {/* 대표이미지 */}
+                    <div className="flex flex-col gap-2.5">
+                      <div className="font-semibold text-sm text-gray-800">
+                        대표이미지 *
+                      </div>
+                      <div className="flex flex-1">
+                        <div className="h-[150px] border-2 border-dashed border-blue-600 rounded-xl flex-1 flex cursor-pointer transition-all hover:bg-blue-50 hover:border-blue-700">
+                          <div className="w-full flex items-center justify-center text-blue-600 text-sm">
+                            클릭하여 이미지 업로드 (다중 선택 가능)
                           </div>
                         </div>
                       </div>
-                      {/* 카드이름 */}
-                      <div className="card_name">
-                        <div className="card_name_content">
-                          <div>카드 이름 *</div>
-                          <input
-                            type="text"
-                            className="card_name_input"
-                            name="cardName"
-                            id="cardName"
-                          ></input>
-                        </div>
-                      </div>
+                    </div>
 
-                      {/* 데이터 필드  */}
-                      <div className="select_data_field">
-                        <div>데이터 필드 *</div>
-                        <Select
-                          className="data_field_select_wrapper"
-                          classNamePrefix="data_field_select"
-                          defaultValue={dataFieldOptions[0]}
-                          options={dataFieldOptions}
-                          isSearchable={false}
-                          placeholder="선택하세요"
-                        />
+                    {/* 카드이름 */}
+                    <div className="flex flex-col gap-2.5">
+                      <div className="font-semibold text-sm text-gray-800">
+                        카드 이름 *
                       </div>
+                      <input
+                        type="text"
+                        className="flex-1 px-4 py-3 border border-gray-300 rounded-md text-sm transition-all bg-gray-100 focus:outline-none focus:border-blue-600 focus:bg-white"
+                        name="cardName"
+                        id="cardName"
+                      />
+                    </div>
+
+                    {/* 데이터 필드 */}
+                    <div className="flex flex-col gap-2.5">
+                      <div className="font-semibold text-sm text-gray-800">
+                        데이터 필드 *
+                      </div>
+                      <Select
+                        defaultValue={dataFieldOptions[0]}
+                        options={dataFieldOptions}
+                        isSearchable={false}
+                        placeholder="선택하세요"
+                        styles={customSelectStyles}
+                      />
                     </div>
                   </div>
                 </div>
               </section>
 
-              <section className="extend_data_section">
-                <div className="extend_data_container">
-                  <header className="extend_data_header">
-                    <div className="extend_data_icon">+</div>
-                    <h2>확장 데이터 추가</h2>
-                    <p>(선택사항)</p>
+              {/* 확장 데이터 추가 */}
+              <section className="flex flex-col bg-white w-full border border-gray-300 rounded-xl shadow-sm overflow-visible">
+                <div className="m-8">
+                  <header className="flex flex-row items-center gap-3 pb-5 border-b border-gray-200">
+                    <div className="w-5 h-5 flex items-center justify-center text-lg">
+                      +
+                    </div>
+                    <h2 className="text-lg font-semibold">확장 데이터 추가</h2>
+                    <p className="text-gray-500 text-sm">(선택사항)</p>
                   </header>
-                  <div className="extend_content">
-                    <div className="extend_data_list">
-                      <div className="extend_data_item">
-                        <div className="extend_data_item_cotainer">
-                          <div className="extend_default_info_icon"></div>
-                          <p>기본 정보 추가</p>
-                          <div> &gt; </div>
+
+                  <div className="w-full pt-5">
+                    <div className="flex flex-col gap-3">
+                      {/* 기본 정보 추가 */}
+                      <div className="flex">
+                        <div className="flex flex-1 items-center gap-3 px-5 py-4 bg-gray-50 border border-gray-200 rounded-lg cursor-pointer transition-all hover:bg-blue-50 hover:border-blue-600">
+                          <div className="w-5 h-5 flex-shrink-0"></div>
+                          <p className="flex-1 text-left m-0">기본 정보 추가</p>
+                          <div className="ml-auto">&gt;</div>
                         </div>
                       </div>
-                      <div className="extend_data_item">
-                        <div className="extend_data_item_cotainer">
-                          <div className="extend_link_data_icon"></div>
-                          <p>종속 데이터 연결</p>
-                          <div> &gt; </div>
+
+                      {/* 종속 데이터 연결 */}
+                      <div className="flex">
+                        <div className="flex flex-1 items-center gap-3 px-5 py-4 bg-gray-50 border border-gray-200 rounded-lg cursor-pointer transition-all hover:bg-blue-50 hover:border-blue-600">
+                          <div className="w-5 h-5 flex-shrink-0"></div>
+                          <p className="flex-1 text-left m-0">
+                            종속 데이터 연결
+                          </p>
+                          <div className="ml-auto">&gt;</div>
                         </div>
                       </div>
-                      <div className="extend_data_item">
-                        <div className="extend_data_item_cotainer">
-                          <div className="extend_unlink_data_icon"></div>
-                          <p>비종속 데이터 첨부</p>
-                          <div> &gt; </div>
+
+                      {/* 비종속 데이터 첨부 */}
+                      <div className="flex">
+                        <div className="flex flex-1 items-center gap-3 px-5 py-4 bg-gray-50 border border-gray-200 rounded-lg cursor-pointer transition-all hover:bg-blue-50 hover:border-blue-600">
+                          <div className="w-5 h-5 flex-shrink-0"></div>
+                          <p className="flex-1 text-left m-0">
+                            비종속 데이터 첨부
+                          </p>
+                          <div className="ml-auto">&gt;</div>
                         </div>
                       </div>
                     </div>
@@ -116,24 +189,25 @@ function CreateCard() {
               </section>
             </div>
 
-            <div className="right-column">
-              <section className="preview_section">
-                <div className="preview_container">
-                  <header className="preview_header">
-                    <div className="create_card_section_icon"></div>
-                    <h2>미리보기</h2>
+            {/* 오른쪽 컬럼 */}
+            <div className="flex flex-col sticky top-5 h-fit min-w-0">
+              {/* 미리보기 */}
+              <section className="flex flex-col bg-white w-full border border-gray-300 rounded-xl shadow-sm overflow-visible">
+                <div className="m-8">
+                  <header className="flex flex-row items-center gap-3 pb-5 border-b border-gray-200">
+                    <div className="w-5 h-5"></div>
+                    <h2 className="text-lg font-semibold">미리보기</h2>
                   </header>
-                  <div className="preview_content_container">
-                    <div className="preview_content">
-                      <div className="preview_img">
-                        <input type="image"></input>
-                      </div>
-                      <div className="preview_img_title">
-                        카드 이름 입력 필요
-                      </div>
-                      <div className="preview_img_date">
-                        20250. 11. 1 오후 2:28:30
-                      </div>
+
+                  <div className="flex flex-col items-center gap-4 py-5">
+                    <div className="w-full max-w-[280px] h-[280px] border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center bg-gray-50">
+                      <input type="image" className="w-full h-full" />
+                    </div>
+                    <div className="font-semibold text-base text-gray-800 text-center">
+                      카드 이름 입력 필요
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      20250. 11. 1 오후 2:28:30
                     </div>
                   </div>
                 </div>
@@ -141,7 +215,12 @@ function CreateCard() {
             </div>
           </div>
 
-          <button>카드 저장</button>
+          <button
+            type="button"
+            className="w-full px-8 py-4 bg-blue-600 text-white border-none rounded-lg text-base font-semibold cursor-pointer transition-colors mt-2 hover:bg-blue-700"
+          >
+            카드 저장
+          </button>
         </form>
       </main>
     </div>
