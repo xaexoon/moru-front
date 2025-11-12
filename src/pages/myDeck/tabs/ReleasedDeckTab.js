@@ -1,6 +1,6 @@
 /* eslint-disable react/react-in-jsx-scope */
 import "../MyDeck.css";
-import Deck from "../../../components/deck/deck";
+import Deck from "../../../components/deck/Deck";
 
 const sharedDeckData = [
   {
