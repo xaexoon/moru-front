@@ -1,7 +1,5 @@
 import { useState, useRef, useEffect } from "react";
 
-import "./Dropdown.css";
-
 function Dropdown({ options, onChange }) {
   const [currentValue, setCurrentValue] = useState(options[0]);
   const [showOptions, setShowOptions] = useState(false);
@@ -24,16 +22,16 @@ function Dropdown({ options, onChange }) {
 
   return (
     <div
-      className="dropdown_select_container"
+      className="w-full h-full bg-gray-100 rounded-lg flex items-center relative"
       ref={dropdownRef}
       onClick={() => setShowOptions((prev) => !prev)}
     >
-      <label>{currentValue}</label>
+      <label className="text-xs text-gray-700 px-[12px]">{currentValue}</label>
       {showOptions && (
-        <ul className="dropdown_select_box">
+        <ul className="w-full p-[4px] flex flex-col absolute top-[38px] border border-gray-200 rounded-md shadow-lg mx-[4px] bg-white">
           {options.map((option, index) => (
             <li
-              className="dropdown_select_option"
+              className="w-full h-[30px] flex items-center justify-between text-xs text-gray-700 p-[5px] rounded-md cursor-default hover:bg-gray-200"
               key={option + index}
               value={option}
               onClick={() => handleSelectValue(option)}

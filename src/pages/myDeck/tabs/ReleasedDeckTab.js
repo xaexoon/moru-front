@@ -1,6 +1,5 @@
 /* eslint-disable react/react-in-jsx-scope */
-import "../MyDeck.css";
-import Deck from "../../../components/deck/deck";
+import Deck from "../../../components/deck/Deck";
 
 const sharedDeckData = [
   {
@@ -28,11 +27,15 @@ const sharedDeckData = [
 function ReleasedDeckTab() {
   return (
     <>
-      <div className="myDeck_bottom_title">
+      <div className="flex justify-between items-center w-full text-base mb-6">
         <p>공개 덱 탐색</p>
         <div>
-          <button className="myDeck_bottom_sort_btn">인기순</button>
-          <button className="myDeck_bottom_sort_btn">최신순</button>
+          <button className="text-sm w-[80px] h-[27px] border border-gray-200 rounded-md mr-2 hover:bg-gray-200">
+            인기순
+          </button>
+          <button className="text-sm w-[80px] h-[27px] border border-gray-200 rounded-md mr-2 hover:bg-gray-200">
+            최신순
+          </button>
         </div>
       </div>
       <Deck deckData={sharedDeckData} />
