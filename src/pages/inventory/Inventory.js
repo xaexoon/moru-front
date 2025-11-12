@@ -1,3 +1,4 @@
+/* eslint-disable no-constant-condition */
 import Dropdown from "../../components/dropdown/Dropdown";
 
 const SORT_OPTION_DATA = ["최근추가", "자주사용", "제목순"];
@@ -35,7 +36,7 @@ function Inventory() {
             <div className="flex-1 max-w-[392px] h-[31px] rounded-lg flex items-center bg-gray-100 focus-within:outline focus-within:outline-3 focus-within:outline-gray-300">
               <div className="search_icon"></div>
               <input
-                className="w-full h-full border-none bg-transparent focus:outline-none"
+                className="w-full h-full border-none bg-transparent focus:outline-none text-[13px] "
                 type="text"
                 placeholder="인벤토리 내 검색..."
               />
@@ -79,7 +80,9 @@ function Inventory() {
           <></>
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center m-5">
-            <p>카드를 선택하면 미리보기가 표시됩니다</p>
+            <p className="text-gray-400">
+              카드를 선택하면 미리보기가 표시됩니다
+            </p>
           </div>
         )}
       </div>
