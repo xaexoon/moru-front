@@ -4,7 +4,7 @@ function Deck({ deckData }) {
       {deckData.map((deck) => {
         return (
           <div
-            className="w-[30%] h-[305px] border border-gray-200 rounded-xl overflow-hidden mr-[14px] cursor-default hover:shadow-lg"
+            className="sm:w-full md:w-[45%] lg:w-[35%] lg:max-w-[320px] h-[305px] border border-gray-200 rounded-xl overflow-hidden mr-[14px] sm:mb-[14px] cursor-default hover:shadow-lg"
             key={deck.title}
           >
             <img
