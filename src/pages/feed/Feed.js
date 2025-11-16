@@ -1,4 +1,13 @@
+import { useState } from "react";
+import gridIcon from "./../../assets/feed/grid.svg";
+import listIcon from "./../../assets/feed/list.svg";
+
 function Feed() {
+  const [viewMode, setViewMode] = useState("grid"); // 'grid' or 'list'
+  const [cardSize, setCardSize] = useState("medium"); // 'small', 'medium', 'large'
+  const [searchMode, setSearchMode] = useState("and"); // 'and' or 'or'
+  const [showFilter, setShowFilter] = useState(true); // 필터 표시/숨김
+
   return (
     <div className="w-full min-h-full bg-white">
       <main>
@@ -15,20 +24,89 @@ function Feed() {
 
             {/* 버튼 그룹 */}
             <div className="flex gap-3 items-center">
-              <div className="flex border border-black rounded-xl divide-x divide-black">
-                <button className="px-4 py-3 hover:bg-gray-100">그리드</button>
-                <button className="px-4 py-3 hover:bg-gray-100">리스트</button>
+              {/* 그리드/리스트 */}
+              <div className="flex border border-black rounded-xl divide-x divide-black overflow-hidden">
+                <div
+                  className={`px-4 py-3 cursor-pointer transition-colors flex items-center gap-2 ${
+                    viewMode === "grid"
+                      ? "bg-black text-white"
+                      : "hover:bg-gray-100"
+                  }`}
+                  onClick={() => setViewMode("grid")}
+                >
+                  <img
+                    src={gridIcon}
+                    alt="grid"
+                    className={`w-4 h-4 ${viewMode === "grid" ? "invert" : ""}`}
+                  />
+                  그리드
+                </div>
+                <div
+                  className={`px-4 py-3 cursor-pointer transition-colors flex items-center gap-2 ${
+                    viewMode === "list"
+                      ? "bg-black text-white"
+                      : "hover:bg-gray-100"
+                  }`}
+                  onClick={() => setViewMode("list")}
+                >
+                  <img
+                    src={listIcon}
+                    alt="list"
+                    className={`w-4 h-4 ${viewMode === "list" ? "invert" : ""}`}
+                  />
+                  리스트
+                </div>
               </div>
-              <div className="flex border border-black rounded-xl divide-x divide-black">
-                <button className="px-4 py-3 hover:bg-gray-100">소형</button>
-                <button className="px-4 py-3 hover:bg-gray-100">중형</button>
-                <button className="px-4 py-3 hover:bg-gray-100">대형</button>
+
+              {/* 소형/중형/대형 */}
+              <div className="flex border border-black rounded-xl divide-x divide-black overflow-hidden">
+                <div
+                  className={`px-4 py-3 cursor-pointer transition-colors ${
+                    cardSize === "small"
+                      ? "bg-black text-white"
+                      : "hover:bg-gray-100"
+                  }`}
+                  onClick={() => setCardSize("small")}
+                >
+                  소형
+                </div>
+                <div
+                  className={`px-4 py-3 cursor-pointer transition-colors ${
+                    cardSize === "medium"
+                      ? "bg-black text-white"
+                      : "hover:bg-gray-100"
+                  }`}
+                  onClick={() => setCardSize("medium")}
+                >
+                  중형
+                </div>
+                <div
+                  className={`px-4 py-3 cursor-pointer transition-colors ${
+                    cardSize === "large"
+                      ? "bg-black text-white"
+                      : "hover:bg-gray-100"
+                  }`}
+                  onClick={() => setCardSize("large")}
+                >
+                  대형
+                </div>
               </div>
-              <div className="border border-black rounded-xl">
-                <button className="px-4 py-3 hover:bg-gray-100">필터</button>
+
+              {/* 필터 */}
+              <div className="border border-black rounded-xl overflow-hidden">
+                <div
+                  className="px-4 py-3 hover:bg-gray-100 cursor-pointer"
+                  onClick={() => setShowFilter(!showFilter)}
+                >
+                  필터
+                </div>
               </div>
-              <div className="border border-black rounded-xl">
-                <button className="px-4 py-3 hover:bg-gray-100">새 카드</button>
+
+              {/* 새 카드 */}
+              <div className="border border-black rounded-xl overflow-hidden">
+                <div className="px-4 py-3 bg-black text-white cursor-pointer hover:bg-gray-800">
+                  새 카드
+                </div>
               </div>
             </div>
           </div>
@@ -38,9 +116,27 @@ function Feed() {
             <p className="font-semibold">태그 검색</p>
             <div className="flex gap-3 items-center">
               <p>검색 모드</p>
-              <div className="flex border border-black rounded-xl divide-x divide-black">
-                <button className="px-4 py-2 hover:bg-gray-100">AND</button>
-                <button className="px-4 py-2 hover:bg-gray-100">OR</button>
+              <div className="flex border border-black rounded-xl divide-x divide-black overflow-hidden">
+                <div
+                  className={`px-4 py-2 cursor-pointer transition-colors ${
+                    searchMode === "and"
+                      ? "bg-black text-white"
+                      : "hover:bg-gray-100"
+                  }`}
+                  onClick={() => setSearchMode("and")}
+                >
+                  AND
+                </div>
+                <div
+                  className={`px-4 py-2 cursor-pointer transition-colors ${
+                    searchMode === "or"
+                      ? "bg-black text-white"
+                      : "hover:bg-gray-100"
+                  }`}
+                  onClick={() => setSearchMode("or")}
+                >
+                  OR
+                </div>
               </div>
             </div>
           </div>
@@ -79,60 +175,64 @@ function Feed() {
           </div>
 
           {/* 필터 */}
-          <div className="mx-10 mb-5 border rounded-xl p-5">
-            <div className="grid grid-cols-4 gap-6">
-              <div className="flex flex-col">
-                <p className="pb-2 font-semibold">정렬</p>
-                <select className="bg-gray-100 rounded-xl p-3 border-none outline-none cursor-pointer hover:bg-gray-200">
-                  <option>최신순</option>
-                  <option>인기순</option>
-                  <option>트렌딩</option>
-                  <option>랜덤</option>
-                </select>
-              </div>
-              <div className="flex flex-col">
-                <p className="pb-2 font-semibold">카드 타입</p>
-                <select className="bg-gray-100 rounded-xl p-3 border-none outline-none cursor-pointer hover:bg-gray-200">
-                  <option>전체</option>
-                  <option>유물</option>
-                  <option>색상</option>
-                  <option>형태</option>
-                  <option>재질</option>
-                  <option>문양</option>
-                  <option>기법</option>
-                  <option>시대</option>
-                  <option>지역</option>
-                </select>
-              </div>
-              <div className="flex flex-col">
-                <p className="pb-2 font-semibold">시대</p>
-                <select className="bg-gray-100 rounded-xl p-3 border-none outline-none cursor-pointer hover:bg-gray-200">
-                  <option>전체</option>
-                  <option>선사시대</option>
-                  <option>삼국시대</option>
-                  <option>통일신라</option>
-                  <option>고려</option>
-                  <option>조선</option>
-                  <option>근현대</option>
-                </select>
-              </div>
-              <div className="flex flex-col">
-                <p className="pb-2 font-semibold">지역</p>
-                <select className="bg-gray-100 rounded-xl p-3 border-none outline-none cursor-pointer hover:bg-gray-200">
-                  <option>전체</option>
-                  <option>서울</option>
-                  <option>경기</option>
-                  <option>부산</option>
-                  <option>대구</option>
-                  <option>인천</option>
-                  <option>광주</option>
-                  <option>대전</option>
-                  <option>울산</option>
-                </select>
+          {showFilter && (
+            <div className="mx-10 mb-5 border rounded-xl p-5">
+              <div className="grid grid-cols-4 gap-6">
+                <div className="flex flex-col">
+                  <p className="pb-2 font-semibold">정렬</p>
+                  <select className="bg-gray-100 rounded-xl p-3 border-none outline-none cursor-pointer hover:bg-gray-200">
+                    <option>최신순</option>
+                    <option>인기순</option>
+                    <option>트렌딩</option>
+                    <option>랜덤</option>
+                  </select>
+                </div>
+                <div className="flex flex-col">
+                  <p className="pb-2 font-semibold">카드 타입</p>
+                  <select className="bg-gray-100 rounded-xl p-3 border-none outline-none cursor-pointer hover:bg-gray-200">
+                    <option>전체</option>
+                    <option>유물</option>
+                    <option>색상</option>
+                    <option>형태</option>
+                    <option>재질</option>
+                    <option>문양</option>
+                    <option>기법</option>
+                    <option>시대</option>
+                    <option>지역</option>
+                  </select>
+                </div>
+                <div className="flex flex-col">
+                  <p className="pb-2 font-semibold">시대</p>
+                  <select className="bg-gray-100 rounded-xl p-3 border-none outline-none cursor-pointer hover:bg-gray-200">
+                    <option>전체</option>
+                    <option>선사시대</option>
+                    <option>삼국시대</option>
+                    <option>통일신라</option>
+                    <option>고려</option>
+                    <option>조선</option>
+                    <option>근현대</option>
+                  </select>
+                </div>
+                <div className="flex flex-col">
+                  <p className="pb-2 font-semibold">지역</p>
+                  <select className="bg-gray-100 rounded-xl p-3 border-none outline-none cursor-pointer hover:bg-gray-200">
+                    <option>전체</option>
+                    <option>서울</option>
+                    <option>경기</option>
+                    <option>부산</option>
+                    <option>대구</option>
+                    <option>인천</option>
+                    <option>광주</option>
+                    <option>대전</option>
+                    <option>울산</option>
+                  </select>
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </section>
+        {/* 구분선 */}
+        <div className="mx-10 mb-5 border-t border-gray-300"></div>
 
         {/* 카드 그리드 */}
         <section className="px-10 py-5">
