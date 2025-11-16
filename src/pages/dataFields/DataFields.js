@@ -31,7 +31,7 @@ const DATA_FIELD_TAB = [
 
 function DataFields() {
   const [currentDataField, setCurrentDataField] = useState({});
-  const [activeTab, setActiveTab] = useState(DATA_FIELD_TAB[0]);
+  const [activeTab, setActiveTab] = useState(DATA_FIELD_TAB[0].id);
 
   return (
     <div className="w-full min-h-full flex">

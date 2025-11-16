@@ -10,7 +10,7 @@ const myDeckData = [
     cardCount: 24,
     updated: "2일 전",
     author: ["김", "박"],
-    image: "https://i.ytimg.com/vi/O6hf6yLEVvU/hqdefault.jpg",
+    image: null,
   },
   {
     title: "한국 전통 문양 패턴",
