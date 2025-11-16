@@ -7,6 +7,7 @@ import Layout from "./components/Layout";
 import CreateCard from "./pages/createCard/CreateCard";
 import MyDeck from "./pages/myDeck/MyDeck";
 import Feed from "./pages/feed/Feed";
+import DataFields from "./pages/dataFields/DataFields";
 
 function App() {
   return (
@@ -58,7 +59,7 @@ function App() {
           path="/dataFields"
           element={
             <Layout>
-              <CreateCard />
+              <DataFields />
             </Layout>
           }
         />
