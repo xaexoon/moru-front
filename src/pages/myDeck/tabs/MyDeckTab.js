@@ -1,6 +1,5 @@
 /* eslint-disable react/react-in-jsx-scope */
-import "../MyDeck.css";
-import Deck from "../../../components/deck/deck";
+import Deck from "../../../components/deck/Deck";
 
 const myDeckData = [
   {
@@ -28,11 +27,15 @@ const myDeckData = [
 function MyDeckTab() {
   return (
     <>
-      <div className="myDeck_bottom_title">
+      <div className="flex justify-between items-center w-full text-base mb-6">
         <p>내가 만든 덱</p>
         <div>
-          <button className="myDeck_bottom_export_btn">전체 내보내기</button>
-          <button className="myDeck_bottom_share_btn">일괄 공유</button>
+          <button className="text-sm w-[125px] h-[27px] border border-gray-200 rounded-md mr-2 hover:bg-gray-200">
+            전체 내보내기
+          </button>
+          <button className="text-sm w-[100px] h-[27px] border border-gray-200 rounded-md mr-2 py-[1px] hover:bg-gray-200">
+            일괄 공유
+          </button>
         </div>
       </div>
       <Deck deckData={myDeckData} />
