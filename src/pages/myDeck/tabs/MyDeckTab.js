@@ -1,6 +1,9 @@
 /* eslint-disable react/react-in-jsx-scope */
 import Deck from "../../../components/deck/Deck";
 
+import { ReactComponent as ExportIcon } from "../../../assets/myDeck/export.svg";
+import { ReactComponent as ShareIcon } from "../../../assets/myDeck/share.svg";
+
 const myDeckData = [
   {
     title: "부산 지역 토기 모음",
@@ -31,10 +34,16 @@ function MyDeckTab() {
         <p>내가 만든 덱</p>
         <div>
           <button className="text-sm w-[125px] h-[27px] border border-gray-200 rounded-md mr-2 hover:bg-gray-200">
-            전체 내보내기
+            <div className="flex items-center justify-center">
+              <ExportIcon className="mr-2" />
+              <p>전체 내보내기</p>
+            </div>
           </button>
           <button className="text-sm w-[100px] h-[27px] border border-gray-200 rounded-md mr-2 py-[1px] hover:bg-gray-200">
-            일괄 공유
+            <div className="flex items-center justify-center">
+              <ShareIcon className="mr-2" />
+              <p>일괄 공유</p>
+            </div>
           </button>
         </div>
       </div>

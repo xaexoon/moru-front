@@ -1,5 +1,6 @@
 /* eslint-disable react/react-in-jsx-scope */
 import Deck from "../../../components/deck/Deck";
+import { ReactComponent as TimeIcon } from "../../../assets/myDeck/time.svg";
 
 const sharedDeckData = [
   {
@@ -34,7 +35,10 @@ function ReleasedDeckTab() {
             인기순
           </button>
           <button className="text-sm w-[80px] h-[27px] border border-gray-200 rounded-md mr-2 hover:bg-gray-200">
-            최신순
+            <div className="flex items-center justify-center">
+              <TimeIcon className="mr-2" />
+              <p>최신순</p>
+            </div>
           </button>
         </div>
       </div>

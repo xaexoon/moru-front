@@ -1,5 +1,10 @@
 import { useState } from "react";
 
+import { ReactComponent as PreviewIcon } from "../../assets/dataFields/preview.svg";
+import { ReactComponent as DataFieldIcon } from "../../assets/dataFields/dataField.svg";
+import { ReactComponent as NewIcon } from "../../assets/dataFields/new.svg";
+import { ReactComponent as UnionIcon } from "../../assets/dataFields/union.svg";
+
 const dataFieldOptions = [
   {
     title: "유물/작품",
@@ -43,8 +48,9 @@ function DataFields() {
             카드 데이터 구조를 커스터마이징하세요
           </div>
           <div className="w-full flex items-center justify-center">
-            <button className="w-[237px] h-[32px] bg-black text-white rounded-lg text-sm">
-              + 새 데이터 필드
+            <button className="w-[237px] h-[32px] bg-black text-white rounded-lg text-sm flex items-center justify-center">
+              <NewIcon className="w-4 text-white mr-3" />
+              <p>새 데이터 필드</p>
             </button>
           </div>
         </div>
@@ -62,15 +68,18 @@ function DataFields() {
                 }}
               >
                 <div className="w-full flex justify-between">
-                  <div className="flex flex-col">
-                    <div key={`option.title_${option.title}`}>
-                      {option.title}
-                    </div>
-                    <div
-                      className="text-[11px] text-gray-500"
-                      key={`option.attributes_${option.connections}`}
-                    >
-                      {option.attributes}개 속성, {option.connections}개 연결
+                  <div className=" flex items-center">
+                    <DataFieldIcon className="mr-2 w-[14px] text-gray-500" />
+                    <div className="flex flex-col">
+                      <div key={`option.title_${option.title}`}>
+                        {option.title}
+                      </div>
+                      <div
+                        className="text-[11px] text-gray-500"
+                        key={`option.attributes_${option.connections}`}
+                      >
+                        {option.attributes}개 속성, {option.connections}개 연결
+                      </div>
                     </div>
                   </div>
                   <div
@@ -95,7 +104,7 @@ function DataFields() {
 
       {/* Middle Section */}
       <div className="flex-1 min-h-full">
-        {currentDataField?.title && (
+        {currentDataField?.title ? (
           <div>
             {/* Middle Top Section */}
             <div className="w-full h-[175px] border-b border-gray-200 flex flex-col p-4">
@@ -116,13 +125,19 @@ function DataFields() {
 
                 <div className="m-2">
                   <button className="w-[130px] h-[30px] text-xs border border-gray-300 rounded-md hover:bg-gray-200 mr-2">
-                    +기본 블록 추가
+                    <div className="flex items-center justify-center">
+                      <NewIcon className="w-4 text-black mr-2" />
+                      기본 블록 추가
+                    </div>
                   </button>
                   <button className="w-[85px] h-[30px] text-xs border border-gray-300 rounded-md hover:bg-gray-200 mr-2">
                     초기화
                   </button>
                   <button className="w-[73px] h-[30px] text-xs bg-black text-white rounded-md">
-                    저장
+                    <div className="flex items-center justify-center">
+                      <UnionIcon className="w-4 text-white mr-2" />
+                      <p>저장</p>
+                    </div>
                   </button>
                 </div>
               </div>
@@ -160,13 +175,24 @@ function DataFields() {
               </div>
             </div>
           </div>
+        ) : (
+          <div className="flex-1 min-h-full flex flex-col items-center justify-center">
+            <DataFieldIcon className="w-14 text-gray-400 mb-4" />
+            <p className="text-lg text-gray-500">데이터 필드를 선택하세요</p>
+            <p className="text-sm text-gray-500">
+              왼쪽에서 데이터 필드를 선택하거나 새로 만들어보세요.
+            </p>
+          </div>
         )}
       </div>
 
       {/* Right Section */}
       <div className="w-[355px] min-h-full flex flex-col border-l border-gray-200">
         <div className="w-full h-[83px] border-b border-gray-200 p-3">
-          <div>실시간 미리보기</div>
+          <div className="flex items-center">
+            <PreviewIcon className="mr-2" />
+            <div>실시간 미리보기</div>
+          </div>
           <div className="text-xs text-gray-500">
             편집 중인 데이터 필드가 카드에서 어떻게 표시되는지 확인할 수
             있습니다.

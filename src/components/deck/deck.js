@@ -1,3 +1,7 @@
+import { ReactComponent as PeopleIcon } from "../../assets/myDeck/people.svg";
+import { ReactComponent as TimeIcon } from "../../assets/myDeck/time.svg";
+import { ReactComponent as ImageIcon } from "../../assets/myDeck/image.svg";
+
 function Deck({ deckData }) {
   return (
     <div className="flex flex-row flex-wrap items-center content-start">
@@ -7,11 +11,14 @@ function Deck({ deckData }) {
             className="sm:w-full md:w-[45%] lg:w-[35%] lg:max-w-[320px] h-[305px] border border-gray-200 rounded-xl overflow-hidden mr-[14px] sm:mb-[14px] cursor-default hover:shadow-lg"
             key={deck.title}
           >
-            <img
+            {/* <img
               className="w-full h-[112px] object-cover bg-gray-100"
               src={deck.image}
               alt=""
-            />
+            /> */}
+            <div className="w-full h-[112px] object-cover bg-gray-100 flex items-center justify-center">
+              <ImageIcon className="w-16 text-gray-400" />
+            </div>
             <div className="flex flex-col m-[10px]">
               <div className="flex items-center justify-between mb-2">
                 <div key={"deck title" + deck.title}>{deck.title}</div>
@@ -38,9 +45,13 @@ function Deck({ deckData }) {
               </div>
               <div className="text-xs text-gray-500 flex text-center justify-between mb-2">
                 <div>{deck.cardCount} 개 카드</div>
-                <div>{deck.updated}</div>
+                <div className="flex items-center justify-center">
+                  <TimeIcon className="mr-1" />
+                  <p>{deck.updated}</p>
+                </div>
               </div>
               <div className="flex flex-row items-center content-start w-full">
+                <PeopleIcon className="mr-1" />
                 {deck.author ? (
                   deck.author.map((author) => {
                     return (
