@@ -3,6 +3,8 @@ import { useState } from "react";
 import MyDeckTab from "./tabs/MyDeckTab";
 import ReleasedDeckTab from "./tabs/ReleasedDeckTab";
 import SharedDeckTab from "./tabs/SharedDeckTab";
+import { ReactComponent as NewIcon } from "../../assets/dataFields/new.svg";
+import { ReactComponent as SearchIcon } from "../../assets/myDeck/search.svg";
 
 const MY_DECK_TAB = [
   { title: "내 덱", id: "myDeck" },
@@ -26,7 +28,7 @@ function MyDeck() {
         {/* Menu */}
         <div className="flex items-center w-full">
           <div className="flex-1 max-w-[392px] h-[31px] rounded-lg flex items-center bg-gray-100 focus-within:outline focus-within:outline-3 focus-within:outline-gray-300 mr-3">
-            <div className="search_icon"></div>
+            <SearchIcon className="text-gray-500 m-3" />
             <input
               className="w-full h-full border-none bg-transparent focus:outline-none text-sm"
               type="text"
@@ -37,7 +39,10 @@ function MyDeck() {
             필터
           </button>
           <button className="w-[120px] h-[30px] text-sm rounded-md bg-black text-white">
-            + 새 덱 만들기
+            <div className="flex items-center justify-center">
+              <NewIcon className="w-4 text-white mr-2" />
+              <p>새 덱 만들기</p>
+            </div>
           </button>
         </div>
         {/* Tab Menu */}

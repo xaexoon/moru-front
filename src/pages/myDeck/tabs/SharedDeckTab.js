@@ -1,8 +1,10 @@
+import { ReactComponent as InventoryIcon } from "../../../assets/myDeck/inventory.svg";
+
 function SharedDeckTab() {
   return (
     <>
       <div className="w-full h-full pt-4 flex flex-col items-center text-base">
-        <div></div>
+        <InventoryIcon className="w-11 text-gray-500 mb-4 mt-5" />
         <div className="mb-2">공유받은 덱이 없습니다</div>
         <div className="text-gray-400 mb-4">
           다른 사용자가 공유한 덱이 여기에 표시됩니다.

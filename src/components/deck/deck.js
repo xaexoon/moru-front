@@ -1,3 +1,6 @@
+import { ReactComponent as PeopleIcon } from "../../assets/myDeck/people.svg";
+import { ReactComponent as TimeIcon } from "../../assets/myDeck/time.svg";
+
 function Deck({ deckData }) {
   return (
     <div className="flex flex-row flex-wrap items-center content-start">
@@ -38,9 +41,13 @@ function Deck({ deckData }) {
               </div>
               <div className="text-xs text-gray-500 flex text-center justify-between mb-2">
                 <div>{deck.cardCount} 개 카드</div>
-                <div>{deck.updated}</div>
+                <div className="flex items-center justify-center">
+                  <TimeIcon className="mr-1" />
+                  <p>{deck.updated}</p>
+                </div>
               </div>
               <div className="flex flex-row items-center content-start w-full">
+                <PeopleIcon className="mr-1" />
                 {deck.author ? (
                   deck.author.map((author) => {
                     return (
