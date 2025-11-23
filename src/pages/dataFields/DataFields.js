@@ -69,7 +69,7 @@ function DataFields() {
               >
                 <div className="w-full flex justify-between">
                   <div className=" flex items-center">
-                    <DataFieldIcon className="mr-2" />
+                    <DataFieldIcon className="mr-2 w-[14px] text-gray-500" />
                     <div className="flex flex-col">
                       <div key={`option.title_${option.title}`}>
                         {option.title}
@@ -104,7 +104,7 @@ function DataFields() {
 
       {/* Middle Section */}
       <div className="flex-1 min-h-full">
-        {currentDataField?.title && (
+        {currentDataField?.title ? (
           <div>
             {/* Middle Top Section */}
             <div className="w-full h-[175px] border-b border-gray-200 flex flex-col p-4">
@@ -174,6 +174,14 @@ function DataFields() {
                 </ul>
               </div>
             </div>
+          </div>
+        ) : (
+          <div className="flex-1 min-h-full flex flex-col items-center justify-center">
+            <DataFieldIcon className="w-14 text-gray-400 mb-4" />
+            <p className="text-lg text-gray-500">데이터 필드를 선택하세요</p>
+            <p className="text-sm text-gray-500">
+              왼쪽에서 데이터 필드를 선택하거나 새로 만들어보세요.
+            </p>
           </div>
         )}
       </div>
