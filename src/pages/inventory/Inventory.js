@@ -1,6 +1,13 @@
 /* eslint-disable no-constant-condition */
 import Dropdown from "../../components/dropdown/Dropdown";
+import { ReactComponent as SearchIcon } from "../../assets/inventory/search.svg";
+import { ReactComponent as TimeIcon } from "../../assets/inventory/time.svg";
 
+// const SORT_OPTION_DATA = [
+//   { title: "최근추가", icon: <TimeIcon /> },
+//   { title: "자주사용", icon: <TimeIcon /> },
+//   { title: "제목순", icon: <TimeIcon /> },
+// ];
 const SORT_OPTION_DATA = ["최근추가", "자주사용", "제목순"];
 const CATEGORY_OPTION_DATA = ["전체", "내 카드", "참조 카드"];
 
@@ -34,7 +41,7 @@ function Inventory() {
           {/* Menu */}
           <div className="flex-1 flex">
             <div className="flex-1 max-w-[392px] h-[31px] rounded-lg flex items-center bg-gray-100 focus-within:outline focus-within:outline-3 focus-within:outline-gray-300">
-              <div className="search_icon"></div>
+              <SearchIcon className="text-gray-500 m-3 w-4" />
               <input
                 className="w-full h-full border-none bg-transparent focus:outline-none text-[13px] "
                 type="text"
@@ -63,7 +70,9 @@ function Inventory() {
             <></>
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center m-5">
-              <div className="w-[55px] h-[55px] rounded-full bg-gray-100 my-[15px]"></div>
+              <div className="w-[55px] h-[55px] rounded-full bg-gray-200 my-[15px] flex items-center justify-center">
+                <SearchIcon className="text-gray-400 m-3 w-6" />
+              </div>
               <p>인벤토리가 비어있습니다</p>
               <p className="text-gray-400 mt-[2px]">
                 카드 피드에서 카드를 추가하여 작업용 인벤토리를 구성하세요
