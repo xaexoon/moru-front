@@ -8,35 +8,35 @@ import { ReactComponent as UnionIcon } from "../../assets/dataFields/union.svg";
 const dataFieldOptions = [
   {
     title: "유물/작품",
-    attributes: 4,
-    connections: 4,
+    attribute: 4,
+    connect: 4,
     description: "전시품, 유물, 예술작품 등의 정보를 관리합니다.",
     type: "기본",
   },
   {
     title: "색상",
-    attributes: 3,
-    connections: 1,
+    attribute: 3,
+    connect: 1,
     description: "색상 정보와 색채 관련 데이터를 관리합니다.",
     type: "기본",
   },
   {
     title: "재질",
-    attributes: 3,
-    connections: 1,
+    attribute: 3,
+    connect: 1,
     description: "재료와 소재 정보를 관리합니다.",
     type: "기본",
   },
 ];
 
 const DATA_FIELD_TAB = [
-  { title: "비종속 데이터 (속성 블록)", id: "attribute" },
-  { title: "종속 데이터 (연결 블록)", id: "connect" },
+  { tab: "비종속 데이터 (속성 블록)", title: "속성 블록", id: "attribute" },
+  { tab: "종속 데이터 (연결 블록)", title: "연결 블록", id: "connect" },
 ];
 
 function DataFields() {
   const [currentDataField, setCurrentDataField] = useState({});
-  const [activeTab, setActiveTab] = useState(DATA_FIELD_TAB[0].id);
+  const [activeTab, setActiveTab] = useState(DATA_FIELD_TAB[0]);
 
   return (
     <div className="w-full min-h-full flex">
@@ -76,9 +76,9 @@ function DataFields() {
                       </div>
                       <div
                         className="text-[11px] text-gray-500"
-                        key={`option.attributes_${option.connections}`}
+                        key={`option.attribute_${option.connect}`}
                       >
-                        {option.attributes}개 속성, {option.connections}개 연결
+                        {option.attribute}개 속성, {option.connect}개 연결
                       </div>
                     </div>
                   </div>
@@ -164,14 +164,29 @@ function DataFields() {
                     <li
                       key={tab.id}
                       className={`py-1 w-[50%] rounded-xl cursor-default flex items-center justify-center ${
-                        tab.id === activeTab ? "bg-white" : ""
+                        tab.id === activeTab.id && "bg-white"
                       }`}
-                      onClick={() => setActiveTab(tab.id)}
+                      onClick={() => setActiveTab(tab)}
                     >
-                      {tab.title}
+                      {tab.tab}
                     </li>
                   ))}
                 </ul>
+              </div>
+
+              {/* Tab Section */}
+              <div className="pt-6 flex flex-col items-center">
+                <div className="p-6 w-[97%] min-h-[340px] border border-gray-200 rounded-lg">
+                  <div className="flex items-center justify-between">
+                    <p>{activeTab.title}</p>
+                    <div className="px-[7px] py-[2px] text-xs bg-gray-200 rounded-lg">
+                      {currentDataField?.[activeTab.id] ?? 0}개
+                    </div>
+                  </div>
+                  <div className="w-full h-[60px] bg-gray-50 rounded-xl mt-4"></div>
+                  {/* {activeTab === "attribute" && <div></div>}
+                  {activeTab === "connect" && <div></div>} */}
+                </div>
               </div>
             </div>
           </div>
