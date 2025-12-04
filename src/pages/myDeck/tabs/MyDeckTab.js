@@ -1,4 +1,4 @@
-import Deck from "../../../components/deck/deck";
+import Deck from "../../../components/deck/Deck";
 
 import { ReactComponent as ExportIcon } from "../../../assets/myDeck/export.svg";
 import { ReactComponent as ShareIcon } from "../../../assets/myDeck/share.svg";

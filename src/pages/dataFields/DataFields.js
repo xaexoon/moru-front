@@ -4,6 +4,8 @@ import { ReactComponent as PreviewIcon } from "../../assets/dataFields/preview.s
 import { ReactComponent as DataFieldIcon } from "../../assets/dataFields/dataField.svg";
 import { ReactComponent as NewIcon } from "../../assets/dataFields/new.svg";
 import { ReactComponent as UnionIcon } from "../../assets/dataFields/union.svg";
+import AttributeBlockEditor from "./tabs/AttributeBlockEditor";
+import ConnectBlockEditor from "./tabs/ConnectBlockEditor";
 
 const dataFieldOptions = [
   {
@@ -30,13 +32,20 @@ const dataFieldOptions = [
 ];
 
 const DATA_FIELD_TAB = [
-  { tab: "비종속 데이터 (속성 블록)", title: "속성 블록", id: "attribute" },
-  { tab: "종속 데이터 (연결 블록)", title: "연결 블록", id: "connect" },
+  { title: "비종속 데이터 (속성 블록)", id: "attribute" },
+  { title: "종속 데이터 (연결 블록)", id: "connect" },
 ];
 
 function DataFields() {
   const [currentDataField, setCurrentDataField] = useState({});
   const [activeTab, setActiveTab] = useState(DATA_FIELD_TAB[0]);
+
+  const handleAttributeChange = (updatedList) => {
+    setCurrentDataField((prev) => ({
+      ...prev,
+      attribute: updatedList,
+    }));
+  };
 
   return (
     <div className="w-full min-h-full flex">
@@ -168,7 +177,7 @@ function DataFields() {
                       }`}
                       onClick={() => setActiveTab(tab)}
                     >
-                      {tab.tab}
+                      {tab.title}
                     </li>
                   ))}
                 </ul>
@@ -177,15 +186,18 @@ function DataFields() {
               {/* Tab Section */}
               <div className="pt-6 flex flex-col items-center">
                 <div className="p-6 w-[97%] min-h-[340px] border border-gray-200 rounded-lg">
-                  <div className="flex items-center justify-between">
-                    <p>{activeTab.title}</p>
-                    <div className="px-[7px] py-[2px] text-xs bg-gray-200 rounded-lg">
-                      {currentDataField?.[activeTab.id] ?? 0}개
-                    </div>
-                  </div>
-                  <div className="w-full h-[60px] bg-gray-50 rounded-xl mt-4"></div>
-                  {/* {activeTab === "attribute" && <div></div>}
-                  {activeTab === "connect" && <div></div>} */}
+                  {activeTab.id === "attribute" && (
+                    <AttributeBlockEditor
+                      data={currentDataField}
+                      onChange={handleAttributeChange}
+                    />
+                  )}
+                  {activeTab.id === "connect" && (
+                    <ConnectBlockEditor
+                      data={currentDataField}
+                      onChange={handleAttributeChange}
+                    />
+                  )}
                 </div>
               </div>
             </div>
