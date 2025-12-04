@@ -1,5 +1,6 @@
 import { ReactComponent as NewIcon } from "../../../assets/dataFields/new.svg";
 import { ReactComponent as RinkIcon } from "../../../assets/dataFields/rink.svg";
+import { ReactComponent as TrashIcon } from "../../../assets/dataFields/trash.svg";
 import Dropdown from "../../../components/dropdown/Dropdown";
 
 const BLOCK_OPTION_DATA = ["숫자/재원", "이미지", "텍스트"];
@@ -7,14 +8,14 @@ const BLOCK_OPTION_DATA = ["숫자/재원", "이미지", "텍스트"];
 function ConnectBlockEditor({ data, onChange }) {
   const handleBlockTypeChange = (value) => console.log("block type:", value);
 
-  console.log("data :", data);
+  console.log("connect data :", data);
 
   return (
     <>
       <div className="flex items-center justify-between">
         <p>연결 블록</p>
         <div className="px-[7px] py-[2px] text-xs bg-gray-200 rounded-lg">
-          {data?.connect ?? 0}개
+          {data?.length ?? 0}개
         </div>
       </div>
       <div className="w-full h-[70px] bg-gray-50 rounded-md mt-4 flex justify-center items-center px-[10px]">
@@ -51,8 +52,39 @@ function ConnectBlockEditor({ data, onChange }) {
           </div>
         </button>
       </div>
-      {false ? (
-        <></>
+      {data?.length !== 0 ? (
+        <li className="flex flex-col justify-center items-center">
+          {data.map((connectData) => {
+            return (
+              <ul
+                className="w-[95%] h-[60px] border border-gray-200 rounded-md mt-3 flex items-center justify-between px-3"
+                key={`connectData_${connectData.length}`}
+              >
+                <div className="flex-1 flex">
+                  <div className="w-3 text-gray-400 mr-2"> || </div>
+                  <RinkIcon className="w-4 text-gray-400 mr-2" />
+                  <div className="flex-1 h-[30px] bg-gray-100 rounded-md mr-3 flex items-center focus-within:outline focus-within:outline-3 focus-within:outline-gray-300 ">
+                    <input
+                      className="w-full h-full border-none bg-transparent focus:outline-none text-[13px] p-2 "
+                      placeholder="연결 블록 이름"
+                      value={connectData.title}
+                      onChange={(e) => e.target.value}
+                    />
+                  </div>
+                  <div className="flex-1 h-[30px] bg-gray-100 rounded-md mr-3 flex items-center focus-within:outline focus-within:outline-3 focus-within:outline-gray-300 ">
+                    <input
+                      className="w-full h-full border-none bg-transparent focus:outline-none text-[13px] p-2 "
+                      placeholder="입력하세요..."
+                      value={connectData.description}
+                      onChange={(e) => e.target.value}
+                    />
+                  </div>
+                </div>
+                <TrashIcon className="w-4 text-red-600" />
+              </ul>
+            );
+          })}
+        </li>
       ) : (
         <div className="flex flex-col items-center mt-5">
           <RinkIcon className="w-10 text-gray-400 mt-4" />
