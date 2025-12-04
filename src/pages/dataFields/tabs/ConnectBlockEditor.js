@@ -12,12 +12,15 @@ function ConnectBlockEditor({ data, onChange }) {
 
   return (
     <>
+      {/* Editor Top */}
       <div className="flex items-center justify-between">
         <p>연결 블록</p>
         <div className="px-[7px] py-[2px] text-xs bg-gray-200 rounded-lg">
           {data?.length ?? 0}개
         </div>
       </div>
+
+      {/* Editor Middle */}
       <div className="w-full h-[70px] bg-gray-50 rounded-md mt-4 flex justify-center items-center px-[10px]">
         <div className="flex-1 flex items-center">
           <div className="flex-1 mr-2">
@@ -52,6 +55,8 @@ function ConnectBlockEditor({ data, onChange }) {
           </div>
         </button>
       </div>
+
+      {/* Editor Bottom */}
       {data?.length !== 0 ? (
         <li className="flex flex-col justify-center items-center">
           {data.map((connectData) => {

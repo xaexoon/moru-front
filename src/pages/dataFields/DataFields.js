@@ -142,6 +142,7 @@ function DataFields() {
             </button>
           </div>
         </div>
+
         {/*Data Field Option*/}
         <div className="flex flex-col p-3">
           <div className="text-sm mb-3">데이터 필드 목록</div>
@@ -247,6 +248,7 @@ function DataFields() {
                 </div>
               </div>
             </div>
+
             {/* Middle Bottom Section */}
             <div className="p-4">
               {/* Tab Menu */}
@@ -310,7 +312,6 @@ function DataFields() {
             있습니다.
           </div>
         </div>
-
         <div className="w-full h-full flex flex-col justify-start items-center">
           {/* 카드 미리보기 */}
           <div className="w-[305px] h-[343px] border border-gray-200 rounded-xl mt-4 p-5">

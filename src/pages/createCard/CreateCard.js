@@ -1,6 +1,12 @@
 import Select from "react-select";
+import { useState } from "react";
+
+import { ReactComponent as ImgIcon } from "../../assets/createCard/image.svg";
 
 function CreateCard() {
+  const [previewImges, setPreviewImges] = useState([]);
+  const [mainImg, setMainImg] = useState(null);
+
   const dataFieldOptions = [
     { value: "유물/작품", label: "유물/작품" },
     { value: "색상", label: "색상" },
@@ -72,6 +78,19 @@ function CreateCard() {
     }),
   };
 
+  const handleImgUpload = (e) => {
+    const imgFiles = e.target.files;
+    if (!imgFiles) return;
+
+    const previewImgUrlList = [...imgFiles].map((file) =>
+      URL.createObjectURL(file)
+    );
+
+    const mergedImgUrlList = [...previewImges, ...previewImgUrlList];
+    setPreviewImges(mergedImgUrlList);
+    setMainImg(mergedImgUrlList[0]);
+  };
+
   return (
     <div className="w-full min-h-full bg-white box-border">
       <main className="flex w-full max-w-[1600px] mx-auto flex-col px-20 pt-12">
@@ -102,13 +121,63 @@ function CreateCard() {
                         대표이미지 *
                       </div>
                       <div className="flex flex-1">
-                        <div className="h-[150px] border-2 border-dashed border-blue-600 rounded-xl flex-1 flex cursor-pointer transition-all hover:bg-blue-50 hover:border-blue-700">
+                        <input
+                          className="hidden"
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          id="mainImgUpload"
+                          onChange={handleImgUpload}
+                        />
+                        <label
+                          htmlFor="mainImgUpload"
+                          className="h-[150px] border-2 border-dashed border-blue-600 rounded-xl flex-1 flex cursor-pointer transition-all hover:bg-blue-50 hover:border-blue-700"
+                        >
                           <div className="w-full flex items-center justify-center text-blue-600 text-sm">
                             클릭하여 이미지 업로드 (다중 선택 가능)
                           </div>
-                        </div>
+                        </label>
                       </div>
                     </div>
+
+                    {/* 업로드된이미지 */}
+                    {previewImges?.length !== 0 && (
+                      <div className="w-full text-sm text-gray-500 mb-1">
+                        <p className="mb-1">
+                          업로드된 이미지 ({previewImges.length}개)
+                        </p>
+                        <ul className="w-full h-auto overflow-x-auto overflow-y-hidden flex items-start mb-2 p-2">
+                          {previewImges.map((img, index) => (
+                            <li
+                              key={index}
+                              className={`w-[70px] h-[70px] rounded-md mr-2 flex-shrink-0 border-2 relative ${
+                                img === mainImg
+                                  ? "border-black"
+                                  : "border-gray-300"
+                              }`}
+                            >
+                              {img === mainImg && (
+                                <div className="absolute text-xs text-white bg-black rounded-full px-[2px] -right-[2px] -top-[2px]">
+                                  ★
+                                </div>
+                              )}
+                              <img
+                                src={img}
+                                alt={`previewImg-${index}`}
+                                className="w-full h-full object-cover rounded-md block "
+                                onClick={() => {
+                                  setMainImg(img);
+                                }}
+                              />
+                            </li>
+                          ))}
+                        </ul>
+                        <p className="text-xs">
+                          ★ 표시된 이미지가 대표 이미지입니다. 클릭하여 변경할
+                          수 있습니다.
+                        </p>
+                      </div>
+                    )}
 
                     {/* 카드이름 */}
                     <div className="flex flex-col gap-2.5">
@@ -201,7 +270,16 @@ function CreateCard() {
 
                   <div className="flex flex-col items-center gap-4 py-5">
                     <div className="w-full max-w-[280px] h-[280px] border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center bg-gray-50">
-                      <input type="image" className="w-full h-full" />
+                      {mainImg ? (
+                        <input
+                          src={mainImg}
+                          type="image"
+                          className="w-full h-full"
+                          alt="미리보기 이미지"
+                        />
+                      ) : (
+                        <ImgIcon className="w-10 text-gray-500" />
+                      )}
                     </div>
                     <div className="font-semibold text-base text-gray-800 text-center">
                       카드 이름 입력 필요

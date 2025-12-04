@@ -7,12 +7,15 @@ function AttributeBlockEditor({ data, onChange }) {
 
   return (
     <>
+      {/* Editor Top */}
       <div className="flex items-center justify-between">
         <p>속성 블록</p>
         <div className="px-[7px] py-[2px] text-xs bg-gray-200 rounded-lg">
           {data?.length ?? 0}개
         </div>
       </div>
+
+      {/* Editor Middle */}
       <div className="w-full h-[60px] bg-gray-50 rounded-md mt-4 flex justify-center items-center px-[10px]">
         <div className="flex-1 h-[30px] bg-gray-100 rounded-md mr-3 flex items-center focus-within:outline focus-within:outline-3 focus-within:outline-gray-300 ">
           <input
@@ -27,6 +30,8 @@ function AttributeBlockEditor({ data, onChange }) {
           </div>
         </button>
       </div>
+
+      {/* Editor Bottom */}
       {data?.length !== 0 ? (
         <li className="flex flex-col justify-center items-center">
           {data.map((attributeData) => {
