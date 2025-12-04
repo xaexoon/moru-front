@@ -1,5 +1,4 @@
-/* eslint-disable react/react-in-jsx-scope */
-import Deck from "../../../components/deck/Deck";
+import Deck from "../../../components/deck/deck";
 import { ReactComponent as TimeIcon } from "../../../assets/myDeck/time.svg";
 
 const sharedDeckData = [
