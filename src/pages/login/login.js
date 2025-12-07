@@ -1,38 +1,39 @@
 import { useState } from "react";
+import { useLogin } from "./useApi";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
 
-  const evtFormSubmit = async (e) => {
+  const { mutate: login, isPending, isError, error } = useLogin();
+
+  const evtFormSubmit = (e) => {
     e.preventDefault();
-    setError("");
 
-    try {
-      const res = await fetch("http://localhost:8080/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id: email,
-          password: password,
-        }),
-      });
+    const requestData = { id: email, password: password };
+    console.log("Request Data: ", requestData);
 
-      const data = await res.json();
+    login(requestData, {
+      onSuccess: (response) => {
+        console.log("===== Login Success =====");
+        console.log("Response Status: ", response.status);
+        console.log("Response Data: ", response.data);
 
-      if (res.ok) {
-        console.log("Login Success:", data);
-        // 성공 처리
-      } else {
-        setError(data.message || "로그인에 실패했습니다.");
-      }
-    } catch (err) {
-      console.error("Login Error:", err);
-      setError("서버와의 연결에 실패했습니다.");
-    }
+        const token = response.data.data.accessToken;
+        localStorage.setItem("accessToken", token);
+
+        console.log("Login Access Token: ", token);
+      },
+      onError: (err) => {
+        console.log("===== Login Failed =====");
+        console.log("Error Message: ", err.message);
+        console.log("Error Code: ", err.code);
+        console.log("Resopnse Status: ", err.response?.status);
+        console.log("Response Data: ", err.response?.data);
+
+        console.log("Object Error:", err);
+      },
+    });
   };
 
   return (
@@ -48,9 +49,9 @@ function Login() {
         <p className="text-center text-gray-800 mb-8">Sign in to continue</p>
 
         <form onSubmit={evtFormSubmit} className="space-y-4">
-          {error && (
+          {isError && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-              {error}
+              {error?.response?.data?.message || "Login Failed"}
             </div>
           )}
 
@@ -73,10 +74,11 @@ function Login() {
           />
 
           <button
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 rounded-lg transition duration-200"
+            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 rounded-lg transition duration-200 disabled:bg-blue-300"
             type="submit"
+            disabled={isPending}
           >
-            Login
+            {isPending ? "Login..." : "Login"}
           </button>
         </form>
 
