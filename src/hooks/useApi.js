@@ -6,6 +6,7 @@ import {
   CARDS_API,
   DECK_API,
   ADMIN_API,
+  DATAFIELD_API,
 } from "../config/config";
 
 //////////////   AUTH API    //////////////
@@ -132,3 +133,20 @@ export const useDeleteDeck = () => {
     mutationFn: (id) => apiClient.delete(`${DECK_API}/${id}`),
   });
 };
+
+//////////////   DATAFIELD API    //////////////
+
+export const useGetDatafield = (options = {}) => {
+   return useQuery({
+    queryKey: ["datafield"],
+    queryFn: () => apiClient.get(`${DATAFIELD_API}`),
+    ...options,
+  });
+}
+
+
+export const useCreateDatafield = () => {
+  return useMutation({
+    mutationFn: (data) => apiClient.post(`${DATAFIELD_API}`, data),
+  });
+}
