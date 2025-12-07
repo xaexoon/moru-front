@@ -4,26 +4,94 @@ import { ReactComponent as PreviewIcon } from "../../assets/dataFields/preview.s
 import { ReactComponent as DataFieldIcon } from "../../assets/dataFields/dataField.svg";
 import { ReactComponent as NewIcon } from "../../assets/dataFields/new.svg";
 import { ReactComponent as UnionIcon } from "../../assets/dataFields/union.svg";
+import AttributeBlockEditor from "./tabs/AttributeBlockEditor";
+import ConnectBlockEditor from "./tabs/ConnectBlockEditor";
 
 const dataFieldOptions = [
   {
     title: "유물/작품",
-    attributes: 4,
-    connections: 4,
+    attribute: [
+      {
+        title: "구성 부품",
+        maxCount: 0,
+        description: "artifact, shape, material",
+      },
+      { title: "적용 문양", maxCount: 5, description: "pattern" },
+      { title: "사용 기법", maxCount: 3, description: "technique" },
+      { title: "관련 시대", maxCount: 1, description: "period" },
+    ],
+    connect: [
+      {
+        title: "설명",
+        type: "text",
+        description: "이 항목에 대한 자세한 설명을 입력하세요...",
+      },
+      { title: "치수", type: "number", description: "수치를 입력하세요" },
+      { title: "재질", type: "text", description: "재질 정보를 입력하세요" },
+      {
+        title: "참고 이미지",
+        type: "image",
+        description: "관련 이미지를 업로드하세요",
+      },
+    ],
     description: "전시품, 유물, 예술작품 등의 정보를 관리합니다.",
     type: "기본",
   },
   {
     title: "색상",
-    attributes: 3,
-    connections: 1,
+    attribute: [
+      {
+        title: "적용된 유물",
+        maxCount: 0,
+        description: "artifact, shape, material",
+      },
+    ],
+    connect: [
+      {
+        title: "색상명",
+        type: "text",
+        description: "색상의 이름을 입력하세요",
+      },
+      {
+        title: "RGB/HEX 값",
+        type: "text",
+        description: "#FFFFFF 또는 rgb(255,255,255)",
+      },
+      {
+        title: "설명",
+        type: "text",
+        description: "색상에 대한 설명을 입력하세요",
+      },
+    ],
     description: "색상 정보와 색채 관련 데이터를 관리합니다.",
     type: "기본",
   },
   {
     title: "재질",
-    attributes: 3,
-    connections: 1,
+    attribute: [
+      {
+        title: "사용된 유물",
+        maxCount: 0,
+        description: "artifact",
+      },
+    ],
+    connect: [
+      {
+        title: "재질명",
+        type: "text",
+        description: "재질의 이름을 입력하세요",
+      },
+      {
+        title: "특성",
+        type: "text",
+        description: "재질의 특성을 설명하세요",
+      },
+      {
+        title: "밀도",
+        type: "number",
+        description: "밀도 값",
+      },
+    ],
     description: "재료와 소재 정보를 관리합니다.",
     type: "기본",
   },
@@ -35,8 +103,16 @@ const DATA_FIELD_TAB = [
 ];
 
 function DataFields() {
+  const [mode, setMode] = useState("add"); // "add" | "edit"
   const [currentDataField, setCurrentDataField] = useState({});
-  const [activeTab, setActiveTab] = useState(DATA_FIELD_TAB[0].id);
+  const [activeTab, setActiveTab] = useState(DATA_FIELD_TAB[0]);
+
+  const handleAttributeChange = (updatedAttribute) => {
+    setCurrentDataField((prev) => ({
+      ...prev,
+      attribute: updatedAttribute,
+    }));
+  };
 
   return (
     <div className="w-full min-h-full flex">
@@ -48,21 +124,35 @@ function DataFields() {
             카드 데이터 구조를 커스터마이징하세요
           </div>
           <div className="w-full flex items-center justify-center">
-            <button className="w-[237px] h-[32px] bg-black text-white rounded-lg text-sm flex items-center justify-center">
+            <button
+              className="w-[237px] h-[32px] bg-black text-white rounded-lg text-sm flex items-center justify-center"
+              onClick={() => {
+                setMode("new");
+                setCurrentDataField({
+                  title: "",
+                  attribute: [],
+                  connect: [],
+                  description: "",
+                  type: "",
+                });
+              }}
+            >
               <NewIcon className="w-4 text-white mr-3" />
               <p>새 데이터 필드</p>
             </button>
           </div>
         </div>
+
         {/*Data Field Option*/}
         <div className="flex flex-col p-3">
           <div className="text-sm mb-3">데이터 필드 목록</div>
-          {dataFieldOptions.map((option, index) => {
+          {dataFieldOptions.map((option) => {
             return (
               <div
                 className="w-[250px] h-[70px] border border-gray-200 rounded-lg mb-2 p-2 text-xs"
                 key={`option_${option.title}`}
                 onClick={() => {
+                  setMode("edit");
                   setCurrentDataField(option);
                   console.log("current data field", currentDataField);
                 }}
@@ -76,9 +166,10 @@ function DataFields() {
                       </div>
                       <div
                         className="text-[11px] text-gray-500"
-                        key={`option.attributes_${option.connections}`}
+                        key={`option.attribute_${option.connect}`}
                       >
-                        {option.attributes}개 속성, {option.connections}개 연결
+                        {option.attribute.length}개 속성,{" "}
+                        {option.connect.length}개 연결
                       </div>
                     </div>
                   </div>
@@ -104,7 +195,7 @@ function DataFields() {
 
       {/* Middle Section */}
       <div className="flex-1 min-h-full">
-        {currentDataField?.title ? (
+        {mode === "new" || currentDataField?.title ? (
           <div>
             {/* Middle Top Section */}
             <div className="w-full h-[175px] border-b border-gray-200 flex flex-col p-4">
@@ -119,6 +210,7 @@ function DataFields() {
                       type="text"
                       id="fieldTitle"
                       value={currentDataField.title}
+                      placeholder="예: 건축물, 문서, 영상 등"
                     />
                   </div>
                 </div>
@@ -151,10 +243,12 @@ function DataFields() {
                     type="text"
                     id="fieldTitle"
                     value={currentDataField.description}
+                    placeholder="이 데이터 필드의 용도를 설명하세요..."
                   />
                 </div>
               </div>
             </div>
+
             {/* Middle Bottom Section */}
             <div className="p-4">
               {/* Tab Menu */}
@@ -164,14 +258,34 @@ function DataFields() {
                     <li
                       key={tab.id}
                       className={`py-1 w-[50%] rounded-xl cursor-default flex items-center justify-center ${
-                        tab.id === activeTab ? "bg-white" : ""
+                        tab.id === activeTab.id && "bg-white"
                       }`}
-                      onClick={() => setActiveTab(tab.id)}
+                      onClick={() => {
+                        setActiveTab(tab);
+                      }}
                     >
                       {tab.title}
                     </li>
                   ))}
                 </ul>
+              </div>
+
+              {/* Tab Section */}
+              <div className="pt-6 flex flex-col items-center">
+                <div className="p-6 w-[97%] min-h-[340px] border border-gray-200 rounded-lg">
+                  {activeTab.id === "attribute" && (
+                    <AttributeBlockEditor
+                      data={currentDataField.attribute}
+                      onChange={handleAttributeChange}
+                    />
+                  )}
+                  {activeTab.id === "connect" && (
+                    <ConnectBlockEditor
+                      data={currentDataField.connect}
+                      onChange={handleAttributeChange}
+                    />
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -198,7 +312,6 @@ function DataFields() {
             있습니다.
           </div>
         </div>
-
         <div className="w-full h-full flex flex-col justify-start items-center">
           {/* 카드 미리보기 */}
           <div className="w-[305px] h-[343px] border border-gray-200 rounded-xl mt-4 p-5">
