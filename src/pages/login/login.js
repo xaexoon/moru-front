@@ -11,7 +11,7 @@ function Login() {
     e.preventDefault();
 
     const requestData = { username: username, password: password };
-    console.log("📤 요청 데이터:", requestData);
+    console.log("Request Data: ", requestData);
 
     login(requestData, {
       onSuccess: (response) => {
@@ -51,7 +51,7 @@ function Login() {
         <form onSubmit={evtFormSubmit} className="space-y-4">
           {isError && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-              {error?.response?.data?.message || "Login Failed"}
+              {error?.response?.data?.message || "로그인 실패하였습니다. 로그인 정보를 확인해주세요"}
             </div>
           )}
 
