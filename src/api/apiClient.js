@@ -1,13 +1,13 @@
 import axios from "axios";
-import { getApiUrl } from "../config/config";
+import { API_BASE_URL } from "../config/config";
 
-// Axios
 const apiClient = axios.create({
-  baseURL: getApiUrl(),
+  baseURL: API_BASE_URL,
   timeout: 30000,
   headers: {
     "Content-Type": "application/json",
   },
 });
+
 
 export default apiClient;

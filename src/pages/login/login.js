@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { useLogin } from "./useApi";
+import { useLogin } from "../../hooks/useApi";
 
 function Login() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const { mutate: login, isPending, isError, error } = useLogin();
@@ -10,27 +10,27 @@ function Login() {
   const evtFormSubmit = (e) => {
     e.preventDefault();
 
-    const requestData = { id: email, password: password };
-    console.log("Request Data: ", requestData);
+    const requestData = { username: username, password: password };
+    console.log("📤 요청 데이터:", requestData);
 
     login(requestData, {
       onSuccess: (response) => {
-        console.log("===== Login Success =====");
+        console.log("Login Success");
         console.log("Response Status: ", response.status);
         console.log("Response Data: ", response.data);
 
         const token = response.data.data.accessToken;
-        localStorage.setItem("accessToken", token);
+        localStorage.setItem("accessToken", token)
 
-        console.log("Login Access Token: ", token);
+        console.log("Login Token: ",token)
       },
       onError: (err) => {
-        console.log("===== Login Failed =====");
+        console.log("Login Failed");
         console.log("Error Message: ", err.message);
         console.log("Error Code: ", err.code);
         console.log("Resopnse Status: ", err.response?.status);
         console.log("Response Data: ", err.response?.data);
-
+        
         console.log("Object Error:", err);
       },
     });
@@ -57,10 +57,10 @@ function Login() {
 
           <input
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            type="email"
-            placeholder="Email address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             required
           />
 
@@ -78,7 +78,7 @@ function Login() {
             type="submit"
             disabled={isPending}
           >
-            {isPending ? "Login..." : "Login"}
+            {isPending ? "로그인 중..." : "Login"}
           </button>
         </form>
 

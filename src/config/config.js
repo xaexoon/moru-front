@@ -1,15 +1,17 @@
 const config = {
   // 환경별 BASE URL 설정
-  baseUrl: "127.0.0.1",
-  port: 8000,
+  baseUrl: "3.38.188.127",
+  port: 8080,
 
   timeout: 3000,
 };
 
-export const AUTH_API = `https://${config.baseUrl}:${config.port}/moru/api/auth`;
-export const USERS_API = `https://${config.baseUrl}:${config.port}/moru/api/users`;
-export const ADMIN_API = `https://${config.baseUrl}:${config.port}/moru/api/admin`;
-export const CARDS_API = `https://${config.baseUrl}:${config.port}/moru/api/cards`;
-export const DECK_API = `https://${config.baseUrl}:${config.port}/moru/api/deck`;
+export const API_BASE_URL = `http://${config.baseUrl}:${config.port}/moru/api`;
+
+export const AUTH_API = `${API_BASE_URL}/auth`;
+export const USERS_API = `${API_BASE_URL}/users`;
+export const ADMIN_API = `${API_BASE_URL}/admin`;
+export const CARDS_API = `${API_BASE_URL}/cards`;
+export const DECK_API = `${API_BASE_URL}/deck`;
 
 export default config;
