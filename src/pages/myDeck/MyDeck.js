@@ -6,6 +6,8 @@ import SharedDeckTab from "./tabs/SharedDeckTab";
 import { ReactComponent as NewIcon } from "../../assets/dataFields/new.svg";
 import { ReactComponent as SearchIcon } from "../../assets/myDeck/search.svg";
 
+import { useGetAllDecks } from "../../hooks/useApi";
+
 const MY_DECK_TAB = [
   { title: "내 덱", id: "myDeck" },
   { title: "공개 덱", id: "releasedDeck" },
@@ -14,6 +16,24 @@ const MY_DECK_TAB = [
 
 function MyDeck() {
   const [activeTab, setActiveTab] = useState("myDeck");
+
+  // const { data, isLoading, isError, error, refetch } = useGetAllDecks({
+  //   onSuccess: (response) => {
+  //     console.log("Decks fetch success");
+  //     console.log("Status:", response.status);
+  //     console.log("Data:", response.data);
+
+  //     const decks = response.data.data;
+  //     console.log("Deck list:", decks);
+  //   },
+  //   onError: (err) => {
+  //     console.log("Decks fetch failed");
+  //     console.log("Error message:", err.message);
+  //     console.log("Error code:", err.code);
+  //     console.log("Response status:", err.response?.status);
+  //     console.log("Response data:", err.response?.data);
+  //   },
+  // });
 
   return (
     <div className="w-full min-h-full flex flex-col flex-1 p-6">
