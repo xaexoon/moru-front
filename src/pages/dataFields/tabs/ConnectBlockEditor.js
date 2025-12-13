@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { ReactComponent as NewIcon } from "../../../assets/dataFields/new.svg";
 import { ReactComponent as RinkIcon } from "../../../assets/dataFields/rink.svg";
 import { ReactComponent as TrashIcon } from "../../../assets/dataFields/trash.svg";
@@ -6,9 +8,33 @@ import Dropdown from "../../../components/dropdown/Dropdown";
 const BLOCK_OPTION_DATA = ["숫자/재원", "이미지", "텍스트"];
 
 function ConnectBlockEditor({ data, onChange }) {
-  const handleBlockTypeChange = (value) => console.log("block type:", value);
+  const [blockTitle, setBlockTitle] = useState("");
+  const [blockType, setBlockType] = useState("");
+  const [description, setDescription] = useState("");
 
-  console.log("connect data :", data);
+  const handleBlockTypeChange = (value) => {
+    setBlockType(value);
+    console.log("block type:", value);
+  };
+
+  const handleAddConnect = () => {
+    if (!blockTitle.trim() || !blockType) return;
+
+    const next = [
+      ...(data ?? []),
+      {
+        title: blockTitle.trim(),
+        type: blockType,
+        description: "",
+      },
+    ];
+
+    onChange(next);
+    setBlockTitle("");
+    setBlockType("");
+
+    console.log("updated connect:", next);
+  };
 
   return (
     <>
@@ -33,6 +59,10 @@ function ConnectBlockEditor({ data, onChange }) {
                 type="text"
                 id="blockTitle"
                 placeholder="예: 크기, 무게, 특징"
+                value={blockTitle}
+                onChange={(e) => {
+                  setBlockTitle(e.target.value);
+                }}
               />
             </div>
           </div>
@@ -42,6 +72,7 @@ function ConnectBlockEditor({ data, onChange }) {
             </label>
             <div className="w-full h-[30px]">
               <Dropdown
+                id="blockType"
                 options={BLOCK_OPTION_DATA}
                 onChange={handleBlockTypeChange}
               />
@@ -49,7 +80,10 @@ function ConnectBlockEditor({ data, onChange }) {
           </div>
         </div>
         <button className="w-[70px] h-[30px] text-xs text-white rounded-md bg-black">
-          <div className="flex items-center justify-center">
+          <div
+            className="flex items-center justify-center"
+            onClick={handleAddConnect}
+          >
             <NewIcon className="flex items-center justify-center w-4 text-white mr-1" />
             추가
           </div>
@@ -63,7 +97,7 @@ function ConnectBlockEditor({ data, onChange }) {
             return (
               <ul
                 className="w-[95%] h-[60px] border border-gray-200 rounded-md mt-3 flex items-center justify-between px-3"
-                key={`connectData_${connectData.length}`}
+                key={`connectData_${connectData.title}`}
               >
                 <div className="flex-1 flex">
                   <div className="w-3 text-gray-400 mr-2"> || </div>

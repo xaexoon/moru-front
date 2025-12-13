@@ -1,9 +1,31 @@
+import { useState } from "react";
+
 import { ReactComponent as NewIcon } from "../../../assets/dataFields/new.svg";
 import { ReactComponent as FileIcon } from "../../../assets/dataFields/file.svg";
 import { ReactComponent as TrashIcon } from "../../../assets/dataFields/trash.svg";
 
 function AttributeBlockEditor({ data, onChange }) {
-  console.log("attribute data :", data);
+  const [blockTitle, setBlockTitle] = useState("");
+  const [maxCount, setMaxCount] = useState(0);
+  const [description, setDescription] = useState("");
+
+  const handleAddAttribute = () => {
+    if (!blockTitle.trim()) return;
+
+    const next = [
+      ...(data ?? []),
+      {
+        title: blockTitle.trim(),
+        maxCount: maxCount,
+        description: "",
+      },
+    ];
+
+    onChange(next);
+    setBlockTitle("");
+
+    console.log("updated attribute:", next);
+  };
 
   return (
     <>
@@ -21,10 +43,15 @@ function AttributeBlockEditor({ data, onChange }) {
           <input
             className="w-full h-full border-none bg-transparent focus:outline-none text-[13px] p-2 "
             placeholder="속성 블록 이름 (예: 구성요소, 관련문양)"
+            value={blockTitle}
+            onChange={(e) => setBlockTitle(e.target.value)}
           />
         </div>
         <button className="w-[70px] h-[30px] text-xs text-white rounded-md bg-black">
-          <div className="flex items-center justify-center">
+          <div
+            className="flex items-center justify-center"
+            onClick={handleAddAttribute}
+          >
             <NewIcon className="flex items-center justify-center w-4 text-white mr-1" />
             추가
           </div>

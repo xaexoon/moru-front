@@ -9,6 +9,7 @@ import ConnectBlockEditor from "./tabs/ConnectBlockEditor";
 
 const dataFieldOptions = [
   {
+    id: 1,
     title: "유물/작품",
     attribute: [
       {
@@ -38,6 +39,7 @@ const dataFieldOptions = [
     type: "기본",
   },
   {
+    id: 2,
     title: "색상",
     attribute: [
       {
@@ -67,6 +69,7 @@ const dataFieldOptions = [
     type: "기본",
   },
   {
+    id: 3,
     title: "재질",
     attribute: [
       {
@@ -111,6 +114,15 @@ function DataFields() {
     setCurrentDataField((prev) => ({
       ...prev,
       attribute: updatedAttribute,
+    }));
+
+    console.log("current DataField:", currentDataField);
+  };
+
+  const handleConnectChange = (updatedConnect) => {
+    setCurrentDataField((prev) => ({
+      ...prev,
+      connect: updatedConnect,
     }));
   };
 
@@ -282,7 +294,7 @@ function DataFields() {
                   {activeTab.id === "connect" && (
                     <ConnectBlockEditor
                       data={currentDataField.connect}
-                      onChange={handleAttributeChange}
+                      onChange={handleConnectChange}
                     />
                   )}
                 </div>
