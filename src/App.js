@@ -8,6 +8,7 @@ import Layout from "./components/Layout";
 import CreateCard from "./pages/createCard/CreateCard";
 import MyDeck from "./pages/myDeck/MyDeck";
 import Feed from "./pages/feed/Feed";
+import FeedDetail from "./pages/feed/FeedDetail";
 import DataFields from "./pages/dataFields/DataFields";
 
 const queryClient = new QueryClient({
@@ -56,6 +57,9 @@ function App() {
               </Layout>
             }
           />
+          <Route path="/feed/:id" element={<Layout>
+                <FeedDetail />
+              </Layout>} />
           <Route
             path="/dataFields"
             element={
