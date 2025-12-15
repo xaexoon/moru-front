@@ -4,6 +4,7 @@ import { ReactComponent as PreviewIcon } from "../../assets/dataFields/preview.s
 import { ReactComponent as DataFieldIcon } from "../../assets/dataFields/dataField.svg";
 import { ReactComponent as NewIcon } from "../../assets/dataFields/new.svg";
 import { ReactComponent as UnionIcon } from "../../assets/dataFields/union.svg";
+import { ReactComponent as ReloadIcon } from "../../assets/dataFields/reload.svg";
 import AttributeBlockEditor from "./tabs/AttributeBlockEditor";
 import ConnectBlockEditor from "./tabs/ConnectBlockEditor";
 
@@ -98,11 +99,33 @@ const dataFieldOptions = [
     description: "재료와 소재 정보를 관리합니다.",
     type: "기본",
   },
+  {
+    id: 4,
+    title: "모루아카이브123",
+    attribute: [
+      {
+        title: "001",
+        maxCount: 0,
+        description: "artifact, shape, material",
+      },
+      { title: "002", maxCount: 5, description: "pattern" },
+    ],
+    connect: [
+      {
+        title: "블록1",
+        type: "text",
+        description: "이 항목에 대한 자세한 설명을 입력하세요...",
+      },
+      { title: "블록2", type: "number", description: "수치를 입력하세요" },
+    ],
+    description: "",
+    type: "기본",
+  },
 ];
 
 const DATA_FIELD_TAB = [
-  { title: "비종속 데이터 (속성 블록)", id: "attribute" },
-  { title: "종속 데이터 (연결 블록)", id: "connect" },
+  { title: "기본 정보 필드", id: "attribute" },
+  { title: "연결 블록", id: "connect" },
 ];
 
 function DataFields() {
@@ -130,14 +153,14 @@ function DataFields() {
     <div className="w-full min-h-full flex">
       {/* Left Section */}
       <div className="w-[280px] min-h-full flex flex-col border-r border-gray-200">
-        <div className="w-full h-[130px] border-b border-gray-200 flex flex-col p-5">
-          <div className="mb-0">데이터 필드 관리</div>
-          <div className="text-xs text-gray-500 mb-4">
+        <div className="w-full h-[150px] border-b border-gray-200 flex flex-col p-6">
+          <div className="text-sm mb-1">데이터 필드 관리</div>
+          <div className="text-xs text-gray-500 mb-6">
             카드 데이터 구조를 커스터마이징하세요
           </div>
           <div className="w-full flex items-center justify-center">
             <button
-              className="w-[237px] h-[32px] bg-black text-white rounded-lg text-sm flex items-center justify-center"
+              className="w-[240px] h-[38px] bg-black text-white rounded-lg text-xs flex items-center justify-center"
               onClick={() => {
                 setMode("new");
                 setCurrentDataField({
@@ -157,51 +180,59 @@ function DataFields() {
 
         {/*Data Field Option*/}
         <div className="flex flex-col p-3">
-          <div className="text-sm mb-3">데이터 필드 목록</div>
-          {dataFieldOptions.map((option) => {
-            return (
-              <div
-                className="w-[250px] h-[70px] border border-gray-200 rounded-lg mb-2 p-2 text-xs"
-                key={`option_${option.title}`}
-                onClick={() => {
-                  setMode("edit");
-                  setCurrentDataField(option);
-                  console.log("current data field", currentDataField);
-                }}
-              >
-                <div className="w-full flex justify-between">
-                  <div className=" flex items-center">
-                    <DataFieldIcon className="mr-2 w-[14px] text-gray-500" />
-                    <div className="flex flex-col">
-                      <div key={`option.title_${option.title}`}>
-                        {option.title}
-                      </div>
-                      <div
-                        className="text-[11px] text-gray-500"
-                        key={`option.attribute_${option.connect}`}
-                      >
-                        {option.attribute.length}개 속성,{" "}
-                        {option.connect.length}개 연결
+          <div className="text-xs mb-3">데이터 필드 목록</div>
+          <div className="flex flex-col item">
+            {dataFieldOptions.map((option) => {
+              return (
+                <div
+                  className="w-[230px] min-h-[70px] border-2 border-gray-200 rounded-lg mb-2 p-2 text-xs"
+                  key={`option_${option.title}`}
+                  onClick={() => {
+                    setMode("edit");
+                    setCurrentDataField(option);
+                    console.log("current data field", currentDataField);
+                  }}
+                >
+                  <div className="w-full flex justify-between">
+                    <div className="flex w-full">
+                      <DataFieldIcon className="mr-2 w-[17px] h-[30px] text-gray-500" />
+                      <div className="w-full flex flex-col">
+                        <div className="flex justify-between">
+                          <div
+                            className="mt-1"
+                            key={`option.title_${option.title}`}
+                          >
+                            {option.title}
+                          </div>
+                          {option.type === "기본" && (
+                            <div
+                              className="w-[35px] h-[20px] m-1 bg-gray-200 rounded-lg text-center text-xs"
+                              key={`option.type_${option.type}`}
+                            >
+                              {option.type}
+                            </div>
+                          )}
+                        </div>
+                        <div
+                          className="w-full text-[11px] text-gray-500 mb-1"
+                          key={`option.attribute_${option.connect}`}
+                        >
+                          {option.attribute.length}개 속성,{" "}
+                          {option.connect.length}개 연결
+                        </div>
+                        <div
+                          className="text-[11px] text-gray-500"
+                          key={`option.description_${option.description}`}
+                        >
+                          {option.description}
+                        </div>
                       </div>
                     </div>
                   </div>
-                  <div
-                    className="w-[35px] h-[20px] m-1 bg-gray-200 rounded-lg text-center"
-                    key={`option.type_${option.type}`}
-                  >
-                    {option.type}
-                  </div>
                 </div>
-
-                <div
-                  className="text-[11px] text-gray-500"
-                  key={`option.description_${option.description}`}
-                >
-                  {option.description}
-                </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
 
@@ -209,14 +240,14 @@ function DataFields() {
       <div className="flex-1 min-h-full">
         {mode === "new" || currentDataField?.title ? (
           <div>
-            {/* Middle Top Section */}
-            <div className="w-full h-[175px] border-b border-gray-200 flex flex-col p-4">
+            {/* Middle Title Section */}
+            <div className="w-full h-[105px] border-b border-gray-200 flex flex-col px-5 py-3">
               <div className="flex justify-between items-center">
-                <div className="flex-1">
+                <div className="flex-1 mr-1">
                   <label for="fieldTitle" className="text-sm">
-                    필드 이름
+                    필드 이름*
                   </label>
-                  <div className="flex-1 max-w-[392px] h-[31px] rounded-lg flex items-center bg-gray-100 focus-within:outline focus-within:outline-3 focus-within:outline-gray-300">
+                  <div className="flex-1 max-w-[588px] h-[40px] rounded-lg flex items-center bg-gray-100 focus-within:outline focus-within:outline-3 focus-within:outline-gray-300 mt-2">
                     <input
                       className="w-full h-full border-none bg-transparent focus:outline-none text-[13px] p-2"
                       type="text"
@@ -226,18 +257,8 @@ function DataFields() {
                     />
                   </div>
                 </div>
-
                 <div className="m-2">
-                  <button className="w-[130px] h-[30px] text-xs border border-gray-300 rounded-md hover:bg-gray-200 mr-2">
-                    <div className="flex items-center justify-center">
-                      <NewIcon className="w-4 text-black mr-2" />
-                      기본 블록 추가
-                    </div>
-                  </button>
-                  <button className="w-[85px] h-[30px] text-xs border border-gray-300 rounded-md hover:bg-gray-200 mr-2">
-                    초기화
-                  </button>
-                  <button className="w-[73px] h-[30px] text-xs bg-black text-white rounded-md">
+                  <button className="w-[80px] h-[35px] text-xs bg-black text-white rounded-md">
                     <div className="flex items-center justify-center">
                       <UnionIcon className="w-4 text-white mr-2" />
                       <p>저장</p>
@@ -245,19 +266,34 @@ function DataFields() {
                   </button>
                 </div>
               </div>
-              <div>
-                <label for="fieldDescription" className="text-sm">
-                  설명
-                </label>
-                <div className="flex-1 h-[55px] rounded-lg flex items-center bg-gray-100 focus-within:outline focus-within:outline-3 focus-within:outline-gray-300">
-                  <textarea
-                    className="w-full h-full border-none bg-transparent focus:outline-none text-[13px] p-2"
-                    type="text"
-                    id="fieldTitle"
-                    value={currentDataField.description}
-                    placeholder="이 데이터 필드의 용도를 설명하세요..."
-                  />
-                </div>
+            </div>
+
+            {/* Middle description Section */}
+            <div className="p-4 min-h-[202px] flex flex-col">
+              <label for="fieldDescription" className="text-sm">
+                설명
+              </label>
+              <div className="flex-1 rounded-lg flex items-center  focus-within:outline focus-within:outline-3 focus-within:outline-gray-300 mt-1 mb-3">
+                <textarea
+                  className="w-full h-[90px] border-none bg-transparent focus:outline-none text-[13px] p-2 resize-none mb-"
+                  type="text"
+                  id="fieldTitle"
+                  value={currentDataField.description}
+                  placeholder="이 데이터 필드의 용도를 설명하세요..."
+                />
+              </div>
+              <div className="mt-2 border-b border-gray-200 pb-5 flex items-center">
+                <button className="w-[130px] h-[33px] text-xs border border-gray-300 rounded-md hover:bg-gray-200 mr-2">
+                  <div className="flex items-center justify-center">
+                    <NewIcon className="w-4 text-black mr-2" />
+                    기본 블록 추가
+                  </div>
+                </button>
+                <button className="w-[85px] h-[33px] text-xs border border-gray-300 rounded-md hover:bg-gray-200 mr-2">
+                  <div className="flex items-center justify-center">
+                    <ReloadIcon className="w-3 text-black mr-2" /> 초기화
+                  </div>
+                </button>
               </div>
             </div>
 
