@@ -6,11 +6,20 @@ import { ReactComponent as TrashIcon } from "../../../assets/dataFields/trash.sv
 
 function AttributeBlockEditor({ data, onChange }) {
   const [blockTitle, setBlockTitle] = useState("");
+  // eslint-disable-next-line no-unused-vars
   const [maxCount, setMaxCount] = useState(0);
+  // eslint-disable-next-line no-unused-vars
   const [description, setDescription] = useState("");
 
   const handleAddAttribute = () => {
-    if (!blockTitle.trim()) return;
+    const inputTitle = blockTitle.trim();
+
+    if (!inputTitle) return;
+    if (data?.some((block) => block.title === inputTitle)) {
+      alert("중복된 블록 이름입니다.");
+      setBlockTitle("");
+      return;
+    }
 
     const next = [
       ...(data ?? []),

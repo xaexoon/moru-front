@@ -9,7 +9,8 @@ const BLOCK_OPTION_DATA = ["숫자/재원", "이미지", "텍스트"];
 
 function ConnectBlockEditor({ data, onChange }) {
   const [blockTitle, setBlockTitle] = useState("");
-  const [blockType, setBlockType] = useState("");
+  const [blockType, setBlockType] = useState("숫자/재원");
+  // eslint-disable-next-line no-unused-vars
   const [description, setDescription] = useState("");
 
   const handleBlockTypeChange = (value) => {
@@ -18,7 +19,14 @@ function ConnectBlockEditor({ data, onChange }) {
   };
 
   const handleAddConnect = () => {
-    if (!blockTitle.trim() || !blockType) return;
+    const inputTitle = blockTitle.trim();
+
+    if (!inputTitle || !blockType) return;
+    if (data?.some((block) => block.title === inputTitle)) {
+      alert("중복된 블록 이름입니다.");
+      setBlockTitle("");
+      return;
+    }
 
     const next = [
       ...(data ?? []),
@@ -31,7 +39,7 @@ function ConnectBlockEditor({ data, onChange }) {
 
     onChange(next);
     setBlockTitle("");
-    setBlockType("");
+    setBlockType("숫자/재원");
 
     console.log("updated connect:", next);
   };
