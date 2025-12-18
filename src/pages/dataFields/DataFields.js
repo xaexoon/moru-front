@@ -6,120 +6,119 @@ import { ReactComponent as NewIcon } from "../../assets/dataFields/new.svg";
 import { ReactComponent as UnionIcon } from "../../assets/dataFields/union.svg";
 import { ReactComponent as ReloadIcon } from "../../assets/dataFields/reload.svg";
 import AttributeBlockEditor from "./tabs/AttributeBlockEditor";
-import ConnectBlockEditor from "./tabs/ConnectBlockEditor";
+import LinkBlockEditor from "./tabs/LinkBlockEditor";
+
+const dataFieldList = [
+  {
+    id: 201,
+    userId: 1102,
+    name: "유물/작품",
+    description: "전시품, 유물, 예술작품 등의 정보를 관리합니다.",
+    attributeCnt: 4,
+    linkCnt: 4,
+  },
+  {
+    id: 202,
+    userId: 1103,
+    name: "색상",
+    description: "색상 정보와 색채 관련 데이터를 관리합니다.",
+    attributeCnt: 3,
+    linkCnt: 1,
+  },
+];
 
 const dataFieldOptions = [
   {
-    id: 1,
-    title: "유물/작품",
-    attribute: [
+    dataField: {
+      id: 201,
+      userId: 1102,
+      name: "유물/작품",
+      description: "전시품, 유물, 예술작품 등의 정보를 관리합니다.",
+      attributeCnt: 4,
+      linkCnt: 4,
+    },
+    linkBlocks: [
       {
-        title: "구성 부품",
-        maxCount: 0,
-        description: "artifact, shape, material",
+        id: 804,
+        dataFieldId: 201,
+        name: "구성 부품",
+        maxLinkCount: 0,
       },
-      { title: "적용 문양", maxCount: 5, description: "pattern" },
-      { title: "사용 기법", maxCount: 3, description: "technique" },
-      { title: "관련 시대", maxCount: 1, description: "period" },
+      { id: 813, dataFieldId: 201, name: "적용 문양", maxLinkCount: 5 },
+      { id: 814, dataFieldId: 201, name: "사용 기법", maxLinkCount: 3 },
+      { id: 815, dataFieldId: 201, name: "관련 시대", maxLinkCount: 1 },
     ],
-    connect: [
+    attributeBlocks: [
       {
-        title: "설명",
-        type: "text",
-        description: "이 항목에 대한 자세한 설명을 입력하세요...",
+        id: 805,
+        dataFieldId: 201,
+        name: "설명",
+        type: "TEXT",
+        placeholder: "이 항목에 대한 자세한 설명을 입력하세요...",
       },
-      { title: "치수", type: "number", description: "수치를 입력하세요" },
-      { title: "재질", type: "text", description: "재질 정보를 입력하세요" },
       {
-        title: "참고 이미지",
-        type: "image",
-        description: "관련 이미지를 업로드하세요",
+        id: 806,
+        dataFieldId: 201,
+        name: "치수",
+        type: "TEXT",
+        placeholder: "수치를 입력하세요",
+      },
+      {
+        id: 807,
+        dataFieldId: 201,
+        name: "재질",
+        type: "TEXT",
+        placeholder: "재질 정보를 입력하세요",
+      },
+      {
+        id: 808,
+        dataFieldId: 201,
+        name: "참고 이미지",
+        type: "TEXT",
+        placeholder: "관련 이미지를 업로드하세요",
       },
     ],
-    description: "전시품, 유물, 예술작품 등의 정보를 관리합니다.",
-    type: "기본",
   },
   {
-    id: 2,
-    title: "색상",
-    attribute: [
+    dataField: {
+      id: 202,
+      userId: 1103,
+      name: "색상",
+      description: "색상 정보와 색채 관련 데이터를 관리합니다.",
+      attributeCnt: 3,
+      linkCnt: 1,
+    },
+    linkBlocks: [
       {
-        title: "적용된 유물",
-        maxCount: 0,
-        description: "artifact, shape, material",
+        id: 809,
+        dataFieldId: 202,
+        name: "적용된 유물",
+        maxLinkCount: 0,
       },
     ],
-    connect: [
+    attributeBlocks: [
       {
-        title: "색상명",
+        id: 810,
+        dataFieldId: 202,
+        name: "색상명",
         type: "text",
-        description: "색상의 이름을 입력하세요",
+        placeholder: "색상의 이름을 입력하세요",
       },
       {
-        title: "RGB/HEX 값",
+        id: 811,
+        dataFieldId: 202,
+        name: "RGB/HEX 값",
         type: "text",
-        description: "#FFFFFF 또는 rgb(255,255,255)",
+        placeholder: "#FFFFFF 또는 rgb(255,255,255)",
       },
       {
-        title: "설명",
+        id: 812,
+        dataFieldId: 202,
+        name: "설명",
         type: "text",
-        description: "색상에 대한 설명을 입력하세요",
+        placeholder: "색상에 대한 설명을 입력하세요",
       },
     ],
-    description: "색상 정보와 색채 관련 데이터를 관리합니다.",
-    type: "기본",
-  },
-  {
-    id: 3,
-    title: "재질",
-    attribute: [
-      {
-        title: "사용된 유물",
-        maxCount: 0,
-        description: "artifact",
-      },
-    ],
-    connect: [
-      {
-        title: "재질명",
-        type: "text",
-        description: "재질의 이름을 입력하세요",
-      },
-      {
-        title: "특성",
-        type: "text",
-        description: "재질의 특성을 설명하세요",
-      },
-      {
-        title: "밀도",
-        type: "number",
-        description: "밀도 값",
-      },
-    ],
-    description: "재료와 소재 정보를 관리합니다.",
-    type: "기본",
-  },
-  {
-    id: 4,
-    title: "모루아카이브123",
-    attribute: [
-      {
-        title: "001",
-        maxCount: 0,
-        description: "artifact, shape, material",
-      },
-      { title: "002", maxCount: 5, description: "pattern" },
-    ],
-    connect: [
-      {
-        title: "블록1",
-        type: "text",
-        description: "이 항목에 대한 자세한 설명을 입력하세요...",
-      },
-      { title: "블록2", type: "number", description: "수치를 입력하세요" },
-    ],
-    description: "",
-    type: "기본",
   },
 ];
 
@@ -130,22 +129,31 @@ const DATA_FIELD_TAB = [
 
 function DataFields() {
   const [mode, setMode] = useState("add"); // "add" | "edit"
-  const [currentDataField, setCurrentDataField] = useState({});
+  const [isPreviewOpen, setIsPreviewOpen] = useState(true);
   const [activeTab, setActiveTab] = useState(DATA_FIELD_TAB[0]);
+  const [currentDataField, setCurrentDataField] = useState({
+    dataField: {
+      userId: 0,
+      name: "",
+      description: "",
+      attributeCnt: 0,
+      linkCnt: 0,
+    },
+    attributeBlocks: [],
+    linkBlocks: [],
+  });
 
   const handleAttributeChange = (updatedAttribute) => {
     setCurrentDataField((prev) => ({
       ...prev,
-      attribute: updatedAttribute,
+      attributeBlocks: updatedAttribute,
     }));
-
-    console.log("current DataField:", currentDataField);
   };
 
-  const handleConnectChange = (updatedConnect) => {
+  const handleLinkChange = (updatedLink) => {
     setCurrentDataField((prev) => ({
       ...prev,
-      connect: updatedConnect,
+      linkBlocks: updatedLink,
     }));
   };
 
@@ -162,14 +170,19 @@ function DataFields() {
             <button
               className="w-[240px] h-[38px] bg-black text-white rounded-lg text-xs flex items-center justify-center"
               onClick={() => {
-                setMode("new");
                 setCurrentDataField({
-                  title: "",
-                  attribute: [],
-                  connect: [],
-                  description: "",
-                  type: "",
+                  dataField: {
+                    userId: 0,
+                    name: "",
+                    description: "",
+                    attributeCnt: 0,
+                    linkCnt: 0,
+                  },
+                  attributeBlocks: [],
+                  linkBlocks: [],
                 });
+
+                setMode("new");
               }}
             >
               <NewIcon className="w-4 text-white mr-3" />
@@ -182,15 +195,22 @@ function DataFields() {
         <div className="flex flex-col p-3">
           <div className="text-xs mb-3">데이터 필드 목록</div>
           <div className="flex flex-col item">
-            {dataFieldOptions.map((option) => {
+            {dataFieldList.map((field) => {
               return (
                 <div
                   className="w-[230px] min-h-[70px] border-2 border-gray-200 rounded-lg mb-2 p-2 text-xs"
-                  key={`option_${option.title}`}
+                  key={`field.name_${field.id}`}
                   onClick={() => {
+                    const selectFieldData = dataFieldOptions.find(
+                      (list) => list.dataField.id === field.id
+                    );
+
+                    if (!selectFieldData) return;
+
+                    setCurrentDataField(selectFieldData);
                     setMode("edit");
-                    setCurrentDataField(option);
-                    console.log("current data field", currentDataField);
+
+                    console.log("current data:", currentDataField);
                   }}
                 >
                   <div className="w-full flex justify-between">
@@ -198,33 +218,29 @@ function DataFields() {
                       <DataFieldIcon className="mr-2 w-[17px] h-[30px] text-gray-500" />
                       <div className="w-full flex flex-col">
                         <div className="flex justify-between">
-                          <div
-                            className="mt-1"
-                            key={`option.title_${option.title}`}
-                          >
-                            {option.title}
+                          <div className="mt-1" key={`field.title_${field.id}`}>
+                            {field.name}
                           </div>
-                          {option.type === "기본" && (
+                          {field.type === "기본" && (
                             <div
                               className="w-[35px] h-[20px] m-1 bg-gray-200 rounded-lg text-center text-xs"
-                              key={`option.type_${option.type}`}
+                              key={`field.type_${field.type}`}
                             >
-                              {option.type}
+                              {field.type}
                             </div>
                           )}
                         </div>
                         <div
                           className="w-full text-[11px] text-gray-500 mb-1"
-                          key={`option.attribute_${option.connect}`}
+                          key={`field.attribute_${field.id}`}
                         >
-                          {option.attribute.length}개 속성,{" "}
-                          {option.connect.length}개 연결
+                          {field.attributeCnt}개 속성, {field.linkCnt}개 연결
                         </div>
                         <div
                           className="text-[11px] text-gray-500"
-                          key={`option.description_${option.description}`}
+                          key={`field.description_${field.id}`}
                         >
-                          {option.description}
+                          {field.description}
                         </div>
                       </div>
                     </div>
@@ -238,7 +254,7 @@ function DataFields() {
 
       {/* Middle Section */}
       <div className="flex-1 min-h-full">
-        {mode === "new" || currentDataField?.title ? (
+        {mode === "new" || mode === "edit" ? (
           <div>
             {/* Middle Title Section */}
             <div className="w-full h-[105px] border-b border-gray-200 flex flex-col px-5 py-3">
@@ -252,8 +268,17 @@ function DataFields() {
                       className="w-full h-full border-none bg-transparent focus:outline-none text-[13px] p-2"
                       type="text"
                       id="fieldTitle"
-                      value={currentDataField.title}
+                      value={currentDataField.dataField.name}
                       placeholder="예: 건축물, 문서, 영상 등"
+                      onChange={(e) => {
+                        setCurrentDataField((prev) => ({
+                          ...prev,
+                          dataField: {
+                            ...prev.dataField,
+                            name: e.target.value,
+                          },
+                        }));
+                      }}
                     />
                   </div>
                 </div>
@@ -278,8 +303,17 @@ function DataFields() {
                   className="w-full h-[90px] border-none bg-transparent focus:outline-none text-[13px] p-2 resize-none mb-"
                   type="text"
                   id="fieldTitle"
-                  value={currentDataField.description}
+                  value={currentDataField.dataField.description}
                   placeholder="이 데이터 필드의 용도를 설명하세요..."
+                  onChange={(e) => {
+                    setCurrentDataField((prev) => ({
+                      ...prev,
+                      dataField: {
+                        ...prev.dataField,
+                        description: e.target.value,
+                      },
+                    }));
+                  }}
                 />
               </div>
               <div className="mt-2 border-b border-gray-200 pb-5 flex items-center">
@@ -323,14 +357,14 @@ function DataFields() {
                 <div className="p-6 w-[97%] min-h-[340px] border border-gray-200 rounded-lg">
                   {activeTab.id === "attribute" && (
                     <AttributeBlockEditor
-                      data={currentDataField.attribute}
+                      data={currentDataField.attributeBlocks}
                       onChange={handleAttributeChange}
                     />
                   )}
                   {activeTab.id === "connect" && (
-                    <ConnectBlockEditor
-                      data={currentDataField.connect}
-                      onChange={handleConnectChange}
+                    <LinkBlockEditor
+                      data={currentDataField.linkBlocks}
+                      onChange={handleLinkChange}
                     />
                   )}
                 </div>
@@ -349,59 +383,80 @@ function DataFields() {
       </div>
 
       {/* Right Section */}
-      <div className="w-[355px] min-h-full flex flex-col border-l border-gray-200">
-        <div className="w-full h-[83px] border-b border-gray-200 p-3">
-          <div className="flex items-center">
-            <PreviewIcon className="mr-2" />
-            <div>실시간 미리보기</div>
+      {isPreviewOpen ? (
+        <div className="w-[355px] min-h-full flex flex-col border-l border-gray-200">
+          <div className="w-full h-[83px] border-b border-gray-200 p-3">
+            <div className="flex justify-between items-center mb-1">
+              <div className="flex items-center">
+                <PreviewIcon className="mr-2 w-4" />
+                <div>실시간 미리보기</div>
+              </div>
+              <p
+                className="mr-2 cursor-default"
+                onClick={() => {
+                  setIsPreviewOpen(!isPreviewOpen);
+                }}
+              >
+                X
+              </p>
+            </div>
+            <div className="text-xs text-gray-500">
+              편집 중인 데이터 필드가 카드에서 어떻게 표시되는지 확인할 수
+              있습니다.
+            </div>
           </div>
-          <div className="text-xs text-gray-500">
-            편집 중인 데이터 필드가 카드에서 어떻게 표시되는지 확인할 수
-            있습니다.
-          </div>
-        </div>
-        <div className="w-full h-full flex flex-col justify-start items-center">
-          {/* 카드 미리보기 */}
-          <div className="w-[305px] h-[343px] border border-gray-200 rounded-xl mt-4 p-5">
-            <div className="text-sm mb-4">카드 미리보기</div>
+          <div className="w-full h-full flex flex-col justify-start items-center">
+            {/* 카드 미리보기 */}
+            <div className="w-[305px] h-[343px] border border-gray-200 rounded-xl mt-4 p-5">
+              <div className="text-sm mb-4">카드 미리보기</div>
 
-            <div className="w-[258px] h-[255px] border border-gray-200 rounded-xl flex flex-col items-center pt-4">
-              <div className="w-[90%] min-h-[112px] relative bg-gray-200">
-                {currentDataField?.title && (
-                  <div className="w-fit h-fit text-xs bg-black text-white rounded-xl p-1 m-1 absolute">
-                    {currentDataField.title}
+              <div className="w-[258px] h-[255px] border border-gray-200 rounded-xl flex flex-col items-center pt-4">
+                <div className="w-[90%] min-h-[112px] relative bg-gray-200">
+                  {currentDataField?.title && (
+                    <div className="w-fit h-fit text-xs bg-black text-white rounded-xl p-1 m-1 absolute">
+                      {currentDataField.title}
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex-1 flex flex-col items-start m-3">
+                  <div className="text-sm mb-1">청화백자 달항아리</div>
+                  <div className="text-xs flex-1 text-gray-500 mb-3">
+                    조선 후기의 대표적인 백자 달항아리로, 정화 안료로 그려진
+                    섬세한 문양이 특징입니다.
                   </div>
-                )}
-              </div>
-
-              <div className="flex-1 flex flex-col items-start m-3">
-                <div className="text-sm mb-1">청화백자 달항아리</div>
-                <div className="text-xs flex-1 text-gray-500 mb-3">
-                  조선 후기의 대표적인 백자 달항아리로, 정화 안료로 그려진
-                  섬세한 문양이 특징입니다.
-                </div>
-                <div className="text-[11px] text-gray-500">
-                  2025. 11. 13. 오후 4:27:08
+                  <div className="text-[11px] text-gray-500">
+                    2025. 11. 13. 오후 4:27:08
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* 속성 블록 미리보기 */}
-          <div className="w-[305px] h-[335px] border border-gray-200 rounded-xl mt-4 p-5">
-            <div className="w-full h-[83px] border-gray-200 p-1">
-              <div className="text-sm mb-4">속성 블록 미리보기</div>
+            {/* 속성 블록 미리보기 */}
+            <div className="w-[305px] h-[335px] border border-gray-200 rounded-xl mt-4 p-5">
+              <div className="w-full h-[83px] border-gray-200 p-1">
+                <div className="text-sm mb-4">속성 블록 미리보기</div>
+              </div>
             </div>
-          </div>
 
-          {/* 연결 블록 미리보기 */}
-          <div className="w-[305px] h-[363px] border border-gray-200 rounded-xl mt-4 p-5">
-            <div className="w-full h-[83px] border-gray-200 p-1">
-              <div className="text-sm mb-4">연결 블록 미리보기</div>
+            {/* 연결 블록 미리보기 */}
+            <div className="w-[305px] h-[363px] border border-gray-200 rounded-xl mt-4 p-5">
+              <div className="w-full h-[83px] border-gray-200 p-1">
+                <div className="text-sm mb-4">연결 블록 미리보기</div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div
+          className="w-[43px] min-h-full flex flex-col items-center justify-center border-l border-gray-200 hover:bg-gray-200"
+          onClick={() => {
+            setIsPreviewOpen(!isPreviewOpen);
+          }}
+        >
+          <PreviewIcon className="mr-2 w-4 ml-[3px]" />
+        </div>
+      )}
     </div>
   );
 }
