@@ -1,14 +1,14 @@
 import { useState } from "react";
 
 import { ReactComponent as NewIcon } from "../../../assets/dataFields/new.svg";
-import { ReactComponent as RinkIcon } from "../../../assets/dataFields/rink.svg";
+import { ReactComponent as LinkIcon } from "../../../assets/dataFields/link.svg";
 import { ReactComponent as TrashIcon } from "../../../assets/dataFields/trash.svg";
 import { ReactComponent as ExpandIcon } from "../../../assets/dataFields/expand.svg";
 
 function LinkBlockEditor({ data, onChange }) {
   const [openBlockIds, setOpenBlockIds] = useState([]);
   const [newBlockName, setNewBlockName] = useState("");
-  const [editingLinkBlocks, setEditingLinkBlocks] = useState({}); // { name: string; maxLinkCount: number }
+  // const [editingLinkBlocks, setEditingLinkBlocks] = useState({}); // { name: string; maxLinkCount: number }
 
   const handleAddLink = () => {
     const inputName = newBlockName.trim();
@@ -32,7 +32,7 @@ function LinkBlockEditor({ data, onChange }) {
     onChange(next);
     setNewBlockName("");
 
-    console.log("current connect data:", next);
+    console.log("updated connect data:", next);
   };
 
   const handleEditLink = (id, editData) => {
@@ -54,7 +54,7 @@ function LinkBlockEditor({ data, onChange }) {
       {/* Editor Top */}
       <div className="flex items-center justify-between">
         <div className="flex mb-3">
-          <RinkIcon className="w-4 text-gray-500 mr-2" />
+          <LinkIcon className="w-4 text-gray-500 mr-2" />
           <p className="text-sm">연결 블록</p>
         </div>
         <div className="px-[10px] py-[3px] text-sm bg-gray-200 rounded-lg">
@@ -114,7 +114,7 @@ function LinkBlockEditor({ data, onChange }) {
                 >
                   <div className="flex-1 flex items-center">
                     <div className="w-3 text-gray-400 mr-2 text-xs"> || </div>
-                    <RinkIcon className="w-3 text-black mr-2 mt-1" />
+                    <LinkIcon className="w-3 text-black mr-2 mt-1" />
                     <div className="text-xs">{linkData.name}</div>
                   </div>
                   {linkData.maxLinkCount !== 0 && (
@@ -173,7 +173,7 @@ function LinkBlockEditor({ data, onChange }) {
         </li>
       ) : (
         <div className="flex flex-col items-center mt-5">
-          <RinkIcon className="w-14 text-gray-300 mt-12" />
+          <LinkIcon className="w-14 text-gray-300 mt-12" />
           <p className="text-sm text-gray-500 mt-4">
             아직 연결 블록이 없습니다.
           </p>

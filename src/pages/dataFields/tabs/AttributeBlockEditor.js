@@ -10,46 +10,56 @@ const BLOCK_OPTION_DATA = ["텍스트", "이미지", "숫자/재원"];
 
 function AttributeBlockEditor({ data, onChange }) {
   const [openBlockIds, setOpenBlockIds] = useState([]);
-  const [blockName, setBlockName] = useState("");
-  const [blockType, setBlockType] = useState(BLOCK_OPTION_DATA[0]);
-  // eslint-disable-next-line no-unused-vars
-  const [description, setDescription] = useState("");
-
-  const handleBlockTypeChange = (value) => {
-    setBlockType(value);
-    console.log("block type:", value);
-  };
+  const [newBlockName, setNewBlockName] = useState("");
+  const [newBlockType, setNewBlockType] = useState(BLOCK_OPTION_DATA[0]);
+  // const [editingAttributeBlocks, setEditingAttributeBlocks] = useState({}); // { name: string; placeholder: string; }
 
   const handleAddAttribute = () => {
-    const inputName = blockName.trim();
+    const inputName = newBlockName.trim();
 
-    if (!inputName || !blockType) return;
+    if (!inputName) return;
     if (data?.some((block) => block.name === inputName)) {
       alert("중복된 블록 이름입니다.");
-      setBlockName("");
+      setNewBlockName("");
       return;
     }
 
     const next = [
       ...(data ?? []),
       {
-        name: blockName.trim(),
-        type: blockType,
+        name: newBlockName.trim(),
+        type: newBlockType,
         placeholder: "",
       },
     ];
 
     onChange(next);
-    setBlockName("");
-    setBlockType("숫자/재원");
+    setNewBlockName("");
+    setNewBlockType(BLOCK_OPTION_DATA[0]);
 
-    console.log("updated link:", next);
+    console.log("updated attribute data:", next);
+  };
+
+  const handleEditAddAttribute = (id, editData) => {
+    const next = data.map((attributeBlock) =>
+      attributeBlock.id === id
+        ? { ...attributeBlock, ...editData }
+        : attributeBlock
+    );
+
+    onChange(next);
+    console.log(next);
   };
 
   const toggleBlock = (id) => {
     setOpenBlockIds((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     );
+  };
+
+  const handleBlockTypeChange = (value) => {
+    setNewBlockType(value);
+    console.log("block type:", value);
   };
 
   return (
@@ -69,30 +79,30 @@ function AttributeBlockEditor({ data, onChange }) {
       <div className="w-full h-[94px] border-2 border-dashed border-gray-300 bg-gray-100 rounded-lg flex justify-center items-center px-4 mt-5 mb-2">
         <div className="flex-1 flex items-center">
           <div className="flex-1 mr-2 mb-2">
-            <label for="atttibuteBlockName" className="text-xs">
+            <label for="atttibutenewBlockName" className="text-xs">
               블록 이름
             </label>
             <div className="w-full h-[30px] rounded-md mr-3 flex items-center focus-within:outline bg-gray-100 focus-within:outline-3 focus-within:outline-gray-300 mt-1">
               <input
                 className="w-full h-full border-none bg-transparent focus:outline-none text-[13px] p-2"
                 type="text"
-                id="atttibuteBlockName"
+                id="atttibutenewBlockName"
                 placeholder="예: 크기, 무게, 특징"
-                value={blockName}
+                value={newBlockName}
                 onChange={(e) => {
-                  setBlockName(e.target.value);
+                  setNewBlockName(e.target.value);
                 }}
               />
             </div>
           </div>
 
           <div className="flex-1 mr-2 mb-2">
-            <label for="blockType" className="text-xs">
+            <label for="newBlockType" className="text-xs">
               블록 타입
             </label>
             <div className="w-full h-[30px] mt-1">
               <Dropdown
-                id="blockType"
+                id="newBlockType"
                 options={BLOCK_OPTION_DATA}
                 onChange={handleBlockTypeChange}
               />
@@ -140,18 +150,20 @@ function AttributeBlockEditor({ data, onChange }) {
                 {isOpen && (
                   <div className="w-full h-[160px] border-t-2 border-gray-200 px-3">
                     <div className="flex-1 mr-2 mb-1">
-                      <label for="atttibuteBlockName" className="text-xs">
+                      <label for="atttibutenewBlockName" className="text-xs">
                         블록 이름
                       </label>
                       <div className="w-full h-[30px] rounded-md mr-3 flex items-center focus-within:outline bg-gray-100 focus-within:outline-3 focus-within:outline-gray-300 mt-1">
                         <input
                           className="w-full h-full border-none bg-transparent focus:outline-none text-xs p-2"
                           type="text"
-                          id="atttibuteBlockName"
+                          id="atttibutenewBlockName"
                           placeholder="블록 이름"
                           value={attributeData.name}
                           onChange={(e) => {
-                            setBlockName(e.target.value);
+                            handleEditAddAttribute(attributeData.id, {
+                              name: e.target.value,
+                            });
                           }}
                         />
                       </div>
@@ -171,7 +183,9 @@ function AttributeBlockEditor({ data, onChange }) {
                           placeholder="입력 안내"
                           value={attributeData.placeholder}
                           onChange={(e) => {
-                            setBlockName(e.target.value);
+                            handleEditAddAttribute(attributeData.id, {
+                              placeholder: e.target.value,
+                            });
                           }}
                         />
                       </div>

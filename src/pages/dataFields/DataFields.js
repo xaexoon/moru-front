@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { ReactComponent as PreviewIcon } from "../../assets/dataFields/preview.svg";
 import { ReactComponent as DataFieldIcon } from "../../assets/dataFields/dataField.svg";
 import { ReactComponent as NewIcon } from "../../assets/dataFields/new.svg";
 import { ReactComponent as UnionIcon } from "../../assets/dataFields/union.svg";
 import { ReactComponent as ReloadIcon } from "../../assets/dataFields/reload.svg";
+import { ReactComponent as LinkIcon } from "../../assets/dataFields/link.svg";
+import { ReactComponent as FileIcon } from "../../assets/dataFields/file.svg";
 import AttributeBlockEditor from "./tabs/AttributeBlockEditor";
 import LinkBlockEditor from "./tabs/LinkBlockEditor";
 
@@ -131,17 +133,11 @@ function DataFields() {
   const [mode, setMode] = useState("add"); // "add" | "edit"
   const [isPreviewOpen, setIsPreviewOpen] = useState(true);
   const [activeTab, setActiveTab] = useState(DATA_FIELD_TAB[0]);
-  const [currentDataField, setCurrentDataField] = useState({
-    dataField: {
-      userId: 0,
-      name: "",
-      description: "",
-      attributeCnt: 0,
-      linkCnt: 0,
-    },
-    attributeBlocks: [],
-    linkBlocks: [],
-  });
+  const [currentDataField, setCurrentDataField] = useState({});
+
+  useEffect(() => {
+    console.log("update current data:", currentDataField);
+  }, [currentDataField]);
 
   const handleAttributeChange = (updatedAttribute) => {
     setCurrentDataField((prev) => ({
@@ -412,9 +408,9 @@ function DataFields() {
 
               <div className="w-[258px] h-[255px] border border-gray-200 rounded-xl flex flex-col items-center pt-4">
                 <div className="w-[90%] min-h-[112px] relative bg-gray-200">
-                  {currentDataField?.title && (
+                  {currentDataField?.dataField.name && (
                     <div className="w-fit h-fit text-xs bg-black text-white rounded-xl p-1 m-1 absolute">
-                      {currentDataField.title}
+                      {currentDataField.dataField.name}
                     </div>
                   )}
                 </div>
@@ -433,18 +429,56 @@ function DataFields() {
             </div>
 
             {/* 속성 블록 미리보기 */}
-            <div className="w-[305px] h-[335px] border border-gray-200 rounded-xl mt-4 p-5">
-              <div className="w-full h-[83px] border-gray-200 p-1">
-                <div className="text-sm mb-4">속성 블록 미리보기</div>
+            {currentDataField?.attributeBlocks?.length > 0 && (
+              <div className="w-[305px] min-h-[118px] h-auto border border-gray-200 rounded-xl mt-4 p-5">
+                <div className="w-full border-gray-200 p-1">
+                  <div className="text-xs mb-2">속성 블록 미리보기</div>
+                  <li className="w-full flex flex-col text-xs">
+                    {currentDataField.attributeBlocks.map((attributeBlock) => {
+                      return (
+                        <ul className="w-full flex flex-col mt-2">
+                          <div className="flex items-center mb-1">
+                            <FileIcon className="w-2 mr-2" />
+                            <div>{attributeBlock.name}</div>
+                          </div>
+                          <div className="h-[25px] bg-gray-100 rounded-md flex items-center">
+                            <p className="ml-2 text-gray-400">
+                              {attributeBlock.placeholder}
+                            </p>
+                          </div>
+                        </ul>
+                      );
+                    })}
+                  </li>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* 연결 블록 미리보기 */}
-            <div className="w-[305px] h-[363px] border border-gray-200 rounded-xl mt-4 p-5">
-              <div className="w-full h-[83px] border-gray-200 p-1">
-                <div className="text-sm mb-4">연결 블록 미리보기</div>
+            {currentDataField?.linkBlocks?.length > 0 && (
+              <div className="w-[305px] min-h-[132px] h-auto border border-gray-200 rounded-xl mt-4 p-5">
+                <div className="w-full border-gray-200 p-1">
+                  <div className="text-xs mb-4">연결 블록 미리보기</div>
+                  <li className="flex flex-col text-xs">
+                    {currentDataField.linkBlocks.map((linkBlock) => {
+                      return (
+                        <ul className="w-full flex flex-col mt-2">
+                          <div className="flex items-center mb-1">
+                            <LinkIcon className="w-3 mr-2" />
+                            <div>{linkBlock.name}</div>
+                          </div>
+                          <div className="rounded-md flex justify-center items-center">
+                            <p className="border-2 border-dotted border-gray-200 h-[37px] w-[95%] ml-2 text-gray-400 flex justify-center items-center">
+                              다른 카드를 드래그하여 연결
+                            </p>
+                          </div>
+                        </ul>
+                      );
+                    })}
+                  </li>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       ) : (
