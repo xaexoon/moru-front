@@ -1,12 +1,24 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import gridIcon from "./../../assets/feed/grid.svg";
 import listIcon from "./../../assets/feed/list.svg";
+import feedCard1 from "./../../assets/feed/feed_card_1.png";
+import feedCard2 from "./../../assets/feed/feed_card_2.png";
 
 function Feed() {
-  const [viewMode, setViewMode] = useState("grid"); // 'grid' or 'list'
-  const [cardSize, setCardSize] = useState("medium"); // 'small', 'medium', 'large'
-  const [searchMode, setSearchMode] = useState("and"); // 'and' or 'or'
-  const [showFilter, setShowFilter] = useState(true); // 필터 표시/숨김
+  const navigate = useNavigate();
+  const [viewMode, setViewMode] = useState("grid");
+  const [cardSize, setCardSize] = useState("medium");
+  const [searchMode, setSearchMode] = useState("and");
+  const [showFilter, setShowFilter] = useState(true);
+
+  // 임시 카드 데이터
+  const cards = [
+    { id: 1, title: "청화 코발트", image: feedCard1 },
+    { id: 2, title: "백자토", image: feedCard2 },
+    { id: 3, title: "훈구문", image: null },
+    { id: 4, title: "청자", image: null },
+  ];
 
   return (
     <div className="w-full min-h-full bg-white">
@@ -175,7 +187,7 @@ function Feed() {
           </div>
 
           {/* 필터 */}
-          {showFilter && (
+          {/* {showFilter && (
             <div className="mx-10 mb-5 border rounded-xl p-5">
               <div className="grid grid-cols-4 gap-6">
                 <div className="flex flex-col">
@@ -229,29 +241,36 @@ function Feed() {
                 </div>
               </div>
             </div>
-          )}
+          )} */}
         </section>
+
         {/* 구분선 */}
         <div className="mx-10 mb-5 border-t border-gray-300"></div>
 
         {/* 카드 그리드 */}
         <section className="px-10 py-5">
           <div className="grid grid-cols-3 gap-6">
-            {/* 카드 컴포넌트 */}
-            {["청화 코발트", "백자토", "훈구문", "청자"].map((title, index) => (
+            {cards.map((card) => (
               <div
-                key={index}
+                key={card.id}
                 className="relative rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow cursor-pointer h-80"
+                onClick={() => navigate(`/feed/${card.id}`)}
               >
-                <img
-                  src=""
-                  alt={title}
-                  className="w-full h-full object-cover bg-gray-200"
-                />
+                {card.image ? (
+                  <img
+                    src={card.image}
+                    alt={card.title}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400">
+                    이미지 없음
+                  </div>
+                )}
                 <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/90 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-4">
                   <p className="font-semibold text-white drop-shadow-lg">
-                    {title}
+                    {card.title}
                   </p>
                 </div>
               </div>
