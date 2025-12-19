@@ -65,7 +65,7 @@ function LinkBlockEditor({ data, onChange }) {
       {/* Editor Middle */}
       <div className="w-full h-[94px] border-2 border-dashed border-gray-300 bg-gray-100 rounded-lg flex justify-center items-center px-4 mt-5 mb-2">
         <div className="flex-1 mr-2 mb-2">
-          <label for="LinkBlockName" className="text-xs">
+          <label htmlFor="LinkBlockName" className="text-xs">
             연결 블록 이름
           </label>
           <div className="w-full h-[30px] rounded-md mr-3 flex items-center focus-within:outline bg-gray-100 focus-within:outline-3 focus-within:outline-gray-300 mt-1">
@@ -128,7 +128,7 @@ function LinkBlockEditor({ data, onChange }) {
                 {isOpen && (
                   <div className="w-full h-[132px] border-t-2 border-gray-200 px-3">
                     <div className="flex-1 mr-2 mb-1">
-                      <label for="LinkBlockName" className="text-xs">
+                      <label htmlFor="LinkBlockName" className="text-xs">
                         연결 블록 이름
                       </label>
                       <div className="w-full h-[30px] rounded-md mr-3 flex items-center focus-within:outline bg-gray-100 focus-within:outline-3 focus-within:outline-gray-300 mt-1">
@@ -147,7 +147,10 @@ function LinkBlockEditor({ data, onChange }) {
                       </div>
                     </div>
                     <div className="flex-1 mr-2 mb-2">
-                      <label for="LinkBlockMaxLinkCount" className="text-xs">
+                      <label
+                        htmlFor="LinkBlockMaxLinkCount"
+                        className="text-xs"
+                      >
                         최대 연결 수
                       </label>
                       <div className="w-[60%] h-[30px] rounded-md mr-3 flex items-center focus-within:outline bg-gray-100 focus-within:outline-3 focus-within:outline-gray-300 mt-1">

@@ -6,7 +6,7 @@ import SharedDeckTab from "./tabs/SharedDeckTab";
 import { ReactComponent as NewIcon } from "../../assets/dataFields/new.svg";
 import { ReactComponent as SearchIcon } from "../../assets/myDeck/search.svg";
 
-import { useGetAllDecks } from "../../hooks/useApi";
+// import { useGetAllDecks } from "../../hooks/useApi";
 
 const MY_DECK_TAB = [
   { title: "내 덱", id: "myDeck" },

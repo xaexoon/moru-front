@@ -256,7 +256,7 @@ function DataFields() {
             <div className="w-full h-[105px] border-b border-gray-200 flex flex-col px-5 py-3">
               <div className="flex justify-between items-center">
                 <div className="flex-1 mr-1">
-                  <label for="fieldTitle" className="text-sm">
+                  <label htmlFor="fieldTitle" className="text-sm">
                     필드 이름*
                   </label>
                   <div className="flex-1 max-w-[588px] h-[40px] rounded-lg flex items-center bg-gray-100 focus-within:outline focus-within:outline-3 focus-within:outline-gray-300 mt-2">
@@ -291,7 +291,7 @@ function DataFields() {
 
             {/* Middle description Section */}
             <div className="p-4 min-h-[202px] flex flex-col">
-              <label for="fieldDescription" className="text-sm">
+              <label htmlFor="fieldDescription" className="text-sm">
                 설명
               </label>
               <div className="flex-1 rounded-lg flex items-center  focus-within:outline focus-within:outline-3 focus-within:outline-gray-300 mt-1 mb-3">
@@ -405,10 +405,9 @@ function DataFields() {
             {/* 카드 미리보기 */}
             <div className="w-[305px] h-[343px] border border-gray-200 rounded-xl mt-4 p-5">
               <div className="text-sm mb-4">카드 미리보기</div>
-
               <div className="w-[258px] h-[255px] border border-gray-200 rounded-xl flex flex-col items-center pt-4">
                 <div className="w-[90%] min-h-[112px] relative bg-gray-200">
-                  {currentDataField?.dataField.name && (
+                  {currentDataField?.dataField?.name && (
                     <div className="w-fit h-fit text-xs bg-black text-white rounded-xl p-1 m-1 absolute">
                       {currentDataField.dataField.name}
                     </div>
@@ -436,7 +435,10 @@ function DataFields() {
                   <li className="w-full flex flex-col text-xs">
                     {currentDataField.attributeBlocks.map((attributeBlock) => {
                       return (
-                        <ul className="w-full flex flex-col mt-2">
+                        <ul
+                          className="w-full flex flex-col mt-2"
+                          key={`previewBlock_${attributeBlock.id}`}
+                        >
                           <div className="flex items-center mb-1">
                             <FileIcon className="w-2 mr-2" />
                             <div>{attributeBlock.name}</div>
@@ -462,7 +464,10 @@ function DataFields() {
                   <li className="flex flex-col text-xs">
                     {currentDataField.linkBlocks.map((linkBlock) => {
                       return (
-                        <ul className="w-full flex flex-col mt-2">
+                        <ul
+                          className="w-full flex flex-col mt-2"
+                          key={`previewBlock_${linkBlock.id}`}
+                        >
                           <div className="flex items-center mb-1">
                             <LinkIcon className="w-3 mr-2" />
                             <div>{linkBlock.name}</div>

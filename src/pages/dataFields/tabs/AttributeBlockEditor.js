@@ -79,7 +79,7 @@ function AttributeBlockEditor({ data, onChange }) {
       <div className="w-full h-[94px] border-2 border-dashed border-gray-300 bg-gray-100 rounded-lg flex justify-center items-center px-4 mt-5 mb-2">
         <div className="flex-1 flex items-center">
           <div className="flex-1 mr-2 mb-2">
-            <label for="atttibutenewBlockName" className="text-xs">
+            <label htmlFor="atttibutenewBlockName" className="text-xs">
               블록 이름
             </label>
             <div className="w-full h-[30px] rounded-md mr-3 flex items-center focus-within:outline bg-gray-100 focus-within:outline-3 focus-within:outline-gray-300 mt-1">
@@ -97,7 +97,7 @@ function AttributeBlockEditor({ data, onChange }) {
           </div>
 
           <div className="flex-1 mr-2 mb-2">
-            <label for="newBlockType" className="text-xs">
+            <label htmlFor="newBlockType" className="text-xs">
               블록 타입
             </label>
             <div className="w-full h-[30px] mt-1">
@@ -150,7 +150,10 @@ function AttributeBlockEditor({ data, onChange }) {
                 {isOpen && (
                   <div className="w-full h-[160px] border-t-2 border-gray-200 px-3">
                     <div className="flex-1 mr-2 mb-1">
-                      <label for="atttibutenewBlockName" className="text-xs">
+                      <label
+                        htmlFor="atttibutenewBlockName"
+                        className="text-xs"
+                      >
                         블록 이름
                       </label>
                       <div className="w-full h-[30px] rounded-md mr-3 flex items-center focus-within:outline bg-gray-100 focus-within:outline-3 focus-within:outline-gray-300 mt-1">
@@ -170,7 +173,7 @@ function AttributeBlockEditor({ data, onChange }) {
                     </div>
                     <div className="flex-1 mr-2 mb-2">
                       <label
-                        for="atttibuteBlockPlaceHolder"
+                        htmlFor="atttibuteBlockPlaceHolder"
                         className="text-xs"
                       >
                         플레이스홀더
