@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useCallback, useState } from "react";
 
 import { ReactComponent as PreviewIcon } from "../../assets/dataFields/preview.svg";
 import { ReactComponent as DataFieldIcon } from "../../assets/dataFields/dataField.svg";
@@ -9,6 +9,9 @@ import { ReactComponent as LinkIcon } from "../../assets/dataFields/link.svg";
 import { ReactComponent as FileIcon } from "../../assets/dataFields/file.svg";
 import AttributeBlockEditor from "./tabs/AttributeBlockEditor";
 import LinkBlockEditor from "./tabs/LinkBlockEditor";
+
+import { useGetDatafield } from "../../hooks/useApi";
+import { useAfterQuery } from "../../hooks/useAfterQuery";
 
 const dataFieldList = [
   {
@@ -134,6 +137,26 @@ function DataFields() {
   const [isPreviewOpen, setIsPreviewOpen] = useState(true);
   const [activeTab, setActiveTab] = useState(DATA_FIELD_TAB[0]);
   const [currentDataField, setCurrentDataField] = useState({});
+
+  const handleSuccess = useCallback((response) => {
+    console.log("DataField Success");
+    console.log("Response Status: ", response.data.status);
+    console.log("Response Data: ", response.data.data);
+  }, []);
+
+  const handleError = useCallback((err) => {
+    console.log("DataField Failed");
+    console.log("Error Message: ", err.message);
+    console.log("Error Code: ", err.code);
+    console.log("Resopnse Status: ", err.response?.status);
+  }, []);
+
+  useAfterQuery({
+    queryResult: useGetDatafield(),
+    enabled: true,
+    onSuccess: handleSuccess,
+    onError: handleError,
+  });
 
   useEffect(() => {
     console.log("update current data:", currentDataField);

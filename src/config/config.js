@@ -12,7 +12,7 @@ export const AUTH_API = `${API_BASE_URL}/auth`;
 export const USERS_API = `${API_BASE_URL}/users`;
 export const ADMIN_API = `${API_BASE_URL}/admin`;
 export const CARDS_API = `${API_BASE_URL}/cards`;
-export const DECK_API = `${API_BASE_URL}/deck/`;
-export const DATAFIELD_API = `${API_BASE_URL}/datafield`;
+export const DECK_API = `${API_BASE_URL}/deck`;
+export const DATAFIELD_API = `${API_BASE_URL}/data-field`;
 
 export default config;

@@ -1,10 +1,10 @@
 import axios from "axios";
 import { API_BASE_URL } from "../config/config";
 
-// const getAccessToken = () => {
-//   const accessToken = localStorage.getItem("accessToken");
-//   return accessToken;
-// };
+const getAccessToken = () => {
+  const accessToken = localStorage.getItem("accessToken");
+  return accessToken;
+};
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -14,14 +14,14 @@ const apiClient = axios.create({
   },
 });
 
-// apiClient.interceptors.request.use((config) => {
-//   const accessToken = getAccessToken();
+apiClient.interceptors.request.use((config) => {
+  const accessToken = getAccessToken();
 
-//   if (accessToken) {
-//     config.headers.Authorization = `Bearer ${accessToken}`;
-//   }
+  if (accessToken) {
+    config.headers.Authorization = `Bearer ${accessToken}`;
+  }
 
-//   return config;
-// });
+  return config;
+});
 
 export default apiClient;

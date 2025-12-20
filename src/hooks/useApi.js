@@ -137,16 +137,15 @@ export const useDeleteDeck = () => {
 //////////////   DATAFIELD API    //////////////
 
 export const useGetDatafield = (options = {}) => {
-   return useQuery({
+  return useQuery({
     queryKey: ["datafield"],
     queryFn: () => apiClient.get(`${DATAFIELD_API}`),
     ...options,
   });
-}
-
+};
 
 export const useCreateDatafield = () => {
   return useMutation({
     mutationFn: (data) => apiClient.post(`${DATAFIELD_API}`, data),
   });
-}
+};
