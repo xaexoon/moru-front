@@ -1,10 +1,9 @@
 import axios from "axios";
 import { API_BASE_URL } from "../config/config";
 
-// const getAccessToken = () => {
-//   const accessToken = localStorage.getItem("accessToken");
-//   return accessToken;
-// };
+const getAccessToken = () => {
+  return localStorage.getItem("accessToken");
+};
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -14,14 +13,18 @@ const apiClient = axios.create({
   },
 });
 
-// apiClient.interceptors.request.use((config) => {
-//   const accessToken = getAccessToken();
+apiClient.interceptors.request.use((config) => {
+  const accessToken = getAccessToken();
 
-//   if (accessToken) {
-//     config.headers.Authorization = `Bearer ${accessToken}`;
-//   }
+  // 로그인, 회원가입 요청은 토큰 제외
+  const noAuthUrls = ["/auth/login", "/auth/register"];
+  const isNoAuthUrl = noAuthUrls.some((url) => config.url?.includes(url));
 
-//   return config;
-// });
+  if (accessToken && !isNoAuthUrl) {
+    config.headers.Authorization = `Bearer ${accessToken}`;
+  }
+
+  return config;
+});
 
 export default apiClient;
