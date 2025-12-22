@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 
 import MyDeckTab from "./tabs/MyDeckTab";
 import ReleasedDeckTab from "./tabs/ReleasedDeckTab";
 import SharedDeckTab from "./tabs/SharedDeckTab";
 import { ReactComponent as NewIcon } from "../../assets/dataFields/new.svg";
 import { ReactComponent as SearchIcon } from "../../assets/myDeck/search.svg";
+
+import { useGetAllDecks } from "../../hooks/useApi";
+import { useAfterQuery } from "../../hooks/useAfterQuery";
 
 const MY_DECK_TAB = [
   { title: "내 덱", id: "myDeck" },
@@ -14,6 +17,26 @@ const MY_DECK_TAB = [
 
 function MyDeck() {
   const [activeTab, setActiveTab] = useState("myDeck");
+
+  const handleSuccess = useCallback((response) => {
+    console.log("MyDecks Success");
+    console.log("Response Status: ", response.data.status);
+    console.log("Response Data: ", response.data.data);
+  }, []);
+
+  const handleError = useCallback((err) => {
+    console.log("MyDecks Failed");
+    console.log("Error Message: ", err.message);
+    console.log("Error Code: ", err.code);
+    console.log("Resopnse Status: ", err.response?.status);
+  }, []);
+
+  useAfterQuery({
+    queryResult: useGetAllDecks(),
+    enabled: true,
+    onSuccess: handleSuccess,
+    onError: handleError,
+  });
 
   return (
     <div className="w-full min-h-full flex flex-col flex-1 p-6">

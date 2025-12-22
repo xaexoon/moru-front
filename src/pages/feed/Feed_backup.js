@@ -4,11 +4,13 @@ import { useGetCards } from "../../hooks/useApi";
 import { useAuth } from "../../context/AuthContext";
 import gridIcon from "./../../assets/feed/grid.svg";
 import listIcon from "./../../assets/feed/list.svg";
+import feedCard1 from "./../../assets/feed/feed_card_1.png";
+import feedCard2 from "./../../assets/feed/feed_card_2.png";
 
 function Feed() {
   const navigate = useNavigate();
   const { isAuthenticated, isLoading: authLoading } = useAuth();
-
+  
   const [viewMode, setViewMode] = useState("grid");
   const [cardSize, setCardSize] = useState("medium");
   const [searchMode, setSearchMode] = useState("and");
@@ -19,50 +21,26 @@ function Feed() {
     enabled: isAuthenticated,
   });
 
-  // 실제 카드 데이터 추출
-  const cards = data?.data?.data || [];
-
-  // 인증 로딩 중
-  if (authLoading) {
-    return (
-      <div className="w-full min-h-full bg-white flex items-center justify-center">
-        <p>인증 확인 중...</p>
-      </div>
-    );
-  }
-
-  // 로그인 안 된 경우
-  if (!isAuthenticated) {
-    return (
-      <div className="w-full min-h-full bg-white flex items-center justify-center flex-col gap-4">
-        <p>로그인이 필요합니다.</p>
-        <button
-          onClick={() => navigate("/login")}
-          className="px-4 py-2 bg-black text-white rounded-xl"
-        >
-          로그인하기
-        </button>
-      </div>
-    );
-  }
-
-  // 데이터 로딩 중
-  if (isLoading) {
-    return (
-      <div className="w-full min-h-full bg-white flex items-center justify-center">
-        <p>카드 불러오는 중...</p>
-      </div>
-    );
-  }
-
-  // 에러 상태
+  // 콘솔로그로 응답 데이터 확인
+  console.log("=== 인증 로딩 ===", authLoading);
+  console.log("=== 인증 상태 ===", isAuthenticated);
+  console.log("=== 데이터 로딩 ===", isLoading);
+  console.log("=== 에러 여부 ===", isError);
+  console.log("=== API 응답 전체 ===", data);
+  console.log("=== data.data ===", data?.data);
+  console.log("=== data.data.data ===", data?.data?.data);
+  
   if (isError) {
-    return (
-      <div className="w-full min-h-full bg-white flex items-center justify-center">
-        <p className="text-red-500">에러 발생: {error.message}</p>
-      </div>
-    );
+    console.log("=== 에러 상세 ===", error);
   }
+
+  // 임시 카드 데이터 (기존 유지)
+  const cards = [
+    { id: 1, title: "청화 코발트", image: feedCard1 },
+    { id: 2, title: "백자토", image: feedCard2 },
+    { id: 3, title: "훈구문", image: null },
+    { id: 4, title: "청자", image: null },
+  ];
 
   return (
     <div className="w-full min-h-full bg-white">
@@ -83,10 +61,11 @@ function Feed() {
               {/* 그리드/리스트 */}
               <div className="flex border border-black rounded-xl divide-x divide-black overflow-hidden">
                 <div
-                  className={`px-4 py-3 cursor-pointer transition-colors flex items-center gap-2 ${viewMode === "grid"
-                    ? "bg-black text-white"
-                    : "hover:bg-gray-100"
-                    }`}
+                  className={`px-4 py-3 cursor-pointer transition-colors flex items-center gap-2 ${
+                    viewMode === "grid"
+                      ? "bg-black text-white"
+                      : "hover:bg-gray-100"
+                  }`}
                   onClick={() => setViewMode("grid")}
                 >
                   <img
@@ -97,10 +76,11 @@ function Feed() {
                   그리드
                 </div>
                 <div
-                  className={`px-4 py-3 cursor-pointer transition-colors flex items-center gap-2 ${viewMode === "list"
-                    ? "bg-black text-white"
-                    : "hover:bg-gray-100"
-                    }`}
+                  className={`px-4 py-3 cursor-pointer transition-colors flex items-center gap-2 ${
+                    viewMode === "list"
+                      ? "bg-black text-white"
+                      : "hover:bg-gray-100"
+                  }`}
                   onClick={() => setViewMode("list")}
                 >
                   <img
@@ -115,28 +95,31 @@ function Feed() {
               {/* 소형/중형/대형 */}
               <div className="flex border border-black rounded-xl divide-x divide-black overflow-hidden">
                 <div
-                  className={`px-4 py-3 cursor-pointer transition-colors ${cardSize === "small"
-                    ? "bg-black text-white"
-                    : "hover:bg-gray-100"
-                    }`}
+                  className={`px-4 py-3 cursor-pointer transition-colors ${
+                    cardSize === "small"
+                      ? "bg-black text-white"
+                      : "hover:bg-gray-100"
+                  }`}
                   onClick={() => setCardSize("small")}
                 >
                   소형
                 </div>
                 <div
-                  className={`px-4 py-3 cursor-pointer transition-colors ${cardSize === "medium"
-                    ? "bg-black text-white"
-                    : "hover:bg-gray-100"
-                    }`}
+                  className={`px-4 py-3 cursor-pointer transition-colors ${
+                    cardSize === "medium"
+                      ? "bg-black text-white"
+                      : "hover:bg-gray-100"
+                  }`}
                   onClick={() => setCardSize("medium")}
                 >
                   중형
                 </div>
                 <div
-                  className={`px-4 py-3 cursor-pointer transition-colors ${cardSize === "large"
-                    ? "bg-black text-white"
-                    : "hover:bg-gray-100"
-                    }`}
+                  className={`px-4 py-3 cursor-pointer transition-colors ${
+                    cardSize === "large"
+                      ? "bg-black text-white"
+                      : "hover:bg-gray-100"
+                  }`}
                   onClick={() => setCardSize("large")}
                 >
                   대형
@@ -154,11 +137,11 @@ function Feed() {
               </div>
 
               {/* 새 카드 */}
-              {/* <div className="border border-black rounded-xl overflow-hidden">
+              <div className="border border-black rounded-xl overflow-hidden">
                 <div className="px-4 py-3 bg-black text-white cursor-pointer hover:bg-gray-800">
                   새 카드
                 </div>
-              </div> */}
+              </div>
             </div>
           </div>
 
@@ -169,19 +152,21 @@ function Feed() {
               <p>검색 모드</p>
               <div className="flex border border-black rounded-xl divide-x divide-black overflow-hidden">
                 <div
-                  className={`px-4 py-2 cursor-pointer transition-colors ${searchMode === "and"
-                    ? "bg-black text-white"
-                    : "hover:bg-gray-100"
-                    }`}
+                  className={`px-4 py-2 cursor-pointer transition-colors ${
+                    searchMode === "and"
+                      ? "bg-black text-white"
+                      : "hover:bg-gray-100"
+                  }`}
                   onClick={() => setSearchMode("and")}
                 >
                   AND
                 </div>
                 <div
-                  className={`px-4 py-2 cursor-pointer transition-colors ${searchMode === "or"
-                    ? "bg-black text-white"
-                    : "hover:bg-gray-100"
-                    }`}
+                  className={`px-4 py-2 cursor-pointer transition-colors ${
+                    searchMode === "or"
+                      ? "bg-black text-white"
+                      : "hover:bg-gray-100"
+                  }`}
                   onClick={() => setSearchMode("or")}
                 >
                   OR
@@ -227,47 +212,35 @@ function Feed() {
         {/* 구분선 */}
         <div className="mx-10 mb-5 border-t border-gray-300"></div>
 
-        {/* 카드 그리드 */}
-        <section className="px-10 py-5">          
-
-          {cards.length === 0 ? (
-            <div className="text-center py-20 text-gray-400">
-              등록된 카드가 없습니다.
-            </div>
-          ) : (
-            <div className="grid grid-cols-6 gap-6">
-              {cards.map((card) => (
-                <div
-                  key={card.cardId}
-                  className="relative rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow cursor-pointer aspect-[3/4]"
-                  onClick={() => navigate(`/feed/${card.cardId}`)}
-                >
-                  {card.imageUrl ? (
-                    <img
-                      src={card.imageUrl}
-                      alt={card.cardName}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400 text-sm">
-                      이미지 없음
-                    </div>
-                  )}
-                  <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black/90 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-3">
-                    <p className="font-semibold text-white drop-shadow-lg text-sm truncate">
-                      {card.cardName}
-                    </p>
-                    <div className="flex gap-2 text-white/70 text-xs mt-1">
-                      <span>♡ {card.likeCount}</span>
-                      <span>👁 {card.viewCount}</span>
-                      <span># {card.tagCount}</span>
-                    </div>
+        {/* 카드 그리드 (기존 임시 데이터 사용) */}
+        <section className="px-10 py-5">
+          <div className="grid grid-cols-3 gap-6">
+            {cards.map((card) => (
+              <div
+                key={card.id}
+                className="relative rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow cursor-pointer h-80"
+                onClick={() => navigate(`/feed/${card.id}`)}
+              >
+                {card.image ? (
+                  <img
+                    src={card.image}
+                    alt={card.title}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400">
+                    이미지 없음
                   </div>
+                )}
+                <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/90 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-4">
+                  <p className="font-semibold text-white drop-shadow-lg">
+                    {card.title}
+                  </p>
                 </div>
-              ))}
-            </div>
-          )}
+              </div>
+            ))}
+          </div>
         </section>
       </main>
     </div>
