@@ -1,4 +1,4 @@
-import Deck from "../../../components/deck/deck";
+import Deck from "../../../components/deck/test";
 import { ReactComponent as TimeIcon } from "../../../assets/myDeck/time.svg";
 
 const sharedDeckData = [
