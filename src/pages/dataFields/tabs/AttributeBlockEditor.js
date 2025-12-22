@@ -9,7 +9,7 @@ import Dropdown from "../../../components/dropdown/Dropdown";
 const BLOCK_OPTION_DATA = ["텍스트", "이미지", "숫자/재원"];
 
 function AttributeBlockEditor({ data, onChange }) {
-  const [openBlockIds, setOpenBlockIds] = useState([]);
+  const [openBlocks, setOpenBlocks] = useState([]);
   const [newBlockName, setNewBlockName] = useState("");
   const [newBlockType, setNewBlockType] = useState(BLOCK_OPTION_DATA[0]);
   // const [editingAttributeBlocks, setEditingAttributeBlocks] = useState({}); // { name: string; placeholder: string; }
@@ -30,6 +30,7 @@ function AttributeBlockEditor({ data, onChange }) {
         name: newBlockName.trim(),
         type: newBlockType,
         placeholder: "",
+        uiKey: crypto.randomUUID(),
       },
     ];
 
@@ -40,20 +41,27 @@ function AttributeBlockEditor({ data, onChange }) {
     console.log("updated attribute data:", next);
   };
 
-  const handleEditAddAttribute = (id, editData) => {
-    const next = data.map((attributeBlock) =>
-      attributeBlock.id === id
-        ? { ...attributeBlock, ...editData }
-        : attributeBlock
+  const handleEditAddAttribute = (uiKey, editData) => {
+    const next = data.map((block) =>
+      block.uiKey === uiKey ? { ...block, ...editData } : block
     );
 
     onChange(next);
-    console.log(next);
   };
 
-  const toggleBlock = (id) => {
-    setOpenBlockIds((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+  const handleDeleteAttribute = (uiKey) => {
+    const next = data.filter((block) => block.uiKey !== uiKey);
+
+    onChange(next);
+
+    setOpenBlocks((prev) => prev.filter((key) => key !== uiKey));
+  };
+
+  const toggleBlock = (uiKey) => {
+    setOpenBlocks((prev) =>
+      prev.includes(uiKey)
+        ? prev.filter((item) => item !== uiKey)
+        : [...prev, uiKey]
     );
   };
 
@@ -124,19 +132,19 @@ function AttributeBlockEditor({ data, onChange }) {
       {data?.length !== 0 ? (
         <li className="flex flex-col justify-center items-center">
           {data.map((attributeData) => {
-            const isOpen = openBlockIds.includes(attributeData.id);
+            const isOpen = openBlocks.includes(attributeData.uiKey);
 
             return (
               <ul
                 className={`w-full h-auto border-2 border-gray-200 rounded-xl mt-3 flex items-center hover:border-gray-400 cursor-pointer ${
                   isOpen ? " flex-col justify-start" : " justify-between"
                 }`}
-                key={attributeData.id}
+                key={attributeData.uiKey}
               >
                 <div
                   className="min-h-[46px] w-full flex-1 flex items-center px-3"
                   onClick={() => {
-                    toggleBlock(attributeData.id);
+                    toggleBlock(attributeData.uiKey);
                   }}
                 >
                   <div className="flex-1 flex items-center">
@@ -144,7 +152,13 @@ function AttributeBlockEditor({ data, onChange }) {
                     <FileIcon className="w-3 text-black mr-2 mt-1" />
                     <div className="text-xs">{attributeData.name}</div>
                   </div>
-                  <TrashIcon className="w-3 text-red-600 mr-4" />
+                  <TrashIcon
+                    className="w-3 text-red-600 mr-4"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteAttribute(attributeData.uiKey);
+                    }}
+                  />
                   <ExpandIcon className="w-3 text-gray-500 -rotate-90" />
                 </div>
                 {isOpen && (
@@ -164,7 +178,7 @@ function AttributeBlockEditor({ data, onChange }) {
                           placeholder="블록 이름"
                           value={attributeData.name}
                           onChange={(e) => {
-                            handleEditAddAttribute(attributeData.id, {
+                            handleEditAddAttribute(attributeData.uiKey, {
                               name: e.target.value,
                             });
                           }}
@@ -186,7 +200,7 @@ function AttributeBlockEditor({ data, onChange }) {
                           placeholder="입력 안내"
                           value={attributeData.placeholder}
                           onChange={(e) => {
-                            handleEditAddAttribute(attributeData.id, {
+                            handleEditAddAttribute(attributeData.uiKey, {
                               placeholder: e.target.value,
                             });
                           }}

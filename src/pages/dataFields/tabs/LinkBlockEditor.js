@@ -6,7 +6,7 @@ import { ReactComponent as TrashIcon } from "../../../assets/dataFields/trash.sv
 import { ReactComponent as ExpandIcon } from "../../../assets/dataFields/expand.svg";
 
 function LinkBlockEditor({ data, onChange }) {
-  const [openBlockIds, setOpenBlockIds] = useState([]);
+  const [openBlocks, setOpenBlocks] = useState([]);
   const [newBlockName, setNewBlockName] = useState("");
   // const [editingLinkBlocks, setEditingLinkBlocks] = useState({}); // { name: string; maxLinkCount: number }
 
@@ -26,6 +26,7 @@ function LinkBlockEditor({ data, onChange }) {
         dataFieldId: data.dataFieldId,
         name: newBlockName.trim(),
         maxLinkCount: 0,
+        uiKey: crypto.randomUUID(),
       },
     ];
 
@@ -35,17 +36,27 @@ function LinkBlockEditor({ data, onChange }) {
     console.log("updated connect data:", next);
   };
 
-  const handleEditLink = (id, editData) => {
+  const handleEditLink = (uiKey, editData) => {
     const next = data.map((linkBlock) =>
-      linkBlock.id === id ? { ...linkBlock, ...editData } : linkBlock
+      linkBlock.uiKey === uiKey ? { ...linkBlock, ...editData } : linkBlock
     );
 
     onChange(next);
   };
 
-  const toggleBlock = (id) => {
-    setOpenBlockIds((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+  const handleDeleteLink = (uiKey) => {
+    const next = data.filter((block) => block.uiKey !== uiKey);
+
+    onChange(next);
+
+    setOpenBlocks((prev) => prev.filter((key) => key !== uiKey));
+  };
+
+  const toggleBlock = (uiKey) => {
+    setOpenBlocks((prev) =>
+      prev.includes(uiKey)
+        ? prev.filter((item) => item !== uiKey)
+        : [...prev, uiKey]
     );
   };
 
@@ -97,19 +108,19 @@ function LinkBlockEditor({ data, onChange }) {
       {data?.length !== 0 ? (
         <li className="flex flex-col justify-center items-center">
           {data.map((linkData) => {
-            const isOpen = openBlockIds.includes(linkData.id);
+            const isOpen = openBlocks.includes(linkData.uiKey);
 
             return (
               <ul
                 className={`w-full h-auto border-2 border-gray-200 rounded-xl mt-3 flex items-center hover:border-gray-400 cursor-pointer ${
                   isOpen ? " flex-col justify-start" : " justify-between"
                 }`}
-                key={linkData.id}
+                key={linkData.uiKey}
               >
                 <div
                   className="min-h-[46px] w-full flex-1 flex items-center px-3"
                   onClick={() => {
-                    toggleBlock(linkData.id);
+                    toggleBlock(linkData.uiKey);
                   }}
                 >
                   <div className="flex-1 flex items-center">
@@ -122,7 +133,13 @@ function LinkBlockEditor({ data, onChange }) {
                       최대 {linkData.maxLinkCount}개
                     </div>
                   )}
-                  <TrashIcon className="w-3 text-red-600 mr-4" />
+                  <TrashIcon
+                    className="w-3 text-red-600 mr-4"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteLink(linkData.uiKey);
+                    }}
+                  />
                   <ExpandIcon className="w-3 text-gray-500 -rotate-90" />
                 </div>
                 {isOpen && (
@@ -139,7 +156,7 @@ function LinkBlockEditor({ data, onChange }) {
                           placeholder="연결 블록 이름"
                           value={linkData.name}
                           onChange={(e) => {
-                            handleEditLink(linkData.id, {
+                            handleEditLink(linkData.uiKey, {
                               name: e.target.value,
                             });
                           }}
@@ -161,7 +178,7 @@ function LinkBlockEditor({ data, onChange }) {
                           placeholder="제한 없음"
                           value={linkData.maxLinkCount}
                           onChange={(e) => {
-                            handleEditLink(linkData.id, {
+                            handleEditLink(linkData.uiKey, {
                               maxLinkCount: e.target.value,
                             });
                           }}

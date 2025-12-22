@@ -23,7 +23,7 @@ export const useAfterQuery = ({ queryResult, enabled, onSuccess, onError }) => {
         prevDataRef.current = queryResult.data;
       }
     }
-  }, [enabled, queryResult?.isSuccess, queryResult?.data, onSuccess]);
+  }, [enabled, queryResult.isSuccess, queryResult.data, onSuccess]);
   // 쿼리 에러 시, 에러가 변경되었을 경우에만 onError 실행
   useEffect(() => {
     if (!enabled) return;
@@ -33,5 +33,5 @@ export const useAfterQuery = ({ queryResult, enabled, onSuccess, onError }) => {
         prevErrorRef.current = queryResult.error;
       }
     }
-  }, [enabled, queryResult?.isError, queryResult?.error, onError]);
+  }, [enabled, queryResult.isError, queryResult.error, onError]);
 };

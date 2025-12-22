@@ -136,6 +136,7 @@ function DataFields() {
   const [mode, setMode] = useState("add"); // "add" | "edit"
   const [isPreviewOpen, setIsPreviewOpen] = useState(true);
   const [activeTab, setActiveTab] = useState(DATA_FIELD_TAB[0]);
+  // const [serverDataField, setserverDataField] = useState({});
   const [currentDataField, setCurrentDataField] = useState({});
 
   const handleSuccess = useCallback((response) => {
@@ -176,6 +177,15 @@ function DataFields() {
     }));
   };
 
+  //컴포넌트 제어용 key 생성
+  const withUiKey = (blocks = []) => {
+    return Array.isArray(blocks)
+      ? blocks.map((block) =>
+          block.uiKey ? block : { ...block, uiKey: crypto.randomUUID() }
+        )
+      : [];
+  };
+
   return (
     <div className="w-full min-h-full flex">
       {/* Left Section */}
@@ -210,7 +220,7 @@ function DataFields() {
           </div>
         </div>
 
-        {/*Data Field Option*/}
+        {/*Data Field List*/}
         <div className="flex flex-col p-3">
           <div className="text-xs mb-3">데이터 필드 목록</div>
           <div className="flex flex-col item">
@@ -218,7 +228,7 @@ function DataFields() {
               return (
                 <div
                   className="w-[230px] min-h-[70px] border-2 border-gray-200 rounded-lg mb-2 p-2 text-xs"
-                  key={`field.name_${field.id}`}
+                  key={`dataField_${field.id}`}
                   onClick={() => {
                     const selectFieldData = dataFieldOptions.find(
                       (list) => list.dataField.id === field.id
@@ -226,10 +236,14 @@ function DataFields() {
 
                     if (!selectFieldData) return;
 
-                    setCurrentDataField(selectFieldData);
+                    setCurrentDataField({
+                      ...selectFieldData,
+                      attributeBlocks: withUiKey(
+                        selectFieldData.attributeBlocks
+                      ),
+                      linkBlocks: withUiKey(selectFieldData.linkBlocks),
+                    });
                     setMode("edit");
-
-                    console.log("current data:", currentDataField);
                   }}
                 >
                   <div className="w-full flex justify-between">
@@ -460,7 +474,7 @@ function DataFields() {
                       return (
                         <ul
                           className="w-full flex flex-col mt-2"
-                          key={`previewBlock_${attributeBlock.id}`}
+                          key={`previewBlock_${attributeBlock.uiKey}`}
                         >
                           <div className="flex items-center mb-1">
                             <FileIcon className="w-2 mr-2" />
