@@ -100,6 +100,15 @@ export const useGetCards = (options = {}) => {
   });
 };
 
+export const useGetCard = (id, options = {}) => {
+  return useQuery({
+    queryKey: ["card", id],
+    queryFn: () => apiClient.get(`${CARDS_API}/${id}`),
+    enabled: !!id,
+    ...options,
+  });
+};
+
 //////////////   DECK API    //////////////
 // 전체 덱 조회
 export const useGetAllDecks = (options = {}) => {

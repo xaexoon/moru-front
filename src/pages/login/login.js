@@ -1,7 +1,12 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useLogin } from "../../hooks/useApi";
+import { useAuth } from "../../context/AuthContext";
 
 function Login() {
+  const navigate = useNavigate();
+  const { login: saveToken } = useAuth();
+  
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -16,22 +21,22 @@ function Login() {
     login(requestData, {
       onSuccess: (response) => {
         console.log("Login Success");
-        console.log("Response Status: ", response.status);
         console.log("Response Data: ", response.data);
 
         const token = response.data.data.accessToken;
-        localStorage.setItem("accessToken", token)
-
-        console.log("Login Token: ",token)
+        
+        // Context에 토큰 저장
+        saveToken(token);
+        
+        console.log("Login Token: ", token);
+        
+        // Feed 페이지로 이동
+        navigate("/feed");
       },
       onError: (err) => {
         console.log("Login Failed");
         console.log("Error Message: ", err.message);
-        console.log("Error Code: ", err.code);
-        console.log("Resopnse Status: ", err.response?.status);
         console.log("Response Data: ", err.response?.data);
-        
-        console.log("Object Error:", err);
       },
     });
   };

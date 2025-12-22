@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useGetMyInfo } from "../hooks/useApi";
+import { useAuth } from "../context/AuthContext";
 
 function Sidebar() {
   const [navOpen, setNavOpen] = useState(true);
@@ -9,6 +11,37 @@ function Sidebar() {
   });
   const navigate = useNavigate();
   const location = useLocation();
+
+  const { isAuthenticated } = useAuth();
+
+  // 내 정보 조회
+  const { data: userInfo } = useGetMyInfo({
+    enabled: isAuthenticated,
+  });
+
+  const user = userInfo?.data?.data;
+
+  // 랜덤 배경색 생성 (사용자별로 고정되도록 useMemo 사용)
+  const profileBgColor = useMemo(() => {
+    const colors = [
+      "bg-purple-500",
+      "bg-blue-500",
+      "bg-green-500",
+      "bg-yellow-500",
+      "bg-red-500",
+      "bg-pink-500",
+      "bg-indigo-500",
+      "bg-teal-500",
+      "bg-orange-500",
+      "bg-cyan-500",
+    ];
+    // 사용자 이름 기반으로 색상 선택 (같은 사용자는 항상 같은 색)
+    if (user?.nickname) {
+      const index = user.nickname.charCodeAt(0) % colors.length;
+      return colors[index];
+    }
+    return colors[Math.floor(Math.random() * colors.length)];
+  }, [user?.nickname]);
 
   const toggleCategory = (category) => {
     setExpandedCategories((prev) => ({
@@ -22,9 +55,7 @@ function Sidebar() {
       type: "category",
       key: "feed",
       title: "피드",
-      items: [
-        { icon: "◫", text: "피드", path: "/feed" },
-      ],
+      items: [{ icon: "◫", text: "피드", path: "/feed" }],
     },
     {
       type: "category",
@@ -43,7 +74,7 @@ function Sidebar() {
       items: [
         { icon: "◫", text: "프로필", path: "/profile" },
         { icon: "◫", text: "내 카드 컬렉션", path: "/myCards" },
-        { icon: "◫", text: "내 덱", path: "/myDecks" },
+        { icon: "◫", text: "내 덱", path: "/myDeck" },
         { icon: "◫", text: "인벤토리", path: "/inventory" },
       ],
     },
@@ -67,7 +98,6 @@ function Sidebar() {
 
   const renderCategory = (category, index) => (
     <div key={index} className="flex flex-col">
-      {/* 카테고리 헤더 */}
       <div
         className="flex items-center justify-between w-full h-10 rounded-[10px] px-5 cursor-pointer hover:bg-[#f5f5f5]"
         onClick={() => toggleCategory(category.key)}
@@ -78,7 +108,6 @@ function Sidebar() {
         </span>
       </div>
 
-      {/* 카테고리 아이템 */}
       <div
         className={`overflow-hidden transition-all duration-300 ease-in-out
           ${expandedCategories[category.key] ? "max-h-64 opacity-100" : "max-h-0 opacity-0"}`}
@@ -133,18 +162,28 @@ function Sidebar() {
       <div className="h-px bg-[#ededed] -mx-[30px]" />
 
       {/* 로그인 정보 */}
-      <div className="flex w-full h-[80px] border rounded-[5px]  items-center">
+      <div
+        className="flex w-full h-[80px] border rounded-[5px] items-center cursor-pointer hover:bg-gray-50"
+        onClick={() => navigate("/profile")}
+      >
         <div className="flex flex-row w-[60px] h-[60px] items-center justify-center mr-4 ml-2">
-          <div className="flex items-center justify-center w-[60px] h-[60px] rounded-full border">이호영</div>
+          <div
+            className={`flex items-center justify-center w-[50px] h-[50px] rounded-full ${profileBgColor} text-white font-bold`}
+          >
+            {user?.nickname?.charAt(0) || "?"}
+          </div>
         </div>
         <div className="flex flex-col justify-center">
-          <span>이호영</span>
-          <span className="text-[8pt]">dbshl620@gmail.com</span>
+          <span className="font-medium">{user?.nickname || "로그인 필요"}</span>
+          <span className="text-[8pt] text-gray-500">
+            {user?.email || "이메일 없음"}
+          </span>
         </div>
       </div>
 
       {/* 구분선 */}
       <div className="h-px bg-[#ededed] -mx-[30px]" />
+
       {/* 메뉴 */}
       <div className="flex flex-col gap-1">
         {menuStructure.map((item, index) =>
@@ -153,8 +192,6 @@ function Sidebar() {
             : renderCategory(item, index)
         )}
       </div>
-
-      
     </div>
   ) : (
     <div className="w-full h-full flex justify-center p-[30px]">
