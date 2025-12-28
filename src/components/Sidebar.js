@@ -63,7 +63,7 @@ function Sidebar() {
       title: "크리에이트",
       items: [
         { icon: "◫", text: "카드 생성", path: "/createCard" },
-        { icon: "◫", text: "내 덱 관리", path: "/myDeck" },
+        // { icon: "◫", text: "내 덱 관리", path: "/myDeck" },
         { icon: "◫", text: "데이터 필드 관리", path: "/dataFields" },
       ],
     },
@@ -73,7 +73,7 @@ function Sidebar() {
       title: "내 아카이브",
       items: [
         { icon: "◫", text: "프로필", path: "/profile" },
-        { icon: "◫", text: "내 카드 컬렉션", path: "/myCards" },
+        // { icon: "◫", text: "내 카드 컬렉션", path: "/myCards" },
         { icon: "◫", text: "내 덱", path: "/myDeck" },
         { icon: "◫", text: "인벤토리", path: "/inventory" },
       ],

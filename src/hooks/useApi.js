@@ -143,6 +143,21 @@ export const useDeleteDeck = () => {
   });
 };
 
+// 덱에 카드 추가
+export const useAddCardToDeck = () => {
+  return useMutation({
+    mutationFn: ({ deckId, cardIds }) => 
+      apiClient.post(`${DECK_API}/${deckId}/cards`, cardIds),
+  });
+};
+
+// 덱에서 카드 제거
+export const useRemoveCardFromDeck = () => {
+  return useMutation({
+    mutationFn: ({ deckId, cardIds }) => 
+      apiClient.delete(`${DECK_API}/${deckId}/cards`, { data: cardIds }),
+  });
+};
 //////////////   DATAFIELD API    //////////////
 
 export const useGetDatafield = (options = {}) => {
