@@ -1,24 +1,39 @@
 import Select from "react-select";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useCreateCard, useGetDatafield } from "../../hooks/useApi";
 
 import { ReactComponent as ImgIcon } from "../../assets/createCard/image.svg";
 
 function CreateCard() {
+  const navigate = useNavigate();
+  
   const [previewImges, setPreviewImges] = useState([]);
   const [mainImg, setMainImg] = useState(null);
+  const [imageFiles, setImageFiles] = useState([]);
+  const [mainImgIndex, setMainImgIndex] = useState(0);
+  
+  // 폼 데이터
+  const [formData, setFormData] = useState({
+    cardName: "",
+    dataFieldId: null,
+  });
 
-  const dataFieldOptions = [
-    { value: "유물/작품", label: "유물/작품" },
-    { value: "색상", label: "색상" },
-    { value: "형태", label: "형태" },
-    { value: "재질", label: "재질" },
-    { value: "문양", label: "문양" },
-    { value: "기법", label: "기법" },
-    { value: "시대", label: "시대" },
-    { value: "지역", label: "지역" },
-    { value: "카테고리", label: "카테고리" },
-    { value: "개념", label: "개념" },
-  ];
+  // 카드 생성 mutation
+  const { mutate: createCard, isPending: isCreating } = useCreateCard();
+  
+  // 데이터필드 목록 조회
+  const { data: datafieldData } = useGetDatafield();
+  
+  // 데이터필드 콘솔 로그
+  console.log("=== 데이터필드 원본 ===", datafieldData);
+  console.log("=== 데이터필드 data ===", datafieldData?.data?.data);
+  
+  // 데이터필드 옵션 변환
+  const dataFieldOptions = datafieldData?.data?.data?.map(field => ({
+    value: field.id,
+    label: field.name,
+  })) || [];
 
   // react-select 커스텀 스타일
   const customSelectStyles = {
@@ -82,13 +97,100 @@ function CreateCard() {
     const imgFiles = e.target.files;
     if (!imgFiles) return;
 
-    const previewImgUrlList = [...imgFiles].map((file) =>
+    const filesArray = [...imgFiles];
+    const previewImgUrlList = filesArray.map((file) =>
       URL.createObjectURL(file)
     );
 
     const mergedImgUrlList = [...previewImges, ...previewImgUrlList];
+    const mergedFileList = [...imageFiles, ...filesArray];
+    
     setPreviewImges(mergedImgUrlList);
+    setImageFiles(mergedFileList);
     setMainImg(mergedImgUrlList[0]);
+    setMainImgIndex(0);
+  };
+
+  const handleMainImgSelect = (img, index) => {
+    setMainImg(img);
+    setMainImgIndex(index);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleDataFieldChange = (selectedOption) => {
+    setFormData(prev => ({
+      ...prev,
+      dataFieldId: selectedOption.value,
+    }));
+  };
+
+  // 카드 저장
+  const handleSubmit = async () => {
+    // 유효성 검사
+    if (imageFiles.length === 0) {
+      alert("대표 이미지를 업로드해주세요.");
+      return;
+    }
+    
+    if (!formData.cardName.trim()) {
+      alert("카드 이름을 입력해주세요.");
+      return;
+    }
+    
+    if (!formData.dataFieldId) {
+      alert("데이터 필드를 선택해주세요.");
+      return;
+    }
+
+    // FormData 생성
+    const submitData = new FormData();
+    
+    // 이미지 파일 추가 (대표 이미지를 첫 번째로)
+    const mainFile = imageFiles[mainImgIndex];
+    submitData.append("images", mainFile);
+    
+    // 나머지 이미지 추가
+    imageFiles.forEach((file, index) => {
+      if (index !== mainImgIndex) {
+        submitData.append("images", file);
+      }
+    });
+    
+    // JSON 데이터 추가
+    submitData.append("cardName", formData.cardName);
+    submitData.append("dataFieldId", formData.dataFieldId);
+
+    createCard(submitData, {
+      onSuccess: (response) => {
+        alert("카드가 성공적으로 생성되었습니다!");
+        console.log("생성된 카드:", response);
+        navigate("/feed");
+      },
+      onError: (error) => {
+        console.error("카드 생성 실패:", error);
+        alert("카드 생성에 실패했습니다: " + (error.response?.data?.message || error.message));
+      },
+    });
+  };
+
+  // 현재 시간 포맷
+  const getCurrentTime = () => {
+    const now = new Date();
+    return now.toLocaleString("ko-KR", {
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      second: "numeric",
+    });
   };
 
   return (
@@ -102,7 +204,7 @@ function CreateCard() {
           </p>
         </header>
 
-        <form className="flex flex-col gap-6 w-full bg-white p-10 rounded-xl">
+        <div className="flex flex-col gap-6 w-full bg-white p-10 rounded-xl">
           <div className="grid grid-cols-2 gap-8 w-full">
             {/* 왼쪽 컬럼 */}
             <div className="flex flex-col gap-6 min-w-0">
@@ -134,7 +236,7 @@ function CreateCard() {
                           className="h-[150px] border-2 border-dashed border-blue-600 rounded-xl flex-1 flex cursor-pointer transition-all hover:bg-blue-50 hover:border-blue-700"
                         >
                           <div className="w-full flex items-center justify-center text-blue-600 text-sm">
-                            클릭하여 이미지 업로드 (다중 선택 가능)
+                            클릭하여 이미지 업로드
                           </div>
                         </label>
                       </div>
@@ -150,13 +252,14 @@ function CreateCard() {
                           {previewImges.map((img, index) => (
                             <li
                               key={index}
-                              className={`w-[70px] h-[70px] rounded-md mr-2 flex-shrink-0 border-2 relative ${
-                                img === mainImg
+                              className={`w-[70px] h-[70px] rounded-md mr-2 flex-shrink-0 border-2 relative cursor-pointer ${
+                                index === mainImgIndex
                                   ? "border-black"
                                   : "border-gray-300"
                               }`}
+                              onClick={() => handleMainImgSelect(img, index)}
                             >
-                              {img === mainImg && (
+                              {index === mainImgIndex && (
                                 <div className="absolute text-xs text-white bg-black rounded-full px-[2px] -right-[2px] -top-[2px]">
                                   ★
                                 </div>
@@ -164,10 +267,7 @@ function CreateCard() {
                               <img
                                 src={img}
                                 alt={`previewImg-${index}`}
-                                className="w-full h-full object-cover rounded-md block "
-                                onClick={() => {
-                                  setMainImg(img);
-                                }}
+                                className="w-full h-full object-cover rounded-md block"
                               />
                             </li>
                           ))}
@@ -189,6 +289,9 @@ function CreateCard() {
                         className="flex-1 px-4 py-3 border border-gray-300 rounded-md text-sm transition-all bg-gray-100 focus:outline-none focus:border-blue-600 focus:bg-white"
                         name="cardName"
                         id="cardName"
+                        value={formData.cardName}
+                        onChange={handleInputChange}
+                        placeholder="카드 이름을 입력하세요"
                       />
                     </div>
 
@@ -198,11 +301,11 @@ function CreateCard() {
                         데이터 필드 *
                       </div>
                       <Select
-                        defaultValue={dataFieldOptions[0]}
                         options={dataFieldOptions}
                         isSearchable={false}
                         placeholder="선택하세요"
                         styles={customSelectStyles}
+                        onChange={handleDataFieldChange}
                       />
                     </div>
                   </div>
@@ -269,12 +372,11 @@ function CreateCard() {
                   </header>
 
                   <div className="flex flex-col items-center gap-4 py-5">
-                    <div className="w-full max-w-[280px] h-[280px] border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center bg-gray-50">
+                    <div className="w-full max-w-[280px] h-[280px] border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center bg-gray-50 overflow-hidden">
                       {mainImg ? (
-                        <input
+                        <img
                           src={mainImg}
-                          type="image"
-                          className="w-full h-full"
+                          className="w-full h-full object-cover"
                           alt="미리보기 이미지"
                         />
                       ) : (
@@ -282,10 +384,10 @@ function CreateCard() {
                       )}
                     </div>
                     <div className="font-semibold text-base text-gray-800 text-center">
-                      카드 이름 입력 필요
+                      {formData.cardName || "카드 이름 입력 필요"}
                     </div>
                     <div className="text-sm text-gray-500">
-                      20250. 11. 1 오후 2:28:30
+                      {getCurrentTime()}
                     </div>
                   </div>
                 </div>
@@ -295,11 +397,13 @@ function CreateCard() {
 
           <button
             type="button"
-            className="w-full px-8 py-4 bg-blue-600 text-white border-none rounded-lg text-base font-semibold cursor-pointer transition-colors mt-2 hover:bg-blue-700"
+            onClick={handleSubmit}
+            disabled={isCreating}
+            className="w-full px-8 py-4 bg-blue-600 text-white border-none rounded-lg text-base font-semibold cursor-pointer transition-colors mt-2 hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed"
           >
-            카드 저장
+            {isCreating ? "카드 저장 중..." : "카드 저장"}
           </button>
-        </form>
+        </div>
       </main>
     </div>
   );

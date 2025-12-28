@@ -8,6 +8,7 @@ import Inventory from "./pages/inventory/Inventory";
 import Layout from "./components/Layout";
 import CreateCard from "./pages/createCard/CreateCard";
 import MyDeck from "./pages/myDeck/MyDeck";
+import MyDeckDetail from "./pages/myDeck/MyDeckDetail";
 import Feed from "./pages/feed/Feed";
 import FeedDetail from "./pages/feed/FeedDetail";
 import DataFields from "./pages/dataFields/DataFields";
@@ -92,6 +93,11 @@ function App() {
                 </Layout>
               }
             />
+            <Route path="/deck/:id" element={
+              <Layout>
+                <MyDeckDetail />
+              </Layout>              
+              } />
             <Route
               path="/workspace"
               element={

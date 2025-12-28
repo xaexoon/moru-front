@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useGetCards } from "../../hooks/useApi";
+import { useGetCards, useGetAllDecks, useAddCardToDeck } from "../../hooks/useApi";
 import { useAuth } from "../../context/AuthContext";
 import gridIcon from "./../../assets/feed/grid.svg";
 import listIcon from "./../../assets/feed/list.svg";
@@ -13,14 +13,85 @@ function Feed() {
   const [cardSize, setCardSize] = useState("medium");
   const [searchMode, setSearchMode] = useState("and");
   const [showFilter, setShowFilter] = useState(true);
+  const [hoveredCard, setHoveredCard] = useState(null);
+  const [inventory, setInventory] = useState([]);
+  const [isInventoryOpen, setIsInventoryOpen] = useState(true);
+  
+  // 덱 선택 관련 상태
+  const [showDeckList, setShowDeckList] = useState(null);
 
   // API에서 카드 데이터 가져오기
   const { data, isLoading, isError, error } = useGetCards({
     enabled: isAuthenticated,
   });
 
+  // 덱 목록 가져오기
+  const { data: decksData } = useGetAllDecks({
+    enabled: isAuthenticated,
+  });
+
+  // 덱에 카드 추가 mutation
+  const { mutate: addCardToDeck } = useAddCardToDeck();
+
   // 실제 카드 데이터 추출
   const cards = data?.data?.data || [];
+  const decks = decksData?.data?.data || [];
+
+  console.log("=== 덱 목록 ===", decks);
+
+  // 좋아요 클릭 핸들러
+  const handleLikeClick = (e, cardId) => {
+    e.stopPropagation();
+    console.log("좋아요 클릭:", cardId);
+    // TODO: 좋아요 API 호출
+  };
+
+  // 인벤토리 담기 클릭 핸들러
+  const handleInventoryClick = (e, card) => {
+    e.stopPropagation();
+    
+    const isAlreadyInInventory = inventory.some(item => item.cardId === card.cardId);
+    
+    if (isAlreadyInInventory) {
+      setInventory(inventory.filter(item => item.cardId !== card.cardId));
+    } else {
+      setInventory([...inventory, card]);
+    }
+  };
+
+  // 덱 추가 버튼 클릭 핸들러
+  const handleDeckButtonClick = (e, cardId) => {
+    e.stopPropagation();
+    setShowDeckList(showDeckList === cardId ? null : cardId);
+  };
+
+  // 덱에 카드 추가 핸들러
+  const handleAddToDeck = (e, deckId, cardId) => {
+    e.stopPropagation();
+    
+    addCardToDeck(
+      { deckId, cardIds: [cardId] },
+      {
+        onSuccess: () => {
+          alert("덱에 카드가 추가되었습니다!");
+          setShowDeckList(null);
+        },
+        onError: (err) => {
+          alert("카드 추가 실패: " + (err.response?.data?.message || err.message));
+        },
+      }
+    );
+  };
+
+  // 인벤토리에서 카드 제거
+  const handleRemoveFromInventory = (cardId) => {
+    setInventory(inventory.filter(item => item.cardId !== cardId));
+  };
+
+  // 인벤토리에 있는지 확인
+  const isInInventory = (cardId) => {
+    return inventory.some(item => item.cardId === cardId);
+  };
 
   // 인증 로딩 중
   if (authLoading) {
@@ -66,7 +137,7 @@ function Feed() {
 
   return (
     <div className="w-full min-h-full bg-white">
-      <main>
+      <main className={`${inventory.length > 0 ? "pb-24" : ""}`}>
         {/* 위쪽 구역 */}
         <section>
           {/* 헤더 & 버튼 */}
@@ -152,13 +223,6 @@ function Feed() {
                   필터
                 </div>
               </div>
-
-              {/* 새 카드 */}
-              {/* <div className="border border-black rounded-xl overflow-hidden">
-                <div className="px-4 py-3 bg-black text-white cursor-pointer hover:bg-gray-800">
-                  새 카드
-                </div>
-              </div> */}
             </div>
           </div>
 
@@ -241,6 +305,13 @@ function Feed() {
                   key={card.cardId}
                   className="relative rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow cursor-pointer aspect-[3/4]"
                   onClick={() => navigate(`/feed/${card.cardId}`)}
+                  onMouseEnter={() => setHoveredCard(card.cardId)}
+                  onMouseLeave={() => {
+                    setHoveredCard(null);
+                    if (showDeckList === card.cardId) {
+                      setShowDeckList(null);
+                    }
+                  }}
                 >
                   {card.imageUrl ? (
                     <img
@@ -253,15 +324,133 @@ function Feed() {
                       이미지 없음
                     </div>
                   )}
-                  <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black/90 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-3">
-                    <p className="font-semibold text-white drop-shadow-lg text-sm truncate">
-                      {card.cardName}
-                    </p>
-                    <div className="flex gap-2 text-white/70 text-xs mt-1">
-                      <span>♡ {card.likeCount}</span>
-                      <span>👁 {card.viewCount}</span>
-                      <span># {card.tagCount}</span>
+                  
+                  {/* 호버 오버레이 */}
+                  <div 
+                    className={`absolute inset-0 bg-black/50 flex flex-col items-center justify-center gap-3 transition-opacity duration-200 ${
+                      hoveredCard === card.cardId ? "opacity-100" : "opacity-0 pointer-events-none"
+                    }`}
+                  >
+                    {/* 카드 정보 */}
+                    <div className="flex items-center gap-3 text-white text-sm">
+                      <span className="flex items-center gap-1">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                        {card.likeCount}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <span>#</span>
+                        {card.tagCount}
+                      </span>
+                    </div>
+
+                    {/* 액션 버튼들 */}
+                    <div className="flex items-center gap-2 relative">
+                      {/* 좋아요 버튼 */}
+                      <button
+                        onClick={(e) => handleLikeClick(e, card.cardId)}
+                        className="w-10 h-10 bg-red-500 hover:bg-red-600 rounded-lg flex items-center justify-center transition-colors"
+                      >
+                        <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                      </button>
+
+                      {/* 인벤토리 담기 버튼 */}
+                      <button
+                        onClick={(e) => handleInventoryClick(e, card)}
+                        className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${
+                          isInInventory(card.cardId) 
+                            ? "bg-green-600 hover:bg-green-700" 
+                            : "bg-green-500 hover:bg-green-600"
+                        }`}
+                      >
+                        {isInInventory(card.cardId) ? (
+                          <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                          </svg>
+                        ) : (
+                          <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                          </svg>
+                        )}
+                      </button>
+
+                      {/* 덱에 추가 버튼 */}
+                      <div className="relative">
+                        <button
+                          onClick={(e) => handleDeckButtonClick(e, card.cardId)}
+                          className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${
+                            showDeckList === card.cardId
+                              ? "bg-blue-600 hover:bg-blue-700"
+                              : "bg-blue-500 hover:bg-blue-600"
+                          }`}
+                        >
+                          <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                          </svg>
+                        </button>
+
+                        {/* 덱 리스트 드롭다운 */}
+                        {showDeckList === card.cardId && (
+                          <div 
+                            className="absolute bottom-12 left-1/2 -translate-x-1/2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden z-10"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <div className="px-3 py-2 bg-gray-50 border-b border-gray-200">
+                              <p className="text-xs font-semibold text-gray-600">덱에 추가</p>
+                            </div>
+                            {decks.length === 0 ? (
+                              <div className="px-3 py-4 text-center text-sm text-gray-400">
+                                생성된 덱이 없습니다
+                              </div>
+                            ) : (
+                              <div className="max-h-40 overflow-y-auto">
+                                {decks.map((deck) => (
+                                  <button
+                                    key={deck.id}
+                                    onClick={(e) => handleAddToDeck(e, deck.id, card.cardId)}
+                                    className="w-full px-3 py-2 text-left text-sm hover:bg-blue-50 hover:text-blue-600 transition-colors flex items-center gap-2"
+                                  >
+                                    <span className="text-base">📚</span>
+                                    <span className="truncate">{deck.title}</span>
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                            <div className="border-t border-gray-200">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  navigate("/deck");
+                                }}
+                                className="w-full px-3 py-2 text-left text-sm text-blue-500 hover:bg-blue-50 transition-colors flex items-center gap-2"
+                              >
+                                <span>+</span>
+                                <span>새 덱 만들기</span>
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 기본 하단 정보 (호버 아닐 때만 표시) */}
+                  <div className={`absolute bottom-0 left-0 right-0 transition-opacity duration-200 ${
+                    hoveredCard === card.cardId ? "opacity-0" : "opacity-100"
+                  }`}>
+                    <div className="h-20 bg-gradient-to-t from-black/90 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-3">
+                      <p className="font-semibold text-white drop-shadow-lg text-sm truncate">
+                        {card.cardName}
+                      </p>
+                      <div className="flex gap-2 text-white/70 text-xs mt-1">
+                        <span>♡ {card.likeCount}</span>
+                        <span>👁 {card.viewCount}</span>
+                        <span># {card.tagCount}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -270,6 +459,81 @@ function Feed() {
           )}
         </section>
       </main>
+
+      {/* 하단 인벤토리 바 */}
+      {inventory.length > 0 && (
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
+          <div className="flex items-center h-20 px-6">
+            {/* 왼쪽: 토글 버튼 & 카운트 */}
+            <div className="flex items-center gap-3 mr-6">
+              <button
+                onClick={() => setIsInventoryOpen(!isInventoryOpen)}
+                className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
+              >
+                <svg 
+                  className={`w-5 h-5 text-gray-600 transition-transform ${isInventoryOpen ? "" : "rotate-180"}`} 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              <span className="text-sm text-gray-600 font-medium">
+                {inventory.length}개
+              </span>
+            </div>
+
+            {/* 중앙: 카드 썸네일 리스트 */}
+            <div className="flex-1 flex items-center gap-2 overflow-x-auto py-2">
+              {inventory.map((card) => (
+                <div 
+                  key={card.cardId} 
+                  className="relative flex-shrink-0 group"
+                >
+                  <div 
+                    className="w-14 h-14 rounded-lg overflow-hidden border-2 border-gray-200 cursor-pointer hover:border-green-500 transition-colors"
+                    onClick={() => navigate(`/feed/${card.cardId}`)}
+                  >
+                    {card.imageUrl ? (
+                      <img
+                        src={card.imageUrl}
+                        alt={card.cardName}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400 text-xs">
+                        🖼
+                      </div>
+                    )}
+                  </div>
+                  {/* 삭제 버튼 */}
+                  <button
+                    onClick={() => handleRemoveFromInventory(card.cardId)}
+                    className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            {/* 오른쪽: 액션 버튼들 */}
+            <div className="flex items-center gap-2 ml-6">
+              <button 
+                className="w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-lg flex items-center justify-center transition-colors"
+                title="저장"
+              >
+                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
