@@ -2,6 +2,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute"
 
 import Login from "./pages/login/login";
 import Inventory from "./pages/inventory/Inventory";
@@ -9,6 +10,7 @@ import Layout from "./components/Layout";
 import CreateCard from "./pages/createCard/CreateCard";
 import MyDeck from "./pages/myDeck/MyDeck";
 import MyDeckDetail from "./pages/myDeck/MyDeckDetail";
+import MyCard from "./pages/myCard/MyCard";
 import Feed from "./pages/feed/Feed";
 import FeedDetail from "./pages/feed/FeedDetail";
 import DataFields from "./pages/dataFields/DataFields";
@@ -29,84 +31,108 @@ function App() {
       <AuthProvider>
         <BrowserRouter>
           <Routes>
+            {/* 로그인 페이지는 누구나 접근 가능 */}
+            <Route path="/login" element={<Login />} />
+
+            {/* 보호된 라우트들 */}
             <Route
               path="/inventory"
               element={
-                <Layout>
-                  <Inventory />
-                </Layout>
+                <ProtectedRoute>
+                  <Layout>
+                    <Inventory />
+                  </Layout>
+                </ProtectedRoute>
               }
             />
             <Route
               path="/createCard"
               element={
-                <Layout>
-                  <CreateCard />
-                </Layout>
-              }
-            />
-            <Route
-              path="/"
-              element={
-                <Layout>
-                  <CreateCard />
-                </Layout>
+                <ProtectedRoute>
+                  <Layout>
+                    <CreateCard />
+                  </Layout>
+                </ProtectedRoute>
               }
             />
             <Route
               path="/feed"
               element={
-                <Layout>
-                  <Feed />
-                </Layout>
+                  <Layout>
+                    <Feed />
+                  </Layout>
               }
             />
             <Route
               path="/feed/:id"
               element={
-                <Layout>
-                  <FeedDetail />
-                </Layout>
+                <ProtectedRoute>
+                  <Layout>
+                    <FeedDetail />
+                  </Layout>
+                </ProtectedRoute>
               }
             />
             <Route
               path="/dataFields"
               element={
-                <Layout>
-                  <DataFields />
-                </Layout>
+                <ProtectedRoute>
+                  <Layout>
+                    <DataFields />
+                  </Layout>
+                </ProtectedRoute>
               }
             />
             <Route
               path="/profile"
               element={
-                <Layout>
-                  <Profile />
-                </Layout>
+                <ProtectedRoute>
+                  <Layout>
+                    <Profile />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/myCard"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <MyCard />
+                  </Layout>
+                </ProtectedRoute>
               }
             />
             <Route
               path="/myDeck"
               element={
-                <Layout>
-                  <MyDeck />
-                </Layout>
+                <ProtectedRoute>
+                  <Layout>
+                    <MyDeck />
+                  </Layout>
+                </ProtectedRoute>
               }
             />
-            <Route path="/deck/:id" element={
-              <Layout>
-                <MyDeckDetail />
-              </Layout>              
-              } />
+            <Route
+              path="/deck/:id"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <MyDeckDetail />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/workspace"
               element={
-                <Layout>
-                  <CreateCard />
-                </Layout>
+                <ProtectedRoute>
+                  <Layout>
+                    <CreateCard />
+                  </Layout>
+                </ProtectedRoute>
               }
             />
-            <Route path="/login" element={<Login />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>
