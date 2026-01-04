@@ -8,7 +8,6 @@ import { ReactComponent as ExpandIcon } from "../../../assets/dataFields/expand.
 function LinkBlockEditor({ data, onChange }) {
   const [openBlocks, setOpenBlocks] = useState([]);
   const [newBlockName, setNewBlockName] = useState("");
-  // const [editingLinkBlocks, setEditingLinkBlocks] = useState({}); // { name: string; maxLinkCount: number }
 
   const handleAddLink = () => {
     const inputName = newBlockName.trim();

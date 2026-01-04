@@ -60,6 +60,7 @@ const dataFieldOptions = [
         name: "설명",
         type: "TEXT",
         placeholder: "이 항목에 대한 자세한 설명을 입력하세요...",
+        required: true,
       },
       {
         id: 806,
@@ -67,6 +68,7 @@ const dataFieldOptions = [
         name: "치수",
         type: "TEXT",
         placeholder: "수치를 입력하세요",
+        required: true,
       },
       {
         id: 807,
@@ -74,6 +76,7 @@ const dataFieldOptions = [
         name: "재질",
         type: "TEXT",
         placeholder: "재질 정보를 입력하세요",
+        required: false,
       },
       {
         id: 808,
@@ -81,6 +84,7 @@ const dataFieldOptions = [
         name: "참고 이미지",
         type: "TEXT",
         placeholder: "관련 이미지를 업로드하세요",
+        required: false,
       },
     ],
   },
@@ -108,6 +112,7 @@ const dataFieldOptions = [
         name: "색상명",
         type: "text",
         placeholder: "색상의 이름을 입력하세요",
+        required: true,
       },
       {
         id: 811,
@@ -115,6 +120,7 @@ const dataFieldOptions = [
         name: "RGB/HEX 값",
         type: "text",
         placeholder: "#FFFFFF 또는 rgb(255,255,255)",
+        required: false,
       },
       {
         id: 812,
@@ -122,6 +128,7 @@ const dataFieldOptions = [
         name: "설명",
         type: "text",
         placeholder: "색상에 대한 설명을 입력하세요",
+        required: false,
       },
     ],
   },
@@ -227,7 +234,7 @@ function DataFields() {
             {dataFieldList.map((field) => {
               return (
                 <div
-                  className="w-[230px] min-h-[70px] border-2 border-gray-200 rounded-lg mb-2 p-2 text-xs"
+                  className="w-[230px] min-h-[70px] border-2 border-gray-200 rounded-lg mb-2 p-2 text-xs hover:bg-gray-200 hover:border-gray-600 cursor-pointer"
                   key={`dataField_${field.id}`}
                   onClick={() => {
                     const selectFieldData = dataFieldOptions.find(

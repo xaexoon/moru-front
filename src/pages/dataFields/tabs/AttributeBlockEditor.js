@@ -12,7 +12,6 @@ function AttributeBlockEditor({ data, onChange }) {
   const [openBlocks, setOpenBlocks] = useState([]);
   const [newBlockName, setNewBlockName] = useState("");
   const [newBlockType, setNewBlockType] = useState(BLOCK_OPTION_DATA[0]);
-  // const [editingAttributeBlocks, setEditingAttributeBlocks] = useState({}); // { name: string; placeholder: string; }
 
   const handleAddAttribute = () => {
     const inputName = newBlockName.trim();
@@ -206,6 +205,19 @@ function AttributeBlockEditor({ data, onChange }) {
                           }}
                         />
                       </div>
+                    </div>
+                    <div className="flex">
+                      <input
+                        type="checkBox"
+                        className="mr-2 "
+                        checked={attributeData.required}
+                        onChange={(e) => {
+                          handleEditAddAttribute(attributeData.uiKey, {
+                            required: !attributeData.required,
+                          });
+                        }}
+                      />
+                      <p className="text-xs">필수 항목으로 설정</p>
                     </div>
                   </div>
                 )}
