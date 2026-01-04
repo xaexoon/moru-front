@@ -208,10 +208,10 @@ function AttributeBlockEditor({ data, onChange }) {
                     </div>
                     <div className="flex">
                       <input
-                        type="checkBox"
+                        type="checkbox"
                         className="mr-2 "
                         checked={attributeData.required}
-                        onChange={(e) => {
+                        onChange={() => {
                           handleEditAddAttribute(attributeData.uiKey, {
                             required: !attributeData.required,
                           });
