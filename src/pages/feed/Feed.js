@@ -2,12 +2,13 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGetCards, useGetAllDecks, useAddCardToDeck } from "../../hooks/useApi";
 import { useAuth } from "../../context/AuthContext";
+import AlarmModal from "../../components/AlarmModal";
 import gridIcon from "./../../assets/feed/grid.svg";
 import listIcon from "./../../assets/feed/list.svg";
 
 function Feed() {
   const navigate = useNavigate();
-  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   const [viewMode, setViewMode] = useState("grid");
   const [cardSize, setCardSize] = useState("medium");
@@ -20,12 +21,13 @@ function Feed() {
   // 덱 선택 관련 상태
   const [showDeckList, setShowDeckList] = useState(null);
 
-  // API에서 카드 데이터 가져오기
-  const { data, isLoading, isError, error } = useGetCards({
-    enabled: isAuthenticated,
-  });
+  // 로그인 필요 모달 상태
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
-  // 덱 목록 가져오기
+  // API에서 카드 데이터 가져오기 - 로그인 여부와 관계없이 호출
+  const { data, isLoading, isError, error } = useGetCards();
+
+  // 덱 목록 가져오기 - 로그인한 경우에만
   const { data: decksData } = useGetAllDecks({
     enabled: isAuthenticated,
   });
@@ -39,9 +41,21 @@ function Feed() {
 
   console.log("=== 덱 목록 ===", decks);
 
+  // 로그인 체크 함수
+  const requireLogin = (callback) => {
+    if (!isAuthenticated) {
+      setShowLoginModal(true);
+      return false;
+    }
+    if (callback) callback();
+    return true;
+  };
+
   // 좋아요 클릭 핸들러
   const handleLikeClick = (e, cardId) => {
     e.stopPropagation();
+    if (!requireLogin()) return;
+    
     console.log("좋아요 클릭:", cardId);
     // TODO: 좋아요 API 호출
   };
@@ -49,6 +63,7 @@ function Feed() {
   // 인벤토리 담기 클릭 핸들러
   const handleInventoryClick = (e, card) => {
     e.stopPropagation();
+    if (!requireLogin()) return;
     
     const isAlreadyInInventory = inventory.some(item => item.cardId === card.cardId);
     
@@ -62,6 +77,8 @@ function Feed() {
   // 덱 추가 버튼 클릭 핸들러
   const handleDeckButtonClick = (e, cardId) => {
     e.stopPropagation();
+    if (!requireLogin()) return;
+    
     setShowDeckList(showDeckList === cardId ? null : cardId);
   };
 
@@ -92,30 +109,6 @@ function Feed() {
   const isInInventory = (cardId) => {
     return inventory.some(item => item.cardId === cardId);
   };
-
-  // 인증 로딩 중
-  if (authLoading) {
-    return (
-      <div className="w-full min-h-full bg-white flex items-center justify-center">
-        <p>인증 확인 중...</p>
-      </div>
-    );
-  }
-
-  // 로그인 안 된 경우
-  if (!isAuthenticated) {
-    return (
-      <div className="w-full min-h-full bg-white flex items-center justify-center flex-col gap-4">
-        <p>로그인이 필요합니다.</p>
-        <button
-          onClick={() => navigate("/login")}
-          className="px-4 py-2 bg-black text-white rounded-xl"
-        >
-          로그인하기
-        </button>
-      </div>
-    );
-  }
 
   // 데이터 로딩 중
   if (isLoading) {
@@ -423,7 +416,7 @@ function Feed() {
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  navigate("/deck");
+                                  navigate("/myDeck");
                                 }}
                                 className="w-full px-3 py-2 text-left text-sm text-blue-500 hover:bg-blue-50 transition-colors flex items-center gap-2"
                               >
@@ -460,8 +453,8 @@ function Feed() {
         </section>
       </main>
 
-      {/* 하단 인벤토리 바 */}
-      {inventory.length > 0 && (
+      {/* 하단 인벤토리 바 - 로그인한 경우에만 표시 */}
+      {isAuthenticated && inventory.length > 0 && (
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
           <div className="flex items-center h-20 px-6">
             {/* 왼쪽: 토글 버튼 & 카운트 */}
@@ -534,6 +527,18 @@ function Feed() {
           </div>
         </div>
       )}
+
+      {/* 로그인 필요 모달 */}
+      <AlarmModal
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+        onConfirm={() => navigate("/login")}
+        title="로그인 필요"
+        content="이 기능을 사용하려면 로그인이 필요합니다."
+        type="confirm"
+        confirmText="로그인"
+        cancelText="취소"
+      />
     </div>
   );
 }
