@@ -6,7 +6,11 @@ import { ReactComponent as TrashIcon } from "../../../assets/dataFields/trash.sv
 import { ReactComponent as ExpandIcon } from "../../../assets/dataFields/expand.svg";
 import Dropdown from "../../../components/dropdown/Dropdown";
 
-const BLOCK_OPTION_DATA = ["텍스트", "이미지", "숫자/재원"];
+const BLOCK_OPTION_DATA = [
+  { title: "텍스트", value: "TEXT" },
+  { title: "이미지", value: "IMAGE" },
+  { title: "숫자/재원", value: "NUMBER" },
+];
 
 function AttributeBlockEditor({ data, onChange }) {
   const [openBlocks, setOpenBlocks] = useState([]);
@@ -27,8 +31,9 @@ function AttributeBlockEditor({ data, onChange }) {
       ...(data ?? []),
       {
         name: newBlockName.trim(),
-        type: newBlockType,
-        placeholder: "",
+        type: newBlockType.value,
+        placeHolder: "",
+        required: false,
         uiKey: crypto.randomUUID(),
       },
     ];
@@ -64,9 +69,8 @@ function AttributeBlockEditor({ data, onChange }) {
     );
   };
 
-  const handleBlockTypeChange = (value) => {
-    setNewBlockType(value);
-    console.log("block type:", value);
+  const handleBlockTypeChange = (option) => {
+    setNewBlockType(option);
   };
 
   return (
@@ -86,14 +90,14 @@ function AttributeBlockEditor({ data, onChange }) {
       <div className="w-full h-[94px] border-2 border-dashed border-gray-300 bg-gray-100 rounded-lg flex justify-center items-center px-4 mt-5 mb-2">
         <div className="flex-1 flex items-center">
           <div className="flex-1 mr-2 mb-2">
-            <label htmlFor="atttibutenewBlockName" className="text-xs">
+            <label htmlFor="atttibuteBlockName" className="text-xs">
               블록 이름
             </label>
             <div className="w-full h-[30px] rounded-md mr-3 flex items-center focus-within:outline bg-gray-100 focus-within:outline-3 focus-within:outline-gray-300 mt-1">
               <input
                 className="w-full h-full border-none bg-transparent focus:outline-none text-[13px] p-2"
                 type="text"
-                id="atttibutenewBlockName"
+                id="atttibuteBlockName"
                 placeholder="예: 크기, 무게, 특징"
                 value={newBlockName}
                 onChange={(e) => {
@@ -104,12 +108,9 @@ function AttributeBlockEditor({ data, onChange }) {
           </div>
 
           <div className="flex-1 mr-2 mb-2">
-            <label htmlFor="newBlockType" className="text-xs">
-              블록 타입
-            </label>
+            <label className="text-xs">블록 타입</label>
             <div className="w-full h-[30px] mt-1">
               <Dropdown
-                id="newBlockType"
                 options={BLOCK_OPTION_DATA}
                 onChange={handleBlockTypeChange}
               />
@@ -151,20 +152,27 @@ function AttributeBlockEditor({ data, onChange }) {
                     <FileIcon className="w-3 text-black mr-2 mt-1" />
                     <div className="text-xs">{attributeData.name}</div>
                   </div>
-                  <TrashIcon
-                    className="w-3 text-red-600 mr-4"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDeleteAttribute(attributeData.uiKey);
-                    }}
-                  />
-                  <ExpandIcon className="w-3 text-gray-500 -rotate-90" />
+                  <div className="flex items-center justify-center">
+                    {attributeData.required && (
+                      <div className="w-9 h-[17px] bg-red-600 flex justify-center items-center mr-3 rounded-lg">
+                        <p className=" text-xs text-white">필수</p>
+                      </div>
+                    )}
+                    <TrashIcon
+                      className="w-3 text-red-600 mr-3"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteAttribute(attributeData.uiKey);
+                      }}
+                    />
+                    <ExpandIcon className="w-3 text-gray-500 -rotate-90" />
+                  </div>
                 </div>
                 {isOpen && (
                   <div className="w-full h-[160px] border-t-2 border-gray-200 px-3">
                     <div className="flex-1 mr-2 mb-1">
                       <label
-                        htmlFor="atttibutenewBlockName"
+                        htmlFor={`atttibutenewBlockName-${attributeData.name}`}
                         className="text-xs"
                       >
                         블록 이름
@@ -173,7 +181,7 @@ function AttributeBlockEditor({ data, onChange }) {
                         <input
                           className="w-full h-full border-none bg-transparent focus:outline-none text-xs p-2"
                           type="text"
-                          id="atttibutenewBlockName"
+                          id={`atttibutenewBlockName-${attributeData.name}`}
                           placeholder="블록 이름"
                           value={attributeData.name}
                           onChange={(e) => {
@@ -197,10 +205,10 @@ function AttributeBlockEditor({ data, onChange }) {
                           type="text"
                           id="atttibuteBlockPlaceHolder"
                           placeholder="입력 안내"
-                          value={attributeData.placeholder}
+                          value={attributeData.placeHolder}
                           onChange={(e) => {
                             handleEditAddAttribute(attributeData.uiKey, {
-                              placeholder: e.target.value,
+                              placeHolder: e.target.value,
                             });
                           }}
                         />
@@ -210,7 +218,7 @@ function AttributeBlockEditor({ data, onChange }) {
                       <input
                         type="checkbox"
                         className="mr-2 "
-                        checked={attributeData.required}
+                        checked={!!attributeData.required}
                         onChange={() => {
                           handleEditAddAttribute(attributeData.uiKey, {
                             required: !attributeData.required,

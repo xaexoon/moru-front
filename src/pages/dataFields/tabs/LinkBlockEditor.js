@@ -178,7 +178,7 @@ function LinkBlockEditor({ data, onChange }) {
                           value={linkData.maxLinkCount}
                           onChange={(e) => {
                             handleEditLink(linkData.uiKey, {
-                              maxLinkCount: e.target.value,
+                              maxLinkCount: Number(e.target.value),
                             });
                           }}
                         />
