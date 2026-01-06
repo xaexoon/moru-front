@@ -132,6 +132,13 @@ function DataFields() {
     if (mode === "edit") {
       if (isUpdating) return;
 
+      const originPayload = toRequestPayload(originDataField);
+
+      if (JSON.stringify(originPayload) === JSON.stringify(submitData)) {
+        alert("수정 내용이 없습니다.");
+        return;
+      }
+
       updateDatafield(
         {
           id: currentDataField.dataField.id,
@@ -142,8 +149,10 @@ function DataFields() {
             alert("데이터 필드가 수정되었습니다!");
             refetchDataFieldList();
             refetchDataField();
+            setOriginDataField(currentDataField);
           },
           onError: (err) => {
+            setCurrentDataField(originDataField);
             alert(
               "데이터필드 수정 실패: " +
                 (err.response?.data?.message || err.message)

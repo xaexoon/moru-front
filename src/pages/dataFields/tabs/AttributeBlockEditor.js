@@ -217,7 +217,8 @@ function AttributeBlockEditor({ data, onChange }) {
                     <div className="flex">
                       <input
                         type="checkbox"
-                        className="mr-2 "
+                        id={`toggleBtn_${attributeData.uiKey}`}
+                        className="sr-only"
                         checked={!!attributeData.required}
                         onChange={() => {
                           handleEditAddAttribute(attributeData.uiKey, {
@@ -225,6 +226,20 @@ function AttributeBlockEditor({ data, onChange }) {
                           });
                         }}
                       />
+                      <label htmlFor={`toggleBtn_${attributeData.uiKey}`}>
+                        <div
+                          className={`w-[25px] h-[15px]  rounded-lg relative flex items-center mr-1 ${
+                            attributeData.required ? "bg-black" : "bg-gray-300"
+                          }`}
+                        >
+                          <div
+                            className={`w-[13px] h-[13px] bg-white rounded-full absolute  top-[1px] left-[1px]
+        transition-transform duration-200 ease-in-out ${
+          attributeData.required ? "translate-x-[10px]" : "translate-x-0"
+        } `}
+                          ></div>
+                        </div>
+                      </label>
                       <p className="text-xs">필수 항목으로 설정</p>
                     </div>
                   </div>
