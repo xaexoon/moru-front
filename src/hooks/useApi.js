@@ -146,7 +146,7 @@ export const useDeleteDeck = () => {
 // 덱에 카드 추가
 export const useAddCardToDeck = () => {
   return useMutation({
-    mutationFn: ({ deckId, cardIds }) => 
+    mutationFn: ({ deckId, cardIds }) =>
       apiClient.post(`${DECK_API}/${deckId}/cards`, cardIds),
   });
 };
@@ -154,13 +154,14 @@ export const useAddCardToDeck = () => {
 // 덱에서 카드 제거
 export const useRemoveCardFromDeck = () => {
   return useMutation({
-    mutationFn: ({ deckId, cardIds }) => 
+    mutationFn: ({ deckId, cardIds }) =>
       apiClient.delete(`${DECK_API}/${deckId}/cards`, { data: cardIds }),
   });
 };
-//////////////   DATAFIELD API    //////////////
 
-export const useGetDatafield = (options = {}) => {
+//////////////   DATAFIELD API    //////////////
+//데이터필드 리스트 조회
+export const useGetDatafieldList = (options = {}) => {
   return useQuery({
     queryKey: ["datafield"],
     queryFn: () => apiClient.get(`${DATAFIELD_API}`),
@@ -168,8 +169,34 @@ export const useGetDatafield = (options = {}) => {
   });
 };
 
+// 특정 데이터필드 조회
+export const useGetDatafield = (id, options = {}) => {
+  return useQuery({
+    queryKey: ["datafield", id],
+    queryFn: () => apiClient.get(`${DATAFIELD_API}/${id}`),
+    enabled: !!id,
+    ...options,
+  });
+};
+
+//데이터필드 생성
 export const useCreateDatafield = () => {
   return useMutation({
     mutationFn: (data) => apiClient.post(`${DATAFIELD_API}`, data),
+  });
+};
+
+//데이터필드 수정
+export const useUpdateDatafield = () => {
+  return useMutation({
+    mutationFn: ({ id, data }) =>
+      apiClient.patch(`${DATAFIELD_API}/${id}`, data),
+  });
+};
+
+//데이터 필드 삭제
+export const useDeleteDatafield = () => {
+  return useMutation({
+    mutationFn: (id) => apiClient.delete(`${DATAFIELD_API}/${id}`),
   });
 };
