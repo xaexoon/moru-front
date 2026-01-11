@@ -124,7 +124,7 @@ function CreateCard() {
   const handleDataFieldChange = (selectedOption) => {
     setFormData(prev => ({
       ...prev,
-      dataFieldId: selectedOption.value,
+      dataFieldId: selectedOption?.value ?? null,
     }));
   };
 
@@ -148,17 +148,17 @@ function CreateCard() {
     // FormData 생성
     const submitFormData = new FormData();
 
-    const cardCreateRequestDto = {
+    const cardData = {
       cardName: formData.cardName,
       status: formData.status,
       dataFieldId: formData.dataFieldId,
     };
 
-    submitFormData.append(
-      "cardCreateRequestDto",
-      new Blob([JSON.stringify(cardCreateRequestDto)], { type: "application/json" })
-    );
+    // JSON 문자열로 보내고, Content-Type을 application/json으로 설정
+    const cardBlob = new Blob([JSON.stringify(cardData)], { type: "application/json" });
+    submitFormData.append("card", cardBlob);
 
+    // 이미지 파일
     submitFormData.append("multipartFile", imageFile);
 
     createCard(
@@ -176,7 +176,7 @@ function CreateCard() {
       }
     );
   };
-
+  
   // 현재 시간 포맷
   const getCurrentTime = () => {
     const now = new Date();
@@ -300,11 +300,10 @@ function CreateCard() {
                   </label>
                   <div className="flex gap-3">
                     <label
-                      className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 border rounded-lg cursor-pointer transition-all text-sm ${
-                        formData.status === "PUBLIC"
-                          ? "border-blue-500 bg-blue-50 text-blue-700"
-                          : "border-gray-200 hover:bg-gray-50"
-                      }`}
+                      className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 border rounded-lg cursor-pointer transition-all text-sm ${formData.status === "PUBLIC"
+                        ? "border-blue-500 bg-blue-50 text-blue-700"
+                        : "border-gray-200 hover:bg-gray-50"
+                        }`}
                     >
                       <input
                         type="radio"
@@ -320,11 +319,10 @@ function CreateCard() {
                       <span className="font-medium">전체공개</span>
                     </label>
                     <label
-                      className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 border rounded-lg cursor-pointer transition-all text-sm ${
-                        formData.status === "PRIVATE"
-                          ? "border-blue-500 bg-blue-50 text-blue-700"
-                          : "border-gray-200 hover:bg-gray-50"
-                      }`}
+                      className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 border rounded-lg cursor-pointer transition-all text-sm ${formData.status === "PRIVATE"
+                        ? "border-blue-500 bg-blue-50 text-blue-700"
+                        : "border-gray-200 hover:bg-gray-50"
+                        }`}
                     >
                       <input
                         type="radio"
@@ -443,11 +441,10 @@ function CreateCard() {
                         {getCurrentTime().split(" ")[0]}
                       </span>
                       <span
-                        className={`text-xs px-2 py-0.5 rounded-full ${
-                          formData.status === "PUBLIC"
-                            ? "bg-green-100 text-green-600"
-                            : "bg-gray-100 text-gray-600"
-                        }`}
+                        className={`text-xs px-2 py-0.5 rounded-full ${formData.status === "PUBLIC"
+                          ? "bg-green-100 text-green-600"
+                          : "bg-gray-100 text-gray-600"
+                          }`}
                       >
                         {formData.status === "PUBLIC" ? "공개" : "비공개"}
                       </span>

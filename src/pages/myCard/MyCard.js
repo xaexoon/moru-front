@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useGetMyCards } from '../../hooks/useApi';
 
-const CardCollection = () => {
+const MyCard = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('all');
   const [viewMode, setViewMode] = useState('grid');
   const [sortBy, setSortBy] = useState('최근 생성순');
@@ -9,9 +11,6 @@ const CardCollection = () => {
 
   // 내 카드 목록 조회
   const { data: myCardsData, isLoading, isError, error } = useGetMyCards();
-  console.log("myCardsData:", myCardsData);
-  console.log("myCardsData?.data:", myCardsData?.data);
-  console.log("myCardsData?.data?.data:", myCardsData?.data?.data);
 
   // 카드 데이터 추출
   const cards = myCardsData?.data?.data || [];
@@ -139,8 +138,8 @@ const CardCollection = () => {
           <button
             onClick={() => setActiveTab('all')}
             className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors ${activeTab === 'all'
-              ? 'bg-gray-100 text-gray-900'
-              : 'text-gray-500 hover:bg-gray-50'
+                ? 'bg-gray-100 text-gray-900'
+                : 'text-gray-500 hover:bg-gray-50'
               }`}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -151,8 +150,8 @@ const CardCollection = () => {
           <button
             onClick={() => setActiveTab('favorites')}
             className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors ${activeTab === 'favorites'
-              ? 'bg-gray-100 text-gray-900'
-              : 'text-gray-500 hover:bg-gray-50'
+                ? 'bg-gray-100 text-gray-900'
+                : 'text-gray-500 hover:bg-gray-50'
               }`}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -169,17 +168,29 @@ const CardCollection = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
             </svg>
             <p className="text-gray-500 text-lg mb-2">카드가 없습니다</p>
-            <p className="text-gray-400 text-sm">새 카드를 만들어보세요!</p>
+            <p className="text-gray-400 text-sm mb-4">새 카드를 만들어보세요!</p>
+            <button
+              onClick={() => navigate('/createCard')}
+              className="px-6 py-2.5 bg-black text-white text-sm rounded-lg hover:bg-gray-800 transition-colors"
+            >
+              카드 만들기
+            </button>
           </div>
         ) : (
           /* Card Grid - Masonry Style */
-          <div className="columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 space-y-4">
-            {sortedCards.map((card, index) => (
+          <div className="columns-2 md:columns-3 lg:columns-4 xl:columns-5 2xl:columns-6 gap-4 space-y-4">
+            {sortedCards.map((card) => (
               <div
                 key={card.cardId || card.id}
                 className="break-inside-avoid group cursor-pointer"
+                onClick={() => {
+                  console.log("클릭한 카드:", card);
+                  console.log("cardId:", card.cardId);
+                  console.log("id:", card.id);
+                  navigate(`/myCard/${card.cardId || card.id}`);
+                }}
               >
-                <div className="relative rounded-lg overflow-hidden bg-gray-100">
+                <div className="relative rounded-lg overflow-hidden bg-gray-100 transition-shadow hover:shadow-lg">
                   {card.imageUrl ? (
                     <img
                       src={card.imageUrl}
@@ -191,14 +202,15 @@ const CardCollection = () => {
                       이미지 없음
                     </div>
                   )}
+
                   {/* Gradient Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
                   {/* 공개/비공개 뱃지 */}
                   <div className="absolute top-2 right-2">
                     <span className={`text-xs px-2 py-1 rounded-full ${card.status === 'PUBLIC'
-                      ? 'bg-green-500 text-white'
-                      : 'bg-gray-500 text-white'
+                        ? 'bg-green-500 text-white'
+                        : 'bg-gray-500 text-white'
                       }`}>
                       {card.status === 'PUBLIC' ? '공개' : '비공개'}
                     </span>
@@ -206,7 +218,7 @@ const CardCollection = () => {
 
                   {/* Card Info */}
                   <div className="absolute bottom-0 left-0 right-0 p-3">
-                    <h3 className="text-white text-sm font-medium mb-1">{card.cardName}</h3>
+                    <h3 className="text-white text-sm font-medium mb-1 truncate">{card.cardName}</h3>
                     <div className="flex items-center gap-3 text-white/80 text-xs">
                       <span className="flex items-center gap-1">
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -222,7 +234,7 @@ const CardCollection = () => {
                         {card.viewCount || 0}
                       </span>
                       <span className="flex items-center gap-1">
-                        <span className="text-white/80">#</span>
+                        <span>#</span>
                         {card.tagCount || 0}
                       </span>
                     </div>
@@ -232,23 +244,9 @@ const CardCollection = () => {
             ))}
           </div>
         )}
-
-        {/* Floating Action Buttons */}
-        <div className="fixed bottom-6 right-6 flex flex-col gap-3">
-          <button className="w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors border border-gray-200">
-            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
-          </button>
-          <button className="w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors border border-gray-200">
-            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </button>
-        </div>
       </div>
     </div>
   );
 };
 
-export default CardCollection;
+export default MyCard;

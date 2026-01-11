@@ -14,6 +14,7 @@ import CreateCard from "./pages/createCard/CreateCard";
 import MyDeck from "./pages/myDeck/MyDeck";
 import MyDeckDetail from "./pages/myDeck/MyDeckDetail";
 import MyCard from "./pages/myCard/MyCard";
+import MyCardDetail from "./pages/myCard/MyCardDetail";
 import Feed from "./pages/feed/Feed";
 import FeedDetail from "./pages/feed/FeedDetail";
 import DataFields from "./pages/dataFields/DataFields";
@@ -97,6 +98,16 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+               <Route
+                path="/myCard/:id"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <MyCardDetail />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
               <Route
                 path="/myCard"
                 element={
@@ -107,6 +118,7 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+             
               <Route
                 path="/myDeck"
                 element={

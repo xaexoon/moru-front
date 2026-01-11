@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient  } from "@tanstack/react-query";
 import apiClient from "../api/apiClient";
 import {
   AUTH_API,
@@ -131,6 +131,12 @@ export const useGetMyCards = (options = {}) => {
 };
 
 
+// 카드 삭제
+export const useDeleteCard = () => {
+  return useMutation({
+    mutationFn: (id) => apiClient.delete(`${CARDS_API}/${id}`),
+  });
+};
 
 //////////////   DECK API    //////////////
 // 전체 덱 조회
