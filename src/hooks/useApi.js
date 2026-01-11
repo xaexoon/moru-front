@@ -60,6 +60,13 @@ export const useUpdateMyInfo = () => {
   });
 };
 
+// 비밀번호 변경
+export const useChangePassword = () => {
+  return useMutation({
+    mutationFn: (data) => apiClient.patch(`${USERS_API}/me/pwd`, data),
+  });
+};
+
 // 회원탈퇴
 export const useDeleteMyInfo = () => {
   return useMutation({
@@ -75,6 +82,7 @@ export const useAllUsers = () => {
   });
 };
 
+
 // 사용자 활성화
 export const useActiveUser = () => {
   return useMutation({
@@ -86,12 +94,10 @@ export const useActiveUser = () => {
 //////////////   CARDS API    //////////////
 export const useCreateCard = () => {
   return useMutation({
-    mutationFn: ({ formData, params }) =>
+    mutationFn: ({ formData }) =>
       apiClient.post(`${CARDS_API}`, formData, {
-        params: {
-          cardName: params.cardName,
-          status: params.status,
-          dataFiledId: params.dataFieldId,
+        headers: {
+          'Content-Type': 'multipart/form-data',
         },
       }),
   });

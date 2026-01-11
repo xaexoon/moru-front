@@ -34,14 +34,13 @@ const defaultDataField = {
 };
 
 function DataFields() {
-  const [mode, setMode] = useState("default"); // "default" | "add" | "edit"
+  const [mode, setMode] = useState("default");
   const [selectedId, setSelectedId] = useState(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(true);
   const [activeTab, setActiveTab] = useState(DATA_FIELD_TAB[0]);
   const [originDataField, setOriginDataField] = useState(null);
   const [currentDataField, setCurrentDataField] = useState(defaultDataField);
 
-  //데이터 필드 목록 조회
   const {
     data: dataFieldListData,
     refetch: refetchDataFieldList,
@@ -54,7 +53,6 @@ function DataFields() {
     ? dataFieldListData.data.data.dataFields
     : [];
 
-  //데이터 필드 상세 조회
   const {
     data: dataFieldDetailData,
     isLoading: dataFieldLoading,
@@ -63,25 +61,20 @@ function DataFields() {
     enabled: !!selectedId,
   });
 
-  //데이터 필드 생성
   const { mutate: createDatafield, isPending: isCreating } =
     useCreateDatafield();
 
-  //데이터 필드 수정
   const { mutate: updateDatafield, isPending: isUpdating } =
     useUpdateDatafield();
 
-  //데이터 필드 삭제
   const { mutate: deleteDatafield } = useDeleteDatafield();
 
-  //request data
   const toRequestPayload = (currentDataField) => {
     return {
       dataField: {
         name: currentDataField.dataField.name ?? "",
         description: currentDataField.dataField.description ?? "",
       },
-
       attributeBlocks: (currentDataField.attributeBlocks || []).map(
         ({ name, placeHolder, type, required }) => ({
           name,
@@ -90,7 +83,6 @@ function DataFields() {
           required,
         })
       ),
-
       linkBlocks: (currentDataField.linkBlocks || []).map(
         ({ name, maxLinkCount }) => ({
           name,
@@ -100,7 +92,6 @@ function DataFields() {
     };
   };
 
-  //데이터필드 생성, 수정 핸들러
   const handleSubmitDatafield = () => {
     if (!currentDataField.dataField.name.trim()) {
       alert("데이터 필드의 이름을 입력해주세요.");
@@ -109,7 +100,6 @@ function DataFields() {
 
     const submitData = toRequestPayload(currentDataField);
 
-    //생성
     if (mode === "add") {
       createDatafield(submitData, {
         onSuccess: () => {
@@ -128,7 +118,6 @@ function DataFields() {
       return;
     }
 
-    //수정
     if (mode === "edit") {
       if (isUpdating) return;
 
@@ -163,7 +152,6 @@ function DataFields() {
     }
   };
 
-  //데이터필드 삭제 핸들러
   const handleRemoveDatafield = (selectedId) => {
     if (window.confirm("이 데이터 필드를 삭제하시겠습니까?")) {
       deleteDatafield(selectedId, {
@@ -183,20 +171,6 @@ function DataFields() {
     }
   };
 
-  //콘솔
-  useEffect(() => {
-    console.log("편집 모드:", mode);
-  }, [mode]);
-
-  useEffect(() => {
-    console.log("업데이트 된 데이터:", currentDataField);
-  }, [currentDataField]);
-
-  useEffect(() => {
-    console.log("선택한 데이터 필드 id:", selectedId);
-  }, [selectedId]);
-  //
-
   useEffect(() => {
     if (!dataFieldDetailData) return;
 
@@ -210,8 +184,6 @@ function DataFields() {
 
     setOriginDataField(withUi);
     setCurrentDataField(withUi);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataFieldDetailData]);
 
   const handleAttributeChange = (updatedAttribute) => {
@@ -228,7 +200,6 @@ function DataFields() {
     }));
   };
 
-  //컴포넌트 제어용 key 삽입
   const withUiKey = (blocks = []) => {
     return Array.isArray(blocks)
       ? blocks.map((block) =>
@@ -237,259 +208,235 @@ function DataFields() {
       : [];
   };
 
-  // 데이터 필드 리스트 로딩 중
   if (isLoading) {
     return (
-      <div className="w-full min-h-full bg-white flex items-center justify-center">
-        <p>데이터 필드 목록 불러오는 중...</p>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <p className="text-gray-500">데이터 필드 목록 불러오는 중...</p>
       </div>
     );
   }
 
-  // 에러 상태
   if (isError) {
     return (
-      <div className="w-full min-h-full bg-white flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <p className="text-red-500">에러 발생: {error.message}</p>
       </div>
     );
   }
 
   return (
-    <div className="w-full min-h-full flex">
-      {/* Left Section */}
-      <div className="w-[280px] min-h-full flex flex-col border-r border-gray-200">
-        <div className="w-full h-[150px] border-b border-gray-200 flex flex-col p-6">
-          <div className="text-sm mb-1">데이터 필드 관리</div>
-          <div className="text-xs text-gray-500 mb-6">
+    <div className="min-h-screen bg-white font-sans flex">
+      {/* Left Section - 사이드바 */}
+      <div className="w-[300px] min-h-full flex flex-col border-r border-gray-200 bg-gray-50">
+        {/* 헤더 */}
+        <div className="p-6 border-b border-gray-200">
+          <h1 className="text-lg font-bold text-gray-900 mb-1">데이터 필드 관리</h1>
+          <p className="text-sm text-gray-500 mb-4">
             카드 데이터 구조를 커스터마이징하세요
-          </div>
-          <div className="w-full flex items-center justify-center">
-            <button
-              className="w-[240px] h-[38px] bg-black text-white rounded-lg text-xs flex items-center justify-center"
-              onClick={() => {
-                setMode("add");
-                setCurrentDataField(defaultDataField);
-                setOriginDataField(defaultDataField);
-              }}
-            >
-              <NewIcon className="w-4 text-white mr-3" />
-              <p>새 데이터 필드</p>
-            </button>
-          </div>
+          </p>
+          <button
+            className="w-full h-[42px] bg-black text-white rounded-lg text-sm flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors"
+            onClick={() => {
+              setMode("add");
+              setCurrentDataField(defaultDataField);
+              setOriginDataField(defaultDataField);
+            }}
+          >
+            <NewIcon className="w-4 text-white" />
+            <span>새 데이터 필드</span>
+          </button>
         </div>
 
-        {/*Data Field List*/}
-        <div className="flex flex-col p-3">
-          <div className="text-xs mb-3">데이터 필드 목록</div>
-          <div className="flex flex-col item">
-            {dataFieldList.map((field) => {
-              return (
-                <div
-                  className="w-[230px] min-h-[70px] border-2 border-gray-200 rounded-lg mb-2 p-2 text-xs hover:bg-gray-200 hover:border-gray-600 cursor-pointer"
-                  key={`dataField_${field.id}`}
-                  onClick={() => {
-                    setSelectedId(field.id);
-                    setMode("edit");
-                  }}
-                >
-                  <div className="w-full flex justify-between">
-                    <div className="flex w-full">
-                      <DataFieldIcon className="mr-2 w-[17px] h-[30px] text-gray-500" />
-                      <div className="w-full flex flex-col">
-                        <div className="flex justify-between">
-                          <div className="mt-1" key={`field.title_${field.id}`}>
-                            {field.name}
-                          </div>
-                          {field.type === "기본" && (
-                            <div
-                              className="w-[35px] h-[20px] m-1 bg-gray-200 rounded-lg text-center text-xs"
-                              key={`field.type_${field.type}`}
-                            >
-                              {field.type}
-                            </div>
-                          )}
-                        </div>
-                        <div
-                          className="w-full text-[11px] text-gray-500 mb-1"
-                          key={`field.attribute_${field.id}`}
-                        >
-                          {field.attributeCnt}개 속성, {field.linkCnt}개 연결
-                        </div>
-                        <div
-                          className="text-[11px] text-gray-500"
-                          key={`field.description_${field.id}`}
-                        >
-                          {field.description}
-                        </div>
-                      </div>
+        {/* 데이터 필드 목록 */}
+        <div className="flex-1 p-4 overflow-y-auto">
+          <p className="text-xs text-gray-500 font-medium mb-3">데이터 필드 목록</p>
+          <div className="flex flex-col gap-2">
+            {dataFieldList.map((field) => (
+              <div
+                key={`dataField_${field.id}`}
+                className={`p-4 border rounded-lg cursor-pointer transition-all ${
+                  selectedId === field.id
+                    ? "border-blue-500 bg-blue-50"
+                    : "border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm"
+                }`}
+                onClick={() => {
+                  setSelectedId(field.id);
+                  setMode("edit");
+                }}
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <DataFieldIcon className="w-4 h-4 text-gray-500" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-1">
+                      <p className="text-sm font-medium text-gray-900 truncate">
+                        {field.name}
+                      </p>
+                      {field.type === "기본" && (
+                        <span className="px-2 py-0.5 bg-gray-200 rounded text-xs text-gray-600">
+                          {field.type}
+                        </span>
+                      )}
                     </div>
+                    <p className="text-xs text-gray-500 mb-1">
+                      {field.attributeCnt}개 속성, {field.linkCnt}개 연결
+                    </p>
+                    {field.description && (
+                      <p className="text-xs text-gray-400 truncate">
+                        {field.description}
+                      </p>
+                    )}
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* Middle Section */}
-      <div className="flex-1 min-h-full">
+      {/* Middle Section - 편집 영역 */}
+      <div className="flex-1 min-h-full flex flex-col">
         {mode !== "default" ? (
           dataFieldLoading ? (
-            <div className="flex-1 flex items-center justify-center text-gray-500 text-lg">
-              데이터 필드를 불러오는 중입니다.
+            <div className="flex-1 flex items-center justify-center">
+              <p className="text-gray-500">데이터 필드를 불러오는 중입니다...</p>
             </div>
           ) : (
-            <div>
-              {/* Middle Title Section */}
-              <div className="w-full h-[105px] border-b border-gray-200 flex flex-col px-5 py-3">
-                <div className="flex justify-between items-center">
-                  <div className="flex-1 mr-1">
-                    <label htmlFor="fieldTitle" className="text-sm">
-                      필드 이름*
+            <div className="flex-1 flex flex-col">
+              {/* 상단 헤더 */}
+              <div className="p-6 border-b border-gray-200">
+                <div className="flex items-end justify-between gap-4">
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      필드 이름 <span className="text-red-500">*</span>
                     </label>
-                    <div className="flex-1 max-w-[588px] h-[40px] rounded-lg flex items-center bg-gray-100 focus-within:outline focus-within:outline-3 focus-within:outline-gray-300 mt-2">
-                      <input
-                        className="w-full h-full border-none bg-transparent focus:outline-none text-[13px] p-2"
-                        type="text"
-                        id="fieldTitle"
-                        value={currentDataField.dataField.name}
-                        placeholder="예: 건축물, 문서, 영상 등"
-                        onChange={(e) => {
-                          setCurrentDataField((prev) => ({
-                            ...prev,
-                            dataField: {
-                              ...prev.dataField,
-                              name: e.target.value,
-                            },
-                          }));
-                        }}
-                      />
-                    </div>
+                    <input
+                      type="text"
+                      value={currentDataField.dataField.name}
+                      placeholder="예: 건축물, 문서, 영상 등"
+                      onChange={(e) => {
+                        setCurrentDataField((prev) => ({
+                          ...prev,
+                          dataField: {
+                            ...prev.dataField,
+                            name: e.target.value,
+                          },
+                        }));
+                      }}
+                      className="w-full max-w-md px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 focus:bg-white"
+                    />
                   </div>
-                  <div className="ml-2">
+                  <div className="flex gap-2">
                     <button
-                      className="w-[80px] h-[35px] text-xs bg-red-500 text-white rounded-md mr-2 flex-col justify-center items-center"
+                      className="h-[42px] px-4 text-sm rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors flex items-center gap-2"
                       onClick={() => {
                         if (isCreating || isUpdating) return;
                         handleRemoveDatafield(selectedId);
                       }}
                     >
-                      <div className="flex items-center justify-center">
-                        <TrashIcon className="w-[11px] text-white mr-2" />
-                        <p>삭제</p>
-                      </div>
+                      <TrashIcon className="w-4 text-white" />
+                      <span>삭제</span>
                     </button>
                     <button
-                      className="w-[80px] h-[35px] text-xs bg-black text-white rounded-md"
+                      className="h-[42px] px-4 text-sm rounded-lg bg-black text-white hover:bg-gray-800 transition-colors flex items-center gap-2"
                       onClick={() => {
                         if (isCreating || isUpdating) return;
                         handleSubmitDatafield();
                       }}
                     >
-                      <div className="flex items-center justify-center">
-                        <UnionIcon className="w-4 text-white mr-2" />
-                        <p>저장</p>
-                      </div>
+                      <UnionIcon className="w-4 text-white" />
+                      <span>{isCreating || isUpdating ? "저장 중..." : "저장"}</span>
                     </button>
                   </div>
                 </div>
               </div>
 
-              {/* Middle description Section */}
-              <div className="p-4 min-h-[202px] flex flex-col">
-                <label htmlFor="fieldDescription" className="text-sm">
+              {/* 설명 영역 */}
+              <div className="p-6 border-b border-gray-200">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   설명
                 </label>
-                <div className="flex-1 rounded-lg flex items-center  focus-within:outline focus-within:outline-3 focus-within:outline-gray-300 mt-1 mb-3">
-                  <textarea
-                    className="w-full h-[90px] border-none bg-transparent focus:outline-none text-[13px] p-2 resize-none mb-"
-                    type="text"
-                    id="fieldDescription"
-                    value={currentDataField.dataField.description}
-                    placeholder="이 데이터 필드의 용도를 설명하세요..."
-                    onChange={(e) => {
-                      setCurrentDataField((prev) => ({
-                        ...prev,
-                        dataField: {
-                          ...prev.dataField,
-                          description: e.target.value,
-                        },
-                      }));
-                    }}
-                  />
-                </div>
-                <div className="mt-2 border-b border-gray-200 pb-5 flex items-center">
-                  <button className="w-[130px] h-[33px] text-xs border border-gray-300 rounded-md hover:bg-gray-200 mr-2">
-                    <div className="flex items-center justify-center">
-                      <NewIcon className="w-4 text-black mr-2" />
-                      기본 블록 추가
-                    </div>
+                <textarea
+                  value={currentDataField.dataField.description}
+                  placeholder="이 데이터 필드의 용도를 설명하세요..."
+                  onChange={(e) => {
+                    setCurrentDataField((prev) => ({
+                      ...prev,
+                      dataField: {
+                        ...prev.dataField,
+                        description: e.target.value,
+                      },
+                    }));
+                  }}
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none bg-gray-50 focus:bg-white"
+                  rows={3}
+                />
+                <div className="flex gap-2 mt-4">
+                  <button className="h-[38px] px-4 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2">
+                    <NewIcon className="w-4 text-gray-600" />
+                    <span>기본 블록 추가</span>
                   </button>
-                  <button className="w-[85px] h-[33px] text-xs border border-gray-300 rounded-md hover:bg-gray-200 mr-2">
-                    <div
-                      className="flex items-center justify-center"
-                      onClick={() => {
-                        if (
-                          window.confirm("수정 사항을 초기화 하시겠습니까?")
-                        ) {
-                          setCurrentDataField(originDataField);
-                          alert("초기화 되었습니다.");
-                        }
-                      }}
-                    >
-                      <ReloadIcon className="w-3 text-black mr-2" />
-                      초기화
-                    </div>
+                  <button
+                    className="h-[38px] px-4 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
+                    onClick={() => {
+                      if (window.confirm("수정 사항을 초기화 하시겠습니까?")) {
+                        setCurrentDataField(originDataField);
+                        alert("초기화 되었습니다.");
+                      }
+                    }}
+                  >
+                    <ReloadIcon className="w-3 text-gray-600" />
+                    <span>초기화</span>
                   </button>
                 </div>
               </div>
 
-              {/* Middle Bottom Section */}
-              <div className="p-4">
-                {/* Tab Menu */}
-                <div className="flex items-center justify-center">
-                  <ul className="h-[34px] w-[97%] flex items-center justify-around rounded-2xl bg-gray-200 text-sm p-1">
+              {/* 탭 영역 */}
+              <div className="flex-1 p-6 overflow-y-auto">
+                {/* 탭 메뉴 */}
+                <div className="flex items-center justify-center mb-6">
+                  <div className="inline-flex p-1 bg-gray-100 rounded-lg">
                     {DATA_FIELD_TAB.map((tab) => (
-                      <li
+                      <button
                         key={tab.id}
-                        className={`py-1 w-[50%] rounded-xl cursor-default flex items-center justify-center ${
-                          tab.id === activeTab.id && "bg-white"
+                        className={`px-6 py-2 text-sm font-medium rounded-lg transition-colors ${
+                          tab.id === activeTab.id
+                            ? "bg-white text-gray-900 shadow-sm"
+                            : "text-gray-500 hover:text-gray-700"
                         }`}
-                        onClick={() => {
-                          setActiveTab(tab);
-                        }}
+                        onClick={() => setActiveTab(tab)}
                       >
                         {tab.title}
-                      </li>
+                      </button>
                     ))}
-                  </ul>
+                  </div>
                 </div>
 
-                {/* Tab Section */}
-                <div className="pt-6 flex flex-col items-center">
-                  <div className="p-6 w-[97%] min-h-[340px] border border-gray-200 rounded-lg">
-                    {activeTab.id === "attribute" && (
-                      <AttributeBlockEditor
-                        data={currentDataField.attributeBlocks}
-                        onChange={handleAttributeChange}
-                      />
-                    )}
-                    {activeTab.id === "link" && (
-                      <LinkBlockEditor
-                        data={currentDataField.linkBlocks}
-                        onChange={handleLinkChange}
-                      />
-                    )}
-                  </div>
+                {/* 탭 컨텐츠 */}
+                <div className="bg-white border border-gray-200 rounded-lg p-6 min-h-[300px]">
+                  {activeTab.id === "attribute" && (
+                    <AttributeBlockEditor
+                      data={currentDataField.attributeBlocks}
+                      onChange={handleAttributeChange}
+                    />
+                  )}
+                  {activeTab.id === "link" && (
+                    <LinkBlockEditor
+                      data={currentDataField.linkBlocks}
+                      onChange={handleLinkChange}
+                    />
+                  )}
                 </div>
               </div>
             </div>
           )
         ) : (
-          <div className="flex-1 min-h-full flex flex-col items-center justify-center">
-            <DataFieldIcon className="w-14 text-gray-400 mb-4" />
-            <p className="text-lg text-gray-500">데이터 필드를 선택하세요</p>
+          <div className="flex-1 flex flex-col items-center justify-center">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+              <DataFieldIcon className="w-8 h-8 text-gray-400" />
+            </div>
+            <p className="text-lg font-medium text-gray-700 mb-1">데이터 필드를 선택하세요</p>
             <p className="text-sm text-gray-500">
               왼쪽에서 데이터 필드를 선택하거나 새로 만들어보세요.
             </p>
@@ -497,109 +444,89 @@ function DataFields() {
         )}
       </div>
 
-      {/* Right Section */}
+      {/* Right Section - 미리보기 */}
       {isPreviewOpen ? (
-        <div className="w-[355px] min-h-full flex flex-col border-l border-gray-200">
-          <div className="w-full h-[83px] border-b border-gray-200 p-3">
-            <div className="flex justify-between items-center mb-1">
-              <div className="flex items-center">
-                <PreviewIcon className="mr-2 w-4" />
-                <div>실시간 미리보기</div>
+        <div className="w-[360px] min-h-full flex flex-col border-l border-gray-200 bg-gray-50">
+          {/* 미리보기 헤더 */}
+          <div className="p-4 border-b border-gray-200">
+            <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center gap-2">
+                <PreviewIcon className="w-4 h-4 text-gray-600" />
+                <span className="text-sm font-medium text-gray-900">실시간 미리보기</span>
               </div>
-              <p
-                className="mr-2 cursor-default"
-                onClick={() => {
-                  setIsPreviewOpen(!isPreviewOpen);
-                }}
+              <button
+                className="w-6 h-6 flex items-center justify-center rounded hover:bg-gray-200 transition-colors"
+                onClick={() => setIsPreviewOpen(false)}
               >
-                X
-              </p>
+                <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
             </div>
-            <div className="text-xs text-gray-500">
-              편집 중인 데이터 필드가 카드에서 어떻게 표시되는지 확인할 수
-              있습니다.
-            </div>
+            <p className="text-xs text-gray-500">
+              편집 중인 데이터 필드가 카드에서 어떻게 표시되는지 확인할 수 있습니다.
+            </p>
           </div>
-          <div className="w-full h-full flex flex-col justify-start items-center">
+
+          {/* 미리보기 컨텐츠 */}
+          <div className="flex-1 p-4 overflow-y-auto">
             {/* 카드 미리보기 */}
-            <div className="w-[305px] h-[343px] border border-gray-200 rounded-xl mt-4 p-5">
-              <div className="text-sm mb-4">카드 미리보기</div>
-              <div className="w-[258px] h-[255px] border border-gray-200 rounded-xl flex flex-col items-center pt-4">
-                <div className="w-[90%] min-h-[112px] relative bg-gray-200">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+              <p className="text-sm font-medium text-gray-700 mb-3">카드 미리보기</p>
+              <div className="border border-gray-200 rounded-lg overflow-hidden">
+                <div className="aspect-[4/3] bg-gray-100 relative">
                   {currentDataField?.dataField?.name && (
-                    <div className="w-fit h-fit text-xs bg-black text-white rounded-xl p-1 m-1 absolute">
+                    <span className="absolute top-2 left-2 px-2 py-1 bg-black text-white text-xs rounded-full">
                       {currentDataField.dataField.name}
-                    </div>
+                    </span>
                   )}
                 </div>
-
-                <div className="flex-1 flex flex-col items-start m-3">
-                  <div className="text-sm mb-1">청화백자 달항아리</div>
-                  <div className="text-xs flex-1 text-gray-500 mb-3">
-                    조선 후기의 대표적인 백자 달항아리로, 정화 안료로 그려진
-                    섬세한 문양이 특징입니다.
-                  </div>
-                  <div className="text-[11px] text-gray-500">
-                    2025. 11. 13. 오후 4:27:08
-                  </div>
+                <div className="p-3">
+                  <p className="text-sm font-medium text-gray-900 mb-1">청화백자 달항아리</p>
+                  <p className="text-xs text-gray-500 mb-2 line-clamp-2">
+                    조선 후기의 대표적인 백자 달항아리로, 정화 안료로 그려진 섬세한 문양이 특징입니다.
+                  </p>
+                  <p className="text-xs text-gray-400">2025. 11. 13. 오후 4:27:08</p>
                 </div>
               </div>
             </div>
 
             {/* 속성 블록 미리보기 */}
             {currentDataField?.attributeBlocks?.length > 0 && (
-              <div className="w-[305px] min-h-[118px] h-auto border border-gray-200 rounded-xl mt-4 p-5">
-                <div className="w-full border-gray-200 p-1">
-                  <div className="text-xs mb-2">속성 블록 미리보기</div>
-                  <li className="w-full flex flex-col text-xs">
-                    {currentDataField.attributeBlocks.map((attributeBlock) => {
-                      return (
-                        <ul
-                          className="w-full flex flex-col mt-2"
-                          key={`previewBlock_${attributeBlock.uiKey}`}
-                        >
-                          <div className="flex items-center mb-1">
-                            <FileIcon className="w-2 mr-2" />
-                            <div>{attributeBlock.name}</div>
-                          </div>
-                          <div className="h-[25px] bg-gray-100 rounded-md flex items-center">
-                            <p className="ml-2 text-gray-400">
-                              {attributeBlock.placeHolder}
-                            </p>
-                          </div>
-                        </ul>
-                      );
-                    })}
-                  </li>
+              <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+                <p className="text-sm font-medium text-gray-700 mb-3">속성 블록 미리보기</p>
+                <div className="space-y-3">
+                  {currentDataField.attributeBlocks.map((attributeBlock) => (
+                    <div key={`previewBlock_${attributeBlock.uiKey}`}>
+                      <div className="flex items-center gap-2 mb-1">
+                        <FileIcon className="w-3 h-3 text-gray-400" />
+                        <span className="text-xs font-medium text-gray-700">{attributeBlock.name}</span>
+                      </div>
+                      <div className="h-[32px] bg-gray-100 rounded-lg flex items-center px-3">
+                        <span className="text-xs text-gray-400">{attributeBlock.placeHolder}</span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
 
             {/* 연결 블록 미리보기 */}
             {currentDataField?.linkBlocks?.length > 0 && (
-              <div className="w-[305px] min-h-[132px] h-auto border border-gray-200 rounded-xl mt-4 p-5">
-                <div className="w-full border-gray-200 p-1">
-                  <div className="text-xs mb-4">연결 블록 미리보기</div>
-                  <li className="flex flex-col text-xs">
-                    {currentDataField.linkBlocks.map((linkBlock) => {
-                      return (
-                        <ul
-                          className="w-full flex flex-col mt-2"
-                          key={`previewBlock_${linkBlock.id}`}
-                        >
-                          <div className="flex items-center mb-1">
-                            <LinkIcon className="w-3 mr-2" />
-                            <div>{linkBlock.name}</div>
-                          </div>
-                          <div className="rounded-md flex justify-center items-center">
-                            <p className="border-2 border-dotted border-gray-200 h-[37px] w-[95%] ml-2 text-gray-400 flex justify-center items-center">
-                              다른 카드를 드래그하여 연결
-                            </p>
-                          </div>
-                        </ul>
-                      );
-                    })}
-                  </li>
+              <div className="bg-white border border-gray-200 rounded-lg p-4">
+                <p className="text-sm font-medium text-gray-700 mb-3">연결 블록 미리보기</p>
+                <div className="space-y-3">
+                  {currentDataField.linkBlocks.map((linkBlock) => (
+                    <div key={`previewBlock_${linkBlock.id}`}>
+                      <div className="flex items-center gap-2 mb-1">
+                        <LinkIcon className="w-3 h-3 text-gray-400" />
+                        <span className="text-xs font-medium text-gray-700">{linkBlock.name}</span>
+                      </div>
+                      <div className="h-[40px] border-2 border-dashed border-gray-200 rounded-lg flex items-center justify-center">
+                        <span className="text-xs text-gray-400">다른 카드를 드래그하여 연결</span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
@@ -607,12 +534,10 @@ function DataFields() {
         </div>
       ) : (
         <div
-          className="w-[43px] min-h-full flex flex-col items-center justify-center border-l border-gray-200 hover:bg-gray-200"
-          onClick={() => {
-            setIsPreviewOpen(!isPreviewOpen);
-          }}
+          className="w-[48px] min-h-full flex flex-col items-center justify-center border-l border-gray-200 bg-gray-50 cursor-pointer hover:bg-gray-100 transition-colors"
+          onClick={() => setIsPreviewOpen(true)}
         >
-          <PreviewIcon className="mr-2 w-4 ml-[3px]" />
+          <PreviewIcon className="w-5 h-5 text-gray-500" />
         </div>
       )}
     </div>
