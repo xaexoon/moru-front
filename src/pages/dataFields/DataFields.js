@@ -334,7 +334,7 @@ function DataFields() {
 
       {/* Middle Section */}
       <div className="flex-1 min-h-full">
-        {selectedId ? (
+        {mode !== "default" ? (
           dataFieldLoading ? (
             <div className="flex-1 flex items-center justify-center text-gray-500 text-lg">
               데이터 필드를 불러오는 중입니다.
