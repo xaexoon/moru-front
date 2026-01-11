@@ -7,30 +7,27 @@ import { ReactComponent as ImgIcon } from "../../assets/createCard/image.svg";
 
 function CreateCard() {
   const navigate = useNavigate();
-  
+
   const [previewImges, setPreviewImges] = useState([]);
   const [mainImg, setMainImg] = useState(null);
   const [imageFiles, setImageFiles] = useState([]);
   const [mainImgIndex, setMainImgIndex] = useState(0);
-  
+
   // 폼 데이터
   const [formData, setFormData] = useState({
     cardName: "",
     dataFieldId: null,
+    status: "PUBLIC",
   });
 
   // 카드 생성 mutation
   const { mutate: createCard, isPending: isCreating } = useCreateCard();
-  
+
   // 데이터필드 목록 조회
-  const { data: datafieldData } = useGetDatafield();
-  
-  // 데이터필드 콘솔 로그
-  console.log("=== 데이터필드 원본 ===", datafieldData);
-  console.log("=== 데이터필드 data ===", datafieldData?.data?.data);
-  
+  const { data: datafieldData, isLoading: isDatafieldLoading } = useGetDatafield();
+
   // 데이터필드 옵션 변환
-  const dataFieldOptions = datafieldData?.data?.data?.map(field => ({
+  const dataFieldOptions = datafieldData?.data?.data?.dataFields?.map(field => ({
     value: field.id,
     label: field.name,
   })) || [];
@@ -71,8 +68,8 @@ function CreateCard() {
       backgroundColor: state.isSelected
         ? "#1976d2"
         : state.isFocused
-        ? "#e3f2fd"
-        : "white",
+          ? "#e3f2fd"
+          : "white",
       color: state.isSelected ? "white" : "#333",
       cursor: "pointer",
     }),
@@ -93,6 +90,7 @@ function CreateCard() {
     }),
   };
 
+  // 이미지 업로드
   const handleImgUpload = (e) => {
     const imgFiles = e.target.files;
     if (!imgFiles) return;
@@ -104,18 +102,20 @@ function CreateCard() {
 
     const mergedImgUrlList = [...previewImges, ...previewImgUrlList];
     const mergedFileList = [...imageFiles, ...filesArray];
-    
+
     setPreviewImges(mergedImgUrlList);
     setImageFiles(mergedFileList);
     setMainImg(mergedImgUrlList[0]);
     setMainImgIndex(0);
   };
 
+  // 대표 이미지 선택
   const handleMainImgSelect = (img, index) => {
     setMainImg(img);
     setMainImgIndex(index);
   };
 
+  // 입력값 변경
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -124,6 +124,7 @@ function CreateCard() {
     }));
   };
 
+  // 데이터필드 변경
   const handleDataFieldChange = (selectedOption) => {
     setFormData(prev => ({
       ...prev,
@@ -132,52 +133,59 @@ function CreateCard() {
   };
 
   // 카드 저장
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     // 유효성 검사
     if (imageFiles.length === 0) {
       alert("대표 이미지를 업로드해주세요.");
       return;
     }
-    
+
     if (!formData.cardName.trim()) {
       alert("카드 이름을 입력해주세요.");
       return;
     }
-    
+
     if (!formData.dataFieldId) {
       alert("데이터 필드를 선택해주세요.");
       return;
     }
 
-    // FormData 생성
-    const submitData = new FormData();
-    
-    // 이미지 파일 추가 (대표 이미지를 첫 번째로)
+    // FormData 생성 (이미지만)
+    const submitFormData = new FormData();
+
+    // 대표 이미지를 첫 번째로 추가
     const mainFile = imageFiles[mainImgIndex];
-    submitData.append("images", mainFile);
-    
+    submitFormData.append("multipartFile", mainFile);
+
     // 나머지 이미지 추가
     imageFiles.forEach((file, index) => {
       if (index !== mainImgIndex) {
-        submitData.append("images", file);
+        submitFormData.append("multipartFile", file);
       }
     });
-    
-    // JSON 데이터 추가
-    submitData.append("cardName", formData.cardName);
-    submitData.append("dataFieldId", formData.dataFieldId);
 
-    createCard(submitData, {
-      onSuccess: (response) => {
-        alert("카드가 성공적으로 생성되었습니다!");
-        console.log("생성된 카드:", response);
-        navigate("/feed");
-      },
-      onError: (error) => {
-        console.error("카드 생성 실패:", error);
-        alert("카드 생성에 실패했습니다: " + (error.response?.data?.message || error.message));
-      },
-    });
+    // 쿼리 파라미터 데이터
+    const params = {
+      cardName: formData.cardName,
+      status: formData.status,
+      dataFieldId: formData.dataFieldId,
+    };
+
+    // API 호출
+    createCard(
+      { formData: submitFormData, params },
+      {
+        onSuccess: (response) => {
+          alert("카드가 성공적으로 생성되었습니다!");
+          console.log("생성된 카드:", response);
+          navigate("/feed");
+        },
+        onError: (error) => {
+          console.error("카드 생성 실패:", error);
+          alert("카드 생성에 실패했습니다: " + (error.response?.data?.message || error.message));
+        },
+      }
+    );
   };
 
   // 현재 시간 포맷
@@ -242,8 +250,8 @@ function CreateCard() {
                       </div>
                     </div>
 
-                    {/* 업로드된이미지 */}
-                    {previewImges?.length !== 0 && (
+                    {/* 업로드된 이미지 */}
+                    {previewImges.length > 0 && (
                       <div className="w-full text-sm text-gray-500 mb-1">
                         <p className="mb-1">
                           업로드된 이미지 ({previewImges.length}개)
@@ -273,13 +281,12 @@ function CreateCard() {
                           ))}
                         </ul>
                         <p className="text-xs">
-                          ★ 표시된 이미지가 대표 이미지입니다. 클릭하여 변경할
-                          수 있습니다.
+                          ★ 표시된 이미지가 대표 이미지입니다. 클릭하여 변경할 수 있습니다.
                         </p>
                       </div>
                     )}
 
-                    {/* 카드이름 */}
+                    {/* 카드 이름 */}
                     <div className="flex flex-col gap-2.5">
                       <div className="font-semibold text-sm text-gray-800">
                         카드 이름 *
@@ -303,10 +310,55 @@ function CreateCard() {
                       <Select
                         options={dataFieldOptions}
                         isSearchable={false}
-                        placeholder="선택하세요"
+                        placeholder={isDatafieldLoading ? "로딩 중..." : "선택하세요"}
                         styles={customSelectStyles}
                         onChange={handleDataFieldChange}
+                        isDisabled={isDatafieldLoading}
+                        noOptionsMessage={() => "데이터 필드가 없습니다. 먼저 생성해주세요."}
                       />
+                    </div>
+
+                    {/* 공개 여부 */}
+                    <div className="flex flex-col gap-2.5">
+                      <div className="font-semibold text-sm text-gray-800">
+                        공개 여부 *
+                      </div>
+                      <div className="flex gap-4">
+                        <label
+                          className={`flex items-center gap-2 px-4 py-3 border rounded-lg cursor-pointer transition-all ${
+                            formData.status === "PUBLIC"
+                              ? "border-blue-500 bg-blue-50 text-blue-700"
+                              : "border-gray-300 hover:bg-gray-50"
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="status"
+                            value="PUBLIC"
+                            checked={formData.status === "PUBLIC"}
+                            onChange={handleInputChange}
+                            className="w-4 h-4 text-blue-600"
+                          />
+                          <span className="text-sm font-medium">전체공개</span>
+                        </label>
+                        <label
+                          className={`flex items-center gap-2 px-4 py-3 border rounded-lg cursor-pointer transition-all ${
+                            formData.status === "PRIVATE"
+                              ? "border-blue-500 bg-blue-50 text-blue-700"
+                              : "border-gray-300 hover:bg-gray-50"
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="status"
+                            value="PRIVATE"
+                            checked={formData.status === "PRIVATE"}
+                            onChange={handleInputChange}
+                            className="w-4 h-4 text-blue-600"
+                          />
+                          <span className="text-sm font-medium">비공개</span>
+                        </label>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -325,7 +377,6 @@ function CreateCard() {
 
                   <div className="w-full pt-5">
                     <div className="flex flex-col gap-3">
-                      {/* 기본 정보 추가 */}
                       <div className="flex">
                         <div className="flex flex-1 items-center gap-3 px-5 py-4 bg-gray-50 border border-gray-200 rounded-lg cursor-pointer transition-all hover:bg-blue-50 hover:border-blue-600">
                           <div className="w-5 h-5 flex-shrink-0"></div>
@@ -334,24 +385,18 @@ function CreateCard() {
                         </div>
                       </div>
 
-                      {/* 종속 데이터 연결 */}
                       <div className="flex">
                         <div className="flex flex-1 items-center gap-3 px-5 py-4 bg-gray-50 border border-gray-200 rounded-lg cursor-pointer transition-all hover:bg-blue-50 hover:border-blue-600">
                           <div className="w-5 h-5 flex-shrink-0"></div>
-                          <p className="flex-1 text-left m-0">
-                            종속 데이터 연결
-                          </p>
+                          <p className="flex-1 text-left m-0">종속 데이터 연결</p>
                           <div className="ml-auto">&gt;</div>
                         </div>
                       </div>
 
-                      {/* 비종속 데이터 첨부 */}
                       <div className="flex">
                         <div className="flex flex-1 items-center gap-3 px-5 py-4 bg-gray-50 border border-gray-200 rounded-lg cursor-pointer transition-all hover:bg-blue-50 hover:border-blue-600">
                           <div className="w-5 h-5 flex-shrink-0"></div>
-                          <p className="flex-1 text-left m-0">
-                            비종속 데이터 첨부
-                          </p>
+                          <p className="flex-1 text-left m-0">비종속 데이터 첨부</p>
                           <div className="ml-auto">&gt;</div>
                         </div>
                       </div>
@@ -363,7 +408,6 @@ function CreateCard() {
 
             {/* 오른쪽 컬럼 */}
             <div className="flex flex-col sticky top-5 h-fit min-w-0">
-              {/* 미리보기 */}
               <section className="flex flex-col bg-white w-full border border-gray-300 rounded-xl shadow-sm overflow-visible">
                 <div className="m-8">
                   <header className="flex flex-row items-center gap-3 pb-5 border-b border-gray-200">
@@ -388,6 +432,15 @@ function CreateCard() {
                     </div>
                     <div className="text-sm text-gray-500">
                       {getCurrentTime()}
+                    </div>
+                    <div
+                      className={`text-xs px-3 py-1 rounded-full ${
+                        formData.status === "PUBLIC"
+                          ? "bg-green-100 text-green-600"
+                          : "bg-gray-100 text-gray-600"
+                      }`}
+                    >
+                      {formData.status === "PUBLIC" ? "전체공개" : "비공개"}
                     </div>
                   </div>
                 </div>

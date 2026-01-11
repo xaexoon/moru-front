@@ -3,17 +3,17 @@ import { useNavigate } from "react-router-dom";
 import { useGetCards, useGetAllDecks, useAddCardToDeck } from "../../hooks/useApi";
 import { useAuth } from "../../context/AuthContext";
 import AlarmModal from "../../components/AlarmModal";
-import gridIcon from "./../../assets/feed/grid.svg";
-import listIcon from "./../../assets/feed/list.svg";
+// import gridIcon from "./../../assets/feed/grid.svg";
+// import listIcon from "./../../assets/feed/list.svg";
 
 function Feed() {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
 
-  const [viewMode, setViewMode] = useState("grid");
-  const [cardSize, setCardSize] = useState("medium");
-  const [searchMode, setSearchMode] = useState("and");
-  const [showFilter, setShowFilter] = useState(true);
+  // const [viewMode, setViewMode] = useState("grid");
+  // const [cardSize, setCardSize] = useState("medium");
+  // const [searchMode, setSearchMode] = useState("and");
+  // const [showFilter, setShowFilter] = useState(true);
   const [hoveredCard, setHoveredCard] = useState(null);
   const [inventory, setInventory] = useState([]);
   const [isInventoryOpen, setIsInventoryOpen] = useState(true);
@@ -142,9 +142,8 @@ function Feed() {
               </p>
             </div>
 
-            {/* 버튼 그룹 */}
-            <div className="flex gap-3 items-center">
-              {/* 그리드/리스트 */}
+            {/* 버튼 그룹 - 추후 구현 예정 */}
+            {/* <div className="flex gap-3 items-center">
               <div className="flex border border-black rounded-xl divide-x divide-black overflow-hidden">
                 <div
                   className={`px-4 py-3 cursor-pointer transition-colors flex items-center gap-2 ${viewMode === "grid"
@@ -176,7 +175,6 @@ function Feed() {
                 </div>
               </div>
 
-              {/* 소형/중형/대형 */}
               <div className="flex border border-black rounded-xl divide-x divide-black overflow-hidden">
                 <div
                   className={`px-4 py-3 cursor-pointer transition-colors ${cardSize === "small"
@@ -207,7 +205,6 @@ function Feed() {
                 </div>
               </div>
 
-              {/* 필터 */}
               <div className="border border-black rounded-xl overflow-hidden">
                 <div
                   className="px-4 py-3 hover:bg-gray-100 cursor-pointer"
@@ -216,13 +213,14 @@ function Feed() {
                   필터
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* 태그 검색 */}
           <div className="flex justify-between items-center px-10 mb-5">
             <p className="font-semibold">태그 검색</p>
-            <div className="flex gap-3 items-center">
+            {/* 검색 모드 - 추후 구현 예정 */}
+            {/* <div className="flex gap-3 items-center">
               <p>검색 모드</p>
               <div className="flex border border-black rounded-xl divide-x divide-black overflow-hidden">
                 <div
@@ -244,7 +242,7 @@ function Feed() {
                   OR
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* 태그 입력 */}

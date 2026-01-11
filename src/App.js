@@ -5,6 +5,8 @@ import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute"
 
 import Login from "./pages/login/login";
+import SignUp from "./pages/login/SignUp";
+
 import Inventory from "./pages/inventory/Inventory";
 import Layout from "./components/Layout";
 import CreateCard from "./pages/createCard/CreateCard";
@@ -33,7 +35,7 @@ function App() {
           <Routes>
             {/* 로그인 페이지는 누구나 접근 가능 */}
             <Route path="/login" element={<Login />} />
-
+            <Route path="/signup" element={<SignUp />} />
             {/* 보호된 라우트들 */}
             <Route
               path="/inventory"
@@ -58,9 +60,9 @@ function App() {
             <Route
               path="/feed"
               element={
-                  <Layout>
-                    <Feed />
-                  </Layout>
+                <Layout>
+                  <Feed />
+                </Layout>
               }
             />
             <Route

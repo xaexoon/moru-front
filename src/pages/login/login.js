@@ -98,7 +98,16 @@ function Login() {
           </button>
         </form>
 
-        <p className="text-center text-gray-600 mt-6">Or sign in with</p>
+        {/* 회원가입 링크 */}
+        <p className="text-center text-gray-600 mt-6">
+          계정이 없으신가요?{" "}
+          <span
+            className="text-blue-500 hover:text-blue-600 cursor-pointer font-medium"
+            onClick={() => navigate("/signup")}
+          >
+            회원가입
+          </span>
+        </p>
       </div>
     </div>
   );

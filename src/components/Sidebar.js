@@ -194,7 +194,7 @@ function Sidebar() {
           <div className="flex flex-col justify-center">
             <span className="font-medium">{user?.nickname}</span>
             <span className="text-[8pt] text-gray-500">
-              {user?.email || "이메일 없음"}
+              {user?.username || "이메일 없음"}
             </span>
           </div>
         </div>

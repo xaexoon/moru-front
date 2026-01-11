@@ -84,10 +84,16 @@ export const useActiveUser = () => {
 };
 
 //////////////   CARDS API    //////////////
-// 카드 생성
 export const useCreateCard = () => {
   return useMutation({
-    mutationFn: (data) => apiClient.post(`${CARDS_API}`, data),
+    mutationFn: ({ formData, params }) =>
+      apiClient.post(`${CARDS_API}`, formData, {
+        params: {
+          cardName: params.cardName,
+          status: params.status,
+          dataFiledId: params.dataFieldId,
+        },
+      }),
   });
 };
 
@@ -108,6 +114,17 @@ export const useGetCard = (id, options = {}) => {
     ...options,
   });
 };
+
+
+export const useGetMyCards = (options = {}) => {
+  return useQuery({
+    queryKey: ["cards", "my"],
+    queryFn: () => apiClient.get(`${CARDS_API}/my`),
+    ...options,
+  });
+};
+
+
 
 //////////////   DECK API    //////////////
 // 전체 덱 조회

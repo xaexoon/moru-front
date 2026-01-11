@@ -159,27 +159,36 @@ function Profile() {
 
                     {/* 버튼 영역 */}
                     <div className="flex justify-between mt-8 pt-6 border-t border-gray-100">
-                        <button
-                            onClick={() => navigate(-1)}
-                            className="px-8 py-3 border border-gray-300 rounded-xl hover:bg-gray-50 transition-all font-medium"
-                        >
-                            ← 뒤로가기
-                        </button>
-                        <button
-                            onClick={handleSave}
-                            disabled={!hasChanges || isUpdating}
-                            className="px-8 py-3 bg-purple-500 text-white rounded-xl hover:bg-purple-600 disabled:bg-purple-300 disabled:cursor-not-allowed transition-all font-medium flex items-center justify-center gap-2"
-                        >
-                            {isUpdating ? (
-                                <>
-                                    <span className="animate-spin">⏳</span>
-                                    저장 중...
-                                </>
-                            ) : (
-                                "저장"
-                            )}
-                        </button>
-                    </div>
+    <button
+        onClick={() => navigate(-1)}
+        className="px-8 py-3 border border-gray-300 rounded-xl hover:bg-gray-50 transition-all font-medium"
+    >
+        ← 뒤로가기
+    </button>
+    
+    <div className="flex gap-3">
+        <button
+            onClick={() => navigate("/change-password")}
+            className="px-8 py-3 border border-gray-300 rounded-xl hover:bg-gray-50 transition-all font-medium"
+        >
+            비밀번호 변경
+        </button>
+        <button
+            onClick={handleSave}
+            disabled={!hasChanges || isUpdating}
+            className="px-8 py-3 bg-purple-500 text-white rounded-xl hover:bg-purple-600 disabled:bg-purple-300 disabled:cursor-not-allowed transition-all font-medium flex items-center justify-center gap-2"
+        >
+            {isUpdating ? (
+                <>
+                    <span className="animate-spin">⏳</span>
+                    저장 중...
+                </>
+            ) : (
+                "저장"
+            )}
+        </button>
+    </div>
+</div>
                 </div>
             </div>
         </div>
