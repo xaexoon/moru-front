@@ -84,10 +84,16 @@ export const useActiveUser = () => {
 };
 
 //////////////   CARDS API    //////////////
-// 카드 생성
 export const useCreateCard = () => {
   return useMutation({
-    mutationFn: (data) => apiClient.post(`${CARDS_API}`, data),
+    mutationFn: ({ formData, params }) =>
+      apiClient.post(`${CARDS_API}`, formData, {
+        params: {
+          cardName: params.cardName,
+          status: params.status,
+          dataFiledId: params.dataFieldId,
+        },
+      }),
   });
 };
 
@@ -108,6 +114,17 @@ export const useGetCard = (id, options = {}) => {
     ...options,
   });
 };
+
+
+export const useGetMyCards = (options = {}) => {
+  return useQuery({
+    queryKey: ["cards", "my"],
+    queryFn: () => apiClient.get(`${CARDS_API}/my`),
+    ...options,
+  });
+};
+
+
 
 //////////////   DECK API    //////////////
 // 전체 덱 조회
@@ -146,7 +163,7 @@ export const useDeleteDeck = () => {
 // 덱에 카드 추가
 export const useAddCardToDeck = () => {
   return useMutation({
-    mutationFn: ({ deckId, cardIds }) => 
+    mutationFn: ({ deckId, cardIds }) =>
       apiClient.post(`${DECK_API}/${deckId}/cards`, cardIds),
   });
 };
@@ -154,7 +171,7 @@ export const useAddCardToDeck = () => {
 // 덱에서 카드 제거
 export const useRemoveCardFromDeck = () => {
   return useMutation({
-    mutationFn: ({ deckId, cardIds }) => 
+    mutationFn: ({ deckId, cardIds }) =>
       apiClient.delete(`${DECK_API}/${deckId}/cards`, { data: cardIds }),
   });
 };

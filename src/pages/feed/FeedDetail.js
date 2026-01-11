@@ -19,10 +19,6 @@ function FeedDetail() {
 
   const cardData = data?.data?.data;
 
-  // 콘솔로그로 확인
-  console.log("=== 카드 ID ===", id);
-  console.log("=== 카드 상세 데이터 ===", cardData);
-
   // 인증 로딩 중
   if (authLoading) {
     return (
