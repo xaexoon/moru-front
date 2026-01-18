@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useGetDeck, useGetCards, useGetMyCards } from "../../hooks/useApi";
+import { useGetDeck, useGetCards, useGetMyCards, useRemoveCardFromDeck } from "../../hooks/useApi";
 import { useAuth } from "../../context/AuthContext";
+import AlarmModal from "../../components/AlarmModal";
 
 function MyDeckDetail() {
   const navigate = useNavigate();
@@ -10,8 +11,17 @@ function MyDeckDetail() {
 
   const [viewMode, setViewMode] = useState("grid");
 
+  // 알림 모달 상태
+  const [modal, setModal] = useState({
+    isOpen: false,
+    title: "",
+    content: "",
+    type: "alarm",
+    onConfirm: null,
+  });
+
   // 덱 정보 조회
-  const { data: deckData, isLoading: deckLoading } = useGetDeck(id, {
+  const { data: deckData, isLoading: deckLoading, refetch: refetchDeck } = useGetDeck(id, {
     enabled: isAuthenticated && !!id,
   });
 
@@ -24,6 +34,9 @@ function MyDeckDetail() {
   const { data: myCardsData, isLoading: myCardsLoading } = useGetMyCards({
     enabled: isAuthenticated,
   });
+
+  // 덱에서 카드 제거 mutation
+  const { mutate: removeCardFromDeck, isPending: isRemoving } = useRemoveCardFromDeck();
 
   const deck = deckData?.data?.data;
   const publicCards = publicCardsData?.data?.data || [];
@@ -42,19 +55,53 @@ function MyDeckDetail() {
     deck?.cardIds?.map(Number).includes(Number(card.cardId))
   );
 
-  // 디버깅 로그
-  console.log("=== 덱 cardIds ===", deck?.cardIds);
-  console.log("=== 공개 카드 수 ===", publicCards.length);
-  console.log("=== 내 카드 수 ===", myCards.length);
-  console.log("=== 합친 카드 수 ===", allCards.length);
-  console.log("=== 덱에 포함된 카드 ===", deckCards);
+  // 모달 열기 헬퍼 함수
+  const showModal = ({ title, content, type = "alarm", onConfirm = null }) => {
+    setModal({
+      isOpen: true,
+      title,
+      content,
+      type,
+      onConfirm,
+    });
+  };
 
-  // 덱에서 카드 제거 핸들러
-  const handleRemoveCard = (cardId) => {
-    if (window.confirm("이 카드를 덱에서 제거하시겠습니까?")) {
-      console.log(`카드 ${cardId}를 덱에서 제거`);
-      alert("카드가 덱에서 제거되었습니다.");
-    }
+  // 모달 닫기
+  const closeModal = () => {
+    setModal((prev) => ({ ...prev, isOpen: false }));
+  };
+
+  // 카드 제거 확인 모달 열기
+  const handleRemoveClick = (e, cardId, cardName) => {
+    e.stopPropagation();
+    showModal({
+      title: "카드 제거",
+      content: `"${cardName}" 카드를 덱에서 제거하시겠습니까?`,
+      type: "confirm",
+      onConfirm: () => handleRemoveConfirm(cardId),
+    });
+  };
+
+  // 카드 제거 실행
+  const handleRemoveConfirm = (cardId) => {
+    removeCardFromDeck(
+      { deckId: id, cardIds: [cardId] },
+      {
+        onSuccess: () => {
+          refetchDeck();
+          showModal({
+            title: "제거 완료",
+            content: "카드가 덱에서 제거되었습니다.",
+          });
+        },
+        onError: (err) => {
+          showModal({
+            title: "제거 실패",
+            content: err.response?.data?.message || err.message,
+          });
+        },
+      }
+    );
   };
 
   // 인증 로딩 중
@@ -203,13 +250,11 @@ function MyDeckDetail() {
                     </div>
                   )}
 
-                  {/* 삭제 버튼 */}
+                  {/* 제거 버튼 */}
                   <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleRemoveCard(card.cardId);
-                    }}
-                    className="absolute top-2 right-2 px-2 py-1 bg-red-500 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                    onClick={(e) => handleRemoveClick(e, card.cardId, card.cardName)}
+                    disabled={isRemoving}
+                    className="absolute top-2 right-2 px-2 py-1 bg-red-500 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 disabled:bg-gray-400"
                   >
                     제거
                   </button>
@@ -290,8 +335,9 @@ function MyDeckDetail() {
                     </td>
                     <td className="px-4 py-3 text-center">
                       <button
-                        onClick={() => handleRemoveCard(card.cardId)}
-                        className="px-3 py-1 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                        onClick={(e) => handleRemoveClick(e, card.cardId, card.cardName)}
+                        disabled={isRemoving}
+                        className="px-3 py-1 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors disabled:text-gray-400"
                       >
                         제거
                       </button>
@@ -303,6 +349,16 @@ function MyDeckDetail() {
           </div>
         )}
       </div>
+
+      {/* 알림 모달 */}
+      <AlarmModal
+        isOpen={modal.isOpen}
+        onClose={closeModal}
+        onConfirm={modal.onConfirm}
+        title={modal.title}
+        content={modal.content}
+        type={modal.type}
+      />
     </div>
   );
 }

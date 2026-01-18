@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useGetCard, useDeleteCard } from "../../hooks/useApi";
 import { useAuth } from "../../context/AuthContext";
+import AlarmModal from "../../components/AlarmModal";
 
 function MyCardDetail() {
   const navigate = useNavigate();
@@ -12,6 +13,15 @@ function MyCardDetail() {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isAttributeOpen, setIsAttributeOpen] = useState(true);
 
+  // 모달 상태
+  const [modal, setModal] = useState({
+    isOpen: false,
+    title: "",
+    content: "",
+    type: "alarm",
+    onConfirm: null,
+  });
+
   const { mutate: deleteCard, isPending: isDeleting } = useDeleteCard();
 
   // API에서 카드 상세 데이터 가져오기
@@ -21,25 +31,57 @@ function MyCardDetail() {
 
   const cardData = data?.data?.data;
 
+  // 모달 열기 헬퍼 함수
+  const showModal = ({ title, content, type = "alarm", onConfirm = null }) => {
+    setModal({
+      isOpen: true,
+      title,
+      content,
+      type,
+      onConfirm,
+    });
+  };
+
+  // 모달 닫기
+  const closeModal = () => {
+    setModal((prev) => ({ ...prev, isOpen: false }));
+  };
+
   // 카드 수정 핸들러
   const handleEditCard = () => {
     navigate(`/createCard?edit=${id}`);
   };
 
-  // 카드 삭제 핸들러
+  // 카드 삭제 핸들러 - 확인 모달 열기
   const handleDeleteCard = () => {
-    if (window.confirm("이 카드를 삭제하시겠습니까?")) {
-      deleteCard(id, {
-        onSuccess: () => {
-          alert("카드가 삭제되었습니다.");
-          navigate("/myCard");
-        },
-        onError: (error) => {
-          console.error("카드 삭제 실패:", error);
-          alert("카드 삭제에 실패했습니다.");
-        },
-      });
-    }
+    showModal({
+      title: "카드 삭제",
+      content: `"${cardData?.cardName}" 카드를 정말 삭제하시겠습니까?\n삭제된 카드는 복구할 수 없습니다.`,
+      type: "confirm",
+      onConfirm: handleDeleteConfirm,
+    });
+  };
+
+  // 삭제 실행
+  const handleDeleteConfirm = () => {
+    deleteCard(id, {
+      onSuccess: () => {
+        showModal({
+          title: "삭제 완료",
+          content: "카드가 성공적으로 삭제되었습니다.",
+          type: "alarm",
+          onConfirm: () => navigate("/myCard"),
+        });
+      },
+      onError: (error) => {
+        console.error("카드 삭제 실패:", error);
+        showModal({
+          title: "삭제 실패",
+          content: error.response?.data?.message || "카드 삭제에 실패했습니다.",
+          type: "alarm",
+        });
+      },
+    });
   };
 
   // 인증 로딩 중
@@ -119,16 +161,6 @@ function MyCardDetail() {
           <span>돌아가기</span>
         </button>
         <div className="flex items-center gap-3">
-          {/* 수정 버튼 */}
-          {/* <button
-            onClick={handleEditCard}
-            className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-            </svg>
-            <span>수정</span>
-          </button> */}
           {/* 삭제 버튼 */}
           <button
             onClick={handleDeleteCard}
@@ -141,12 +173,12 @@ function MyCardDetail() {
             <span>{isDeleting ? "삭제 중..." : "삭제"}</span>
           </button>
           {/* 공유 버튼 */}
-          <button className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+          {/* <button className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
             </svg>
             <span>공유</span>
-          </button>
+          </button> */}
         </div>
       </div>
 
@@ -372,6 +404,16 @@ function MyCardDetail() {
           </div>
         </div>
       </div>
+
+      {/* 알림 모달 */}
+      <AlarmModal
+        isOpen={modal.isOpen}
+        onClose={closeModal}
+        onConfirm={modal.onConfirm}
+        title={modal.title}
+        content={modal.content}
+        type={modal.type}
+      />
     </div>
   );
 }

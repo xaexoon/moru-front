@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient  } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import apiClient from "../api/apiClient";
 import {
   AUTH_API,
@@ -54,9 +54,14 @@ export const useGetMyInfo = (options = {}) => {
 
 // 개인프로필 수정
 export const useUpdateMyInfo = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: (credentials) =>
       apiClient.patch(`${USERS_API}/me`, credentials),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users", "me"] });
+    },
   });
 };
 
@@ -82,7 +87,6 @@ export const useAllUsers = () => {
   });
 };
 
-
 // 사용자 활성화
 export const useActiveUser = () => {
   return useMutation({
@@ -92,18 +96,24 @@ export const useActiveUser = () => {
 };
 
 //////////////   CARDS API    //////////////
+// 카드 생성
 export const useCreateCard = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: ({ formData }) =>
       apiClient.post(`${CARDS_API}`, formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
         },
       }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cards"] });
+    },
   });
 };
 
-// 카드 조회
+// 전체 카드 조회
 export const useGetCards = (options = {}) => {
   return useQuery({
     queryKey: ["cards"],
@@ -112,6 +122,7 @@ export const useGetCards = (options = {}) => {
   });
 };
 
+// 특정 카드 조회
 export const useGetCard = (id, options = {}) => {
   return useQuery({
     queryKey: ["card", id],
@@ -121,7 +132,7 @@ export const useGetCard = (id, options = {}) => {
   });
 };
 
-
+// 내 카드 조회
 export const useGetMyCards = (options = {}) => {
   return useQuery({
     queryKey: ["cards", "my"],
@@ -130,11 +141,16 @@ export const useGetMyCards = (options = {}) => {
   });
 };
 
-
 // 카드 삭제
 export const useDeleteCard = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: (id) => apiClient.delete(`${CARDS_API}/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cards"] });
+      queryClient.invalidateQueries({ queryKey: ["card"] });
+    },
   });
 };
 
@@ -158,38 +174,58 @@ export const useGetDeck = (id, options = {}) => {
   });
 };
 
-//덱 생성
+// 덱 생성
 export const useCreateDeck = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: (data) => apiClient.post(`${DECK_API}`, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["decks"] });
+    },
   });
 };
 
 // 덱 삭제
 export const useDeleteDeck = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: (id) => apiClient.delete(`${DECK_API}/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["decks"] });
+    },
   });
 };
 
 // 덱에 카드 추가
 export const useAddCardToDeck = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: ({ deckId, cardIds }) =>
       apiClient.post(`${DECK_API}/${deckId}/cards`, cardIds),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["decks"] });
+    },
   });
 };
 
 // 덱에서 카드 제거
 export const useRemoveCardFromDeck = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: ({ deckId, cardIds }) =>
       apiClient.delete(`${DECK_API}/${deckId}/cards`, { data: cardIds }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["decks"] });
+    },
   });
 };
 
 //////////////   DATAFIELD API    //////////////
-//데이터필드 리스트 조회
+// 데이터필드 리스트 조회
 export const useGetDatafieldList = (options = {}) => {
   return useQuery({
     queryKey: ["datafield"],
@@ -208,24 +244,62 @@ export const useGetDatafield = (id, options = {}) => {
   });
 };
 
-//데이터필드 생성
+// 데이터필드 생성
 export const useCreateDatafield = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: (data) => apiClient.post(`${DATAFIELD_API}`, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["datafield"] });
+    },
   });
 };
 
-//데이터필드 수정
+// 데이터필드 수정
 export const useUpdateDatafield = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: ({ id, data }) =>
       apiClient.patch(`${DATAFIELD_API}/${id}`, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["datafield"] });
+    },
   });
 };
 
-//데이터 필드 삭제
+// 데이터필드 삭제
 export const useDeleteDatafield = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: (id) => apiClient.delete(`${DATAFIELD_API}/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["datafield"] });
+    },
+  });
+};
+
+// 좋아요 토글
+export const useLikeCard = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (cardId) => apiClient.post(`${CARDS_API}/${cardId}/like`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cards"] });
+      queryClient.invalidateQueries({ queryKey: ["card"] });
+    },
+  });
+};
+
+// 실시간 좋아요 개수 조회
+export const useGetLikeCount = (cardId, options = {}) => {
+  return useQuery({
+    queryKey: ["likeCount", cardId],
+    queryFn: () => apiClient.get(`${CARDS_API}/${cardId}/like-count`),
+    enabled: !!cardId,
+    ...options,
   });
 };

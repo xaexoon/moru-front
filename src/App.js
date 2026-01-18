@@ -39,6 +39,14 @@ function App() {
               {/* 로그인 페이지는 누구나 접근 가능 */}
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<SignUp />} />
+              <Route
+                path="/"
+                element={
+                  <Layout>
+                    <Feed />
+                  </Layout>
+                }
+              />
               {/* 보호된 라우트들 */}
               <Route
                 path="/inventory"

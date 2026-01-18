@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { ReactComponent as NewIcon } from "../../assets/dataFields/new.svg";
 
 import { useGetAllDecks, useCreateDeck, useDeleteDeck } from "../../hooks/useApi";
+import AlarmModal from "../../components/AlarmModal";
 
 function MyDeck() {
   const navigate = useNavigate();
@@ -12,6 +13,15 @@ function MyDeck() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [newDeckName, setNewDeckName] = useState("");
   const [newDeckDescription, setNewDeckDescription] = useState("");
+
+  // 알림 모달 상태
+  const [modal, setModal] = useState({
+    isOpen: false,
+    title: "",
+    content: "",
+    type: "alarm",
+    onConfirm: null,
+  });
 
   // 덱 목록 조회
   const { data: decksData, isLoading, refetch } = useGetAllDecks();
@@ -22,17 +32,36 @@ function MyDeck() {
   const { mutate: createDeck, isPending: isCreating } = useCreateDeck();
 
   // 덱 삭제
-  const { mutate: deleteDeck } = useDeleteDeck();
+  const { mutate: deleteDeck, isPending: isDeleting } = useDeleteDeck();
 
   // 검색 필터링
   const filteredDecks = decks.filter((deck) =>
     deck.title?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // 모달 열기 헬퍼 함수
+  const showModal = ({ title, content, type = "alarm", onConfirm = null }) => {
+    setModal({
+      isOpen: true,
+      title,
+      content,
+      type,
+      onConfirm,
+    });
+  };
+
+  // 모달 닫기
+  const closeModal = () => {
+    setModal((prev) => ({ ...prev, isOpen: false }));
+  };
+
   // 새 덱 만들기
   const handleCreateDeck = () => {
     if (!newDeckName.trim()) {
-      alert("덱 이름을 입력해주세요.");
+      showModal({
+        title: "입력 오류",
+        content: "덱 이름을 입력해주세요.",
+      });
       return;
     }
 
@@ -44,33 +73,53 @@ function MyDeck() {
       },
       {
         onSuccess: () => {
-          alert("덱이 생성되었습니다!");
           setIsCreateModalOpen(false);
           setNewDeckName("");
           setNewDeckDescription("");
           refetch();
+          showModal({
+            title: "생성 완료",
+            content: "덱이 성공적으로 생성되었습니다!",
+          });
         },
         onError: (err) => {
-          alert("덱 생성 실패: " + (err.response?.data?.message || err.message));
+          showModal({
+            title: "생성 실패",
+            content: err.response?.data?.message || err.message,
+          });
         },
       }
     );
   };
 
-  // 덱 삭제
-  const handleDeleteDeck = (e, deckId, deckName) => {
+  // 덱 삭제 확인 모달 열기
+  const handleDeleteClick = (e, deckId, deckName) => {
     e.stopPropagation();
-    if (window.confirm(`"${deckName}" 덱을 삭제하시겠습니까?`)) {
-      deleteDeck(deckId, {
-        onSuccess: () => {
-          alert("덱이 삭제되었습니다.");
-          refetch();
-        },
-        onError: (err) => {
-          alert("덱 삭제 실패: " + (err.response?.data?.message || err.message));
-        },
-      });
-    }
+    showModal({
+      title: "덱 삭제",
+      content: `"${deckName}" 덱을 정말 삭제하시겠습니까?\n삭제된 덱은 복구할 수 없습니다.`,
+      type: "confirm",
+      onConfirm: () => handleDeleteConfirm(deckId),
+    });
+  };
+
+  // 덱 삭제 실행
+  const handleDeleteConfirm = (deckId) => {
+    deleteDeck(deckId, {
+      onSuccess: () => {
+        refetch();
+        showModal({
+          title: "삭제 완료",
+          content: "덱이 성공적으로 삭제되었습니다.",
+        });
+      },
+      onError: (err) => {
+        showModal({
+          title: "삭제 실패",
+          content: err.response?.data?.message || err.message,
+        });
+      },
+    });
   };
 
   // 로딩 상태
@@ -157,8 +206,9 @@ function MyDeck() {
                   {/* 삭제 버튼 */}
                   <div className="absolute top-2 right-2">
                     <button
-                      onClick={(e) => handleDeleteDeck(e, deck.id, deck.title)}
-                      className="text-xs px-2 py-1 rounded-full bg-red-500 text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                      onClick={(e) => handleDeleteClick(e, deck.id, deck.title)}
+                      disabled={isDeleting}
+                      className="text-xs px-2 py-1 rounded-full bg-red-500 text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 disabled:bg-gray-400"
                     >
                       삭제
                     </button>
@@ -254,6 +304,16 @@ function MyDeck() {
           </div>
         </div>
       )}
+
+      {/* 알림 모달 */}
+      <AlarmModal
+        isOpen={modal.isOpen}
+        onClose={closeModal}
+        onConfirm={modal.onConfirm}
+        title={modal.title}
+        content={modal.content}
+        type={modal.type}
+      />
     </div>
   );
 }

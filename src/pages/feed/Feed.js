@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useGetCards, useGetAllDecks, useAddCardToDeck } from "../../hooks/useApi";
+import { useGetCards, useGetAllDecks, useAddCardToDeck, useLikeCard } from "../../hooks/useApi";
 import { useAuth } from "../../context/AuthContext";
 import { useInventory } from "../../context/InventoryContext";
 import AlarmModal from "../../components/AlarmModal";
@@ -16,60 +16,174 @@ function Feed() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
+  // 좋아요 상태 관리 (로그인한 경우에만 로컬 스토리지 사용)
+  const [likedCards, setLikedCards] = useState(() => {
+    if (typeof window === 'undefined') return [];
+    const saved = localStorage.getItem('likedCards');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  // 모달 상태
+  const [modal, setModal] = useState({
+    isOpen: false,
+    title: '',
+    content: '',
+    type: 'alarm',
+    onConfirm: null,
+  });
+
+  // 카드 조회 - 로그인 없이도 가능
   const { data, isLoading, isError, error } = useGetCards();
-  const { data: decksData } = useGetAllDecks({ enabled: isAuthenticated });
+  
+  // 덱 조회 - 로그인한 경우에만 호출
+  const { data: decksData } = useGetAllDecks({ 
+    enabled: isAuthenticated  // 로그인 시에만 API 호출
+  });
+  
+  // 좋아요 - 로그인한 경우에만 사용
+  const { mutate: likeCard, isPending: isLiking } = useLikeCard();
+  
+  // 덱에 카드 추가 - 로그인한 경우에만 사용
   const { mutate: addCardToDeck } = useAddCardToDeck();
 
   const cards = data?.data?.data || [];
   const decks = decksData?.data?.data || [];
 
+  // 좋아요 상태가 변경되면 로컬 스토리지에 저장 (로그인한 경우에만)
+  useEffect(() => {
+    if (isAuthenticated) {
+      localStorage.setItem('likedCards', JSON.stringify(likedCards));
+    }
+  }, [likedCards, isAuthenticated]);
+
+  // 로그인 상태 변경 시 좋아요 상태 로드
+  useEffect(() => {
+    if (isAuthenticated) {
+      const saved = localStorage.getItem('likedCards');
+      setLikedCards(saved ? JSON.parse(saved) : []);
+    } else {
+      setLikedCards([]);
+    }
+  }, [isAuthenticated]);
+
   const filteredCards = cards.filter(card =>
     card.cardName?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const requireLogin = (callback) => {
-    if (!isAuthenticated) {
-      setShowLoginModal(true);
-      return false;
-    }
-    if (callback) callback();
-    return true;
+  // 좋아요 여부 확인
+  const isLikedCard = (cardId) => {
+    return likedCards.includes(cardId);
   };
 
-  const handleLikeClick = (cardId) => {
-    if (!requireLogin()) return;
-    console.log("좋아요 클릭:", cardId);
+  // 모달 열기 헬퍼 함수
+  const showModal = ({ title, content, type = 'alarm', onConfirm = null }) => {
+    setModal({
+      isOpen: true,
+      title,
+      content,
+      type,
+      onConfirm,
+    });
+  };
+
+  // 모달 닫기
+  const closeModal = () => {
+    setModal(prev => ({ ...prev, isOpen: false }));
+  };
+
+  // 좋아요 클릭 핸들러
+  const handleLikeClick = (e, cardId) => {
+    e.stopPropagation();
+
+    // 로그인 체크
+    if (!isAuthenticated) {
+      setShowLoginModal(true);
+      return;
+    }
+
+    likeCard(cardId, {
+      onSuccess: (response) => {
+        console.log("좋아요 응답:", response);
+        
+        setLikedCards(prev => {
+          if (prev.includes(cardId)) {
+            return prev.filter(id => id !== cardId);
+          } else {
+            return [...prev, cardId];
+          }
+        });
+      },
+      onError: (err) => {
+        showModal({
+          title: '오류',
+          content: err.response?.data?.message || '좋아요 처리 중 오류가 발생했습니다.',
+        });
+      },
+    });
   };
 
   const handleInventoryClick = (card) => {
-    if (!requireLogin()) return;
+    // 로그인 체크
+    if (!isAuthenticated) {
+      setShowLoginModal(true);
+      return;
+    }
     toggleInventory(card);
   };
 
   const handleDeckButtonClick = (cardId) => {
-    if (!requireLogin()) return;
+    // 로그인 체크
+    if (!isAuthenticated) {
+      setShowLoginModal(true);
+      return;
+    }
     setShowDeckList(showDeckList === cardId ? null : cardId);
   };
 
   const handleAddToDeck = (deckId, cardId) => {
-
-    console.log("=== 덱 추가 요청 ===");
-    console.log("deckId:", deckId, typeof deckId);
-    console.log("cardId:", cardId, typeof cardId);
-    console.log("전송할 데이터:", { deckId, cardIds: [cardId] });
-
     addCardToDeck(
       { deckId, cardIds: [cardId] },
       {
         onSuccess: () => {
-          alert("덱에 카드가 추가되었습니다!");
+          showModal({
+            title: '추가 완료',
+            content: '덱에 카드가 추가되었습니다!',
+          });
           setShowDeckList(null);
         },
         onError: (err) => {
-          alert("카드 추가 실패: " + (err.response?.data?.message || err.message));
+          showModal({
+            title: '추가 실패',
+            content: err.response?.data?.message || err.message,
+          });
         },
       }
     );
+  };
+
+  // 카드 상세 페이지 이동 - 로그인 체크 추가
+  const handleCardClick = (cardId) => {
+    if (!isAuthenticated) {
+      setShowLoginModal(true);
+      return;
+    }
+    navigate(`/feed/${cardId}`);
+  };
+
+  // 마우스 오버 핸들러 (로그인한 경우에만 동작)
+  const handleMouseEnter = (cardId) => {
+    if (isAuthenticated) {
+      setHoveredCard(cardId);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (isAuthenticated) {
+      setHoveredCard(null);
+      if (showDeckList) {
+        setShowDeckList(null);
+      }
+    }
   };
 
   if (isLoading) {
@@ -133,13 +247,8 @@ function Feed() {
               <div
                 key={card.cardId}
                 className="break-inside-avoid group cursor-pointer"
-                onMouseEnter={() => setHoveredCard(card.cardId)}
-                onMouseLeave={() => {
-                  setHoveredCard(null);
-                  if (showDeckList === card.cardId) {
-                    setShowDeckList(null);
-                  }
-                }}
+                onMouseEnter={() => handleMouseEnter(card.cardId)}
+                onMouseLeave={handleMouseLeave}
               >
                 <div className="relative rounded-lg overflow-hidden bg-gray-100">
                   {/* 이미지 영역 */}
@@ -155,16 +264,21 @@ function Feed() {
                     </div>
                   )}
 
-                  {/* 호버 오버레이 - 전체 클릭 시 상세보기, 버튼은 개별 동작 */}
-                  {hoveredCard === card.cardId && (
+                  {/* 호버 오버레이 - 로그인한 경우에만 표시 */}
+                  {isAuthenticated && hoveredCard === card.cardId && (
                     <div
                       className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center gap-3 cursor-pointer"
-                      onClick={() => navigate(`/feed/${card.cardId}`)}
+                      onClick={() => handleCardClick(card.cardId)}
                     >
                       {/* 카드 정보 */}
                       <div className="flex items-center gap-3 text-white text-sm pointer-events-none">
                         <span className="flex items-center gap-1">
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg 
+                            className="w-4 h-4" 
+                            fill={isLikedCard(card.cardId) ? "currentColor" : "none"} 
+                            stroke="currentColor" 
+                            viewBox="0 0 24 24"
+                          >
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                           </svg>
                           {card.likeCount || 0}
@@ -175,26 +289,44 @@ function Feed() {
                         </span>
                       </div>
 
-                      {/* 액션 버튼들 - pointer-events-auto로 버튼만 클릭 가능 */}
+                      {/* 액션 버튼들 */}
                       <div
                         className="flex items-center gap-2 relative pointer-events-auto"
                         onClick={(e) => e.stopPropagation()}
                       >
+                        {/* 좋아요 버튼 */}
                         <button
-                          onClick={() => handleLikeClick(card.cardId)}
-                          className="w-10 h-10 bg-red-500 hover:bg-red-600 rounded-lg flex items-center justify-center transition-colors"
+                          onClick={(e) => handleLikeClick(e, card.cardId)}
+                          disabled={isLiking}
+                          className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors disabled:opacity-50 ${
+                            isLikedCard(card.cardId)
+                              ? "bg-red-500 hover:bg-red-600"
+                              : "bg-white/20 hover:bg-red-500"
+                          }`}
                         >
-                          <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                          <svg
+                            className="w-5 h-5 text-white"
+                            fill={isLikedCard(card.cardId) ? "currentColor" : "none"}
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                            />
                           </svg>
                         </button>
 
+                        {/* 인벤토리 버튼 */}
                         <button
                           onClick={() => handleInventoryClick(card)}
-                          className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${isInInventory(card.cardId)
-                            ? "bg-green-600 hover:bg-green-700"
-                            : "bg-green-500 hover:bg-green-600"
-                            }`}
+                          className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${
+                            isInInventory(card.cardId)
+                              ? "bg-green-600 hover:bg-green-700"
+                              : "bg-green-500 hover:bg-green-600"
+                          }`}
                         >
                           {isInInventory(card.cardId) ? (
                             <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -207,13 +339,15 @@ function Feed() {
                           )}
                         </button>
 
+                        {/* 덱 추가 버튼 */}
                         <div className="relative">
                           <button
                             onClick={() => handleDeckButtonClick(card.cardId)}
-                            className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${showDeckList === card.cardId
-                              ? "bg-blue-600 hover:bg-blue-700"
-                              : "bg-blue-500 hover:bg-blue-600"
-                              }`}
+                            className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${
+                              showDeckList === card.cardId
+                                ? "bg-blue-600 hover:bg-blue-700"
+                                : "bg-blue-500 hover:bg-blue-600"
+                            }`}
                           >
                             <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
@@ -259,18 +393,23 @@ function Feed() {
                     </div>
                   )}
 
-                  {/* 기본 하단 정보 - 호버 아닐 때만 표시 */}
-                  {hoveredCard !== card.cardId && (
+                  {/* 기본 하단 정보 - 항상 표시 (호버 오버레이가 없을 때) */}
+                  {!(isAuthenticated && hoveredCard === card.cardId) && (
                     <div
                       className="absolute inset-0 cursor-pointer"
-                      onClick={() => navigate(`/feed/${card.cardId}`)}
+                      onClick={() => handleCardClick(card.cardId)}
                     >
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                       <div className="absolute bottom-0 left-0 right-0 p-3">
                         <h3 className="text-white text-sm font-medium mb-1">{card.cardName}</h3>
                         <div className="flex items-center gap-3 text-white/80 text-xs">
                           <span className="flex items-center gap-1">
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg
+                              className="w-3.5 h-3.5"
+                              fill={isLikedCard(card.cardId) ? "currentColor" : "none"}
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                             </svg>
                             {card.likeCount || 0}
@@ -297,7 +436,7 @@ function Feed() {
         )}
       </div>
 
-      {/* 하단 인벤토리 바 */}
+      {/* 하단 인벤토리 바 - 로그인한 경우에만 표시 */}
       {isAuthenticated && inventory.length > 0 && (
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
           <div className="max-w-[2400px] mx-auto flex items-center h-20 px-10">
@@ -365,6 +504,16 @@ function Feed() {
         type="confirm"
         confirmText="로그인"
         cancelText="취소"
+      />
+
+      {/* 알림 모달 */}
+      <AlarmModal
+        isOpen={modal.isOpen}
+        onClose={closeModal}
+        onConfirm={modal.onConfirm}
+        title={modal.title}
+        content={modal.content}
+        type={modal.type}
       />
     </div>
   );

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useGetMyCards } from '../../hooks/useApi';
+import { useGetMyCards, useDeleteCard } from '../../hooks/useApi';
+import AlarmModal from '../../components/AlarmModal';
 
 const MyCard = () => {
   const navigate = useNavigate();
@@ -9,8 +10,23 @@ const MyCard = () => {
   const [sortBy, setSortBy] = useState('최근 생성순');
   const [searchQuery, setSearchQuery] = useState('');
 
+  // 모달 상태
+  const [modal, setModal] = useState({
+    isOpen: false,
+    title: '',
+    content: '',
+    type: 'alarm',
+    onConfirm: null,
+  });
+
+  // 삭제할 카드 ID 저장
+  const [deleteTargetId, setDeleteTargetId] = useState(null);
+
   // 내 카드 목록 조회
   const { data: myCardsData, isLoading, isError, error } = useGetMyCards();
+
+  // 카드 삭제 mutation
+  const { mutate: deleteCard, isPending: isDeleting } = useDeleteCard();
 
   // 카드 데이터 추출
   const cards = myCardsData?.data?.data || [];
@@ -37,6 +53,55 @@ const MyCard = () => {
     }
   });
 
+  // 모달 열기 헬퍼 함수
+  const showModal = ({ title, content, type = 'alarm', onConfirm = null }) => {
+    setModal({
+      isOpen: true,
+      title,
+      content,
+      type,
+      onConfirm,
+    });
+  };
+
+  // 모달 닫기
+  const closeModal = () => {
+    setModal(prev => ({ ...prev, isOpen: false }));
+    setDeleteTargetId(null);
+  };
+
+  // 삭제 확인 모달 열기
+  const handleDeleteClick = (e, cardId, cardName) => {
+    e.stopPropagation(); // 카드 클릭 이벤트 방지
+    setDeleteTargetId(cardId);
+    showModal({
+      title: '카드 삭제',
+      content: `"${cardName}" 카드를 정말 삭제하시겠습니까?\n삭제된 카드는 복구할 수 없습니다.`,
+      type: 'confirm',
+      onConfirm: () => handleDeleteConfirm(cardId),
+    });
+  };
+
+  // 삭제 실행
+  const handleDeleteConfirm = (cardId) => {
+    deleteCard(cardId, {
+      onSuccess: () => {
+        showModal({
+          title: '삭제 완료',
+          content: '카드가 성공적으로 삭제되었습니다.',
+          type: 'alarm',
+        });
+      },
+      onError: (err) => {
+        showModal({
+          title: '삭제 실패',
+          content: err.response?.data?.message || err.message || '카드 삭제 중 오류가 발생했습니다.',
+          type: 'alarm',
+        });
+      },
+    });
+  };
+
   // 로딩 상태
   if (isLoading) {
     return (
@@ -49,8 +114,14 @@ const MyCard = () => {
   // 에러 상태
   if (isError) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <p className="text-red-500">에러 발생: {error.message}</p>
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center">
+        <p className="text-red-500 mb-4">에러 발생: {error.message}</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="px-4 py-2 bg-black text-white rounded-lg text-sm hover:bg-gray-800"
+        >
+          다시 시도
+        </button>
       </div>
     );
   }
@@ -184,9 +255,6 @@ const MyCard = () => {
                 key={card.cardId || card.id}
                 className="break-inside-avoid group cursor-pointer"
                 onClick={() => {
-                  console.log("클릭한 카드:", card);
-                  console.log("cardId:", card.cardId);
-                  console.log("id:", card.id);
                   navigate(`/myCard/${card.cardId || card.id}`);
                 }}
               >
@@ -207,7 +275,7 @@ const MyCard = () => {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
                   {/* 공개/비공개 뱃지 */}
-                  <div className="absolute top-2 right-2">
+                  <div className="absolute top-2 right-2 flex items-center gap-2">
                     <span className={`text-xs px-2 py-1 rounded-full ${card.status === 'PUBLIC'
                         ? 'bg-green-500 text-white'
                         : 'bg-gray-500 text-white'
@@ -215,6 +283,17 @@ const MyCard = () => {
                       {card.status === 'PUBLIC' ? '공개' : '비공개'}
                     </span>
                   </div>
+
+                  {/* 삭제 버튼 - 호버 시 표시 */}
+                  <button
+                    onClick={(e) => handleDeleteClick(e, card.cardId || card.id, card.cardName)}
+                    disabled={isDeleting}
+                    className="absolute top-2 left-2 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity disabled:bg-gray-400"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
 
                   {/* Card Info */}
                   <div className="absolute bottom-0 left-0 right-0 p-3">
@@ -245,6 +324,16 @@ const MyCard = () => {
           </div>
         )}
       </div>
+
+      {/* 알림 모달 */}
+      <AlarmModal
+        isOpen={modal.isOpen}
+        onClose={closeModal}
+        onConfirm={modal.onConfirm}
+        title={modal.title}
+        content={modal.content}
+        type={modal.type}
+      />
     </div>
   );
 };

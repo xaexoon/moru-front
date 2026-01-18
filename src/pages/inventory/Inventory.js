@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useInventory } from "../../context/InventoryContext";
+import AlarmModal from "../../components/AlarmModal";
 
 function Inventory() {
   const navigate = useNavigate();
@@ -10,6 +11,15 @@ function Inventory() {
   const [sortBy, setSortBy] = useState("최근추가");
   const [selectMode, setSelectMode] = useState(false);
   const [selectedCards, setSelectedCards] = useState([]);
+
+  // 모달 상태
+  const [modal, setModal] = useState({
+    isOpen: false,
+    title: "",
+    content: "",
+    type: "alarm",
+    onConfirm: null,
+  });
 
   const totalCards = inventory.length;
 
@@ -26,28 +36,100 @@ function Inventory() {
     return 0;
   });
 
+  // 모달 열기 헬퍼 함수
+  const showModal = ({ title, content, type = "alarm", onConfirm = null }) => {
+    setModal({
+      isOpen: true,
+      title,
+      content,
+      type,
+      onConfirm,
+    });
+  };
+
+  // 모달 닫기
+  const closeModal = () => {
+    setModal((prev) => ({ ...prev, isOpen: false }));
+  };
+
   // 카드 선택 핸들러
   const handleCardSelect = (cardId) => {
     if (selectedCards.includes(cardId)) {
-      setSelectedCards(selectedCards.filter(id => id !== cardId));
+      setSelectedCards(selectedCards.filter((id) => id !== cardId));
     } else {
       setSelectedCards([...selectedCards, cardId]);
     }
   };
 
-  // 선택된 카드 삭제
-  const handleDeleteSelected = () => {
+  // 선택된 카드 삭제 확인 모달
+  const handleDeleteSelectedClick = () => {
     if (selectedCards.length === 0) {
-      alert("삭제할 카드를 선택해주세요.");
+      showModal({
+        title: "알림",
+        content: "삭제할 카드를 선택해주세요.",
+      });
       return;
     }
-    if (window.confirm(`선택한 ${selectedCards.length}개의 카드를 인벤토리에서 삭제하시겠습니까?`)) {
-      selectedCards.forEach(cardId => {
-        removeFromInventory(cardId);
-      });
-      setSelectedCards([]);
-      setSelectMode(false);
-    }
+
+    showModal({
+      title: "카드 삭제",
+      content: `선택한 ${selectedCards.length}개의 카드를 인벤토리에서 삭제하시겠습니까?`,
+      type: "confirm",
+      onConfirm: handleDeleteSelectedConfirm,
+    });
+  };
+
+  // 선택된 카드 삭제 실행
+  const handleDeleteSelectedConfirm = () => {
+    selectedCards.forEach((cardId) => {
+      removeFromInventory(cardId);
+    });
+    setSelectedCards([]);
+    setSelectMode(false);
+
+    showModal({
+      title: "삭제 완료",
+      content: "선택한 카드가 인벤토리에서 삭제되었습니다.",
+    });
+  };
+
+  // 단일 카드 삭제 확인 모달
+  const handleSingleDeleteClick = (e, card) => {
+    e.stopPropagation();
+    showModal({
+      title: "카드 삭제",
+      content: `"${card.cardName}" 카드를 인벤토리에서 삭제하시겠습니까?`,
+      type: "confirm",
+      onConfirm: () => handleSingleDeleteConfirm(card.cardId),
+    });
+  };
+
+  // 단일 카드 삭제 실행
+  const handleSingleDeleteConfirm = (cardId) => {
+    removeFromInventory(cardId);
+    showModal({
+      title: "삭제 완료",
+      content: "카드가 인벤토리에서 삭제되었습니다.",
+    });
+  };
+
+  // 전체 비우기 확인 모달
+  const handleClearAllClick = () => {
+    showModal({
+      title: "인벤토리 비우기",
+      content: "인벤토리를 모두 비우시겠습니까?\n이 작업은 되돌릴 수 없습니다.",
+      type: "confirm",
+      onConfirm: handleClearAllConfirm,
+    });
+  };
+
+  // 전체 비우기 실행
+  const handleClearAllConfirm = () => {
+    clearInventory();
+    showModal({
+      title: "완료",
+      content: "인벤토리가 비워졌습니다.",
+    });
   };
 
   // 전체 선택
@@ -55,7 +137,7 @@ function Inventory() {
     if (selectedCards.length === sortedCards.length) {
       setSelectedCards([]);
     } else {
-      setSelectedCards(sortedCards.map(card => card.cardId));
+      setSelectedCards(sortedCards.map((card) => card.cardId));
     }
   };
 
@@ -80,7 +162,12 @@ function Inventory() {
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
             </svg>
             <input
               type="text"
@@ -107,7 +194,12 @@ function Inventory() {
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 9l-7 7-7-7"
+              />
             </svg>
           </div>
 
@@ -123,8 +215,18 @@ function Inventory() {
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
             <span>선택 모드</span>
           </button>
@@ -135,18 +237,30 @@ function Inventory() {
               onClick={handleSelectAll}
               className="h-[42px] px-4 text-sm rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
             >
-              {selectedCards.length === sortedCards.length ? "전체 해제" : "전체 선택"}
+              {selectedCards.length === sortedCards.length
+                ? "전체 해제"
+                : "전체 선택"}
             </button>
           )}
 
           {/* 선택 삭제 버튼 */}
           {selectMode && selectedCards.length > 0 && (
             <button
-              onClick={handleDeleteSelected}
+              onClick={handleDeleteSelectedClick}
               className="h-[42px] px-4 text-sm rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors flex items-center gap-2"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                />
               </svg>
               <span>{selectedCards.length}개 삭제</span>
             </button>
@@ -155,15 +269,21 @@ function Inventory() {
           {/* 전체 비우기 버튼 */}
           {!selectMode && inventory.length > 0 && (
             <button
-              onClick={() => {
-                if (window.confirm("인벤토리를 모두 비우시겠습니까?")) {
-                  clearInventory();
-                }
-              }}
+              onClick={handleClearAllClick}
               className="h-[42px] px-4 text-sm rounded-lg border border-red-300 text-red-500 hover:bg-red-50 transition-colors flex items-center gap-2"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                />
               </svg>
               <span>전체 비우기</span>
             </button>
@@ -173,14 +293,26 @@ function Inventory() {
         {/* 카드 목록 */}
         {sortedCards.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20">
-            <svg className="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+            <svg
+              className="w-16 h-16 text-gray-300 mb-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+              />
             </svg>
             <p className="text-gray-500 text-lg mb-2">
               {searchTerm ? "검색 결과가 없습니다" : "인벤토리가 비어있습니다"}
             </p>
             <p className="text-gray-400 text-sm mb-4">
-              {searchTerm ? "다른 검색어를 입력해보세요" : "카드 피드에서 카드를 추가하여 작업용 인벤토리를 구성하세요"}
+              {searchTerm
+                ? "다른 검색어를 입력해보세요"
+                : "카드 피드에서 카드를 추가하여 작업용 인벤토리를 구성하세요"}
             </p>
             {!searchTerm && (
               <button
@@ -197,21 +329,33 @@ function Inventory() {
               <div
                 key={card.cardId}
                 className={`break-inside-avoid group cursor-pointer ${
-                  selectMode && selectedCards.includes(card.cardId) ? "ring-2 ring-blue-500 rounded-lg" : ""
+                  selectMode && selectedCards.includes(card.cardId)
+                    ? "ring-2 ring-blue-500 rounded-lg"
+                    : ""
                 }`}
-                onClick={() => selectMode ? handleCardSelect(card.cardId) : navigate(`/feed/${card.cardId}`)}
+                onClick={() =>
+                  selectMode
+                    ? handleCardSelect(card.cardId)
+                    : navigate(`/feed/${card.cardId}`)
+                }
               >
                 <div className="relative rounded-lg overflow-hidden bg-gray-100 transition-shadow hover:shadow-lg">
                   {/* 선택 체크박스 */}
                   {selectMode && (
                     <div className="absolute top-2 left-2 z-10">
-                      <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
-                        selectedCards.includes(card.cardId)
-                          ? "bg-blue-500 border-blue-500"
-                          : "bg-white/80 border-gray-300"
-                      }`}>
+                      <div
+                        className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                          selectedCards.includes(card.cardId)
+                            ? "bg-blue-500 border-blue-500"
+                            : "bg-white/80 border-gray-300"
+                        }`}
+                      >
                         {selectedCards.includes(card.cardId) && (
-                          <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                          <svg
+                            className="w-4 h-4 text-white"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                          >
                             <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
                           </svg>
                         )}
@@ -222,16 +366,21 @@ function Inventory() {
                   {/* 삭제 버튼 (선택 모드가 아닐 때만 표시) */}
                   {!selectMode && (
                     <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (window.confirm(`"${card.cardName}" 카드를 인벤토리에서 삭제하시겠습니까?`)) {
-                          removeFromInventory(card.cardId);
-                        }
-                      }}
+                      onClick={(e) => handleSingleDeleteClick(e, card)}
                       className="absolute top-2 right-2 z-10 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
                     >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M6 18L18 6M6 6l12 12"
+                        />
                       </svg>
                     </button>
                   )}
@@ -253,18 +402,45 @@ function Inventory() {
 
                   {/* 카드 정보 */}
                   <div className="absolute bottom-0 left-0 right-0 p-3 pointer-events-none">
-                    <h3 className="text-white text-sm font-medium mb-1 truncate">{card.cardName}</h3>
+                    <h3 className="text-white text-sm font-medium mb-1 truncate">
+                      {card.cardName}
+                    </h3>
                     <div className="flex items-center gap-3 text-white/80 text-xs">
                       <span className="flex items-center gap-1">
-                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        <svg
+                          className="w-3.5 h-3.5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                          />
                         </svg>
                         {card.likeCount || 0}
                       </span>
                       <span className="flex items-center gap-1">
-                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        <svg
+                          className="w-3.5 h-3.5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                          />
                         </svg>
                         {card.viewCount || 0}
                       </span>
@@ -280,6 +456,16 @@ function Inventory() {
           </div>
         )}
       </div>
+
+      {/* 알림 모달 */}
+      <AlarmModal
+        isOpen={modal.isOpen}
+        onClose={closeModal}
+        onConfirm={modal.onConfirm}
+        title={modal.title}
+        content={modal.content}
+        type={modal.type}
+      />
     </div>
   );
 }

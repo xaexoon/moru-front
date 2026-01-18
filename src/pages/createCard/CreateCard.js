@@ -2,6 +2,7 @@ import Select from "react-select";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCreateCard, useGetDatafieldList } from "../../hooks/useApi";
+import AlarmModal from "../../components/AlarmModal";
 
 import { ReactComponent as ImgIcon } from "../../assets/createCard/image.svg";
 
@@ -10,6 +11,15 @@ function CreateCard() {
 
   const [previewImg, setPreviewImg] = useState(null);
   const [imageFile, setImageFile] = useState(null);
+
+  // 모달 상태
+  const [modal, setModal] = useState({
+    isOpen: false,
+    title: "",
+    content: "",
+    type: "alarm",
+    onConfirm: null,
+  });
 
   // 폼 데이터
   const [formData, setFormData] = useState({
@@ -29,6 +39,22 @@ function CreateCard() {
     value: field.id,
     label: field.name,
   })) || [];
+
+  // 모달 열기 헬퍼 함수
+  const showModal = ({ title, content, type = "alarm", onConfirm = null }) => {
+    setModal({
+      isOpen: true,
+      title,
+      content,
+      type,
+      onConfirm,
+    });
+  };
+
+  // 모달 닫기
+  const closeModal = () => {
+    setModal(prev => ({ ...prev, isOpen: false }));
+  };
 
   // react-select 커스텀 스타일
   const customSelectStyles = {
@@ -131,17 +157,26 @@ function CreateCard() {
   const handleSubmit = () => {
     // 유효성 검사
     if (!imageFile) {
-      alert("대표 이미지를 업로드해주세요.");
+      showModal({
+        title: "입력 오류",
+        content: "대표 이미지를 업로드해주세요.",
+      });
       return;
     }
 
     if (!formData.cardName.trim()) {
-      alert("카드 이름을 입력해주세요.");
+      showModal({
+        title: "입력 오류",
+        content: "카드 이름을 입력해주세요.",
+      });
       return;
     }
 
     if (!formData.dataFieldId) {
-      alert("데이터 필드를 선택해주세요.");
+      showModal({
+        title: "입력 오류",
+        content: "데이터 필드를 선택해주세요.",
+      });
       return;
     }
 
@@ -165,13 +200,19 @@ function CreateCard() {
       { formData: submitFormData },
       {
         onSuccess: (response) => {
-          alert("카드가 성공적으로 생성되었습니다!");
           console.log("생성된 카드:", response);
-          navigate("/feed");
+          showModal({
+            title: "카드 생성 완료",
+            content: "카드가 성공적으로 생성되었습니다!",
+            onConfirm: () => navigate("/feed"),
+          });
         },
         onError: (error) => {
           console.error("카드 생성 실패:", error);
-          alert("카드 생성에 실패했습니다: " + (error.response?.data?.message || error.message));
+          showModal({
+            title: "카드 생성 실패",
+            content: error.response?.data?.message || error.message,
+          });
         },
       }
     );
@@ -456,6 +497,16 @@ function CreateCard() {
           </div>
         </div>
       </div>
+
+      {/* 알림 모달 */}
+      <AlarmModal
+        isOpen={modal.isOpen}
+        onClose={closeModal}
+        onConfirm={modal.onConfirm}
+        title={modal.title}
+        content={modal.content}
+        type={modal.type}
+      />
     </div>
   );
 }
